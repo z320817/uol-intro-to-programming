@@ -23,13 +23,17 @@ class Needles {
 		return Needles.#configuration.name;
 	}
 
+	get onResize() {
+		return Needles.onResize;
+	}
+
 	constructor(PI, TWO_PI) {
 		this.configuration.minAngle = PI + PI / 10;
 		this.configuration.maxAngle = TWO_PI - PI / 10;
 		this.onResize();
 	}
 
-	onResize() {
+	static onResize() {
 		const { plotsAcross, plotsDown } = this.configuration;
 		this.#pad = width / 20;
 		this.#plotWidth = (width - this.#pad) / plotsAcross;

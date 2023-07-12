@@ -1,5 +1,5 @@
 //global for the controls and input 
-var controls = null;
+var inputOutputController = null;
 //store visualisations in a container
 var vis = null;
 //variable for the p5 sound object
@@ -14,7 +14,7 @@ function preload() {
 function setup() {
 	createCanvas(windowWidth, windowHeight);
 	background(0);
-	controls = new inputOutputController();
+	inputOutputController = new InputOutputController();
 
 	//instantiate the fft object
 	fourier = new p5.FFT();
@@ -33,15 +33,15 @@ function draw() {
 	//draw the selected visualisation
 	vis.selectedVisual.draw();
 	//draw the controls on top.
-	controls.draw();
+	inputOutputController.draw();
 }
 
 function mouseClicked() {
-	controls.mousePressed();
+	inputOutputController.mousePressed();
 }
 
 function keyPressed() {
-	controls.keyPressed(keyCode);
+	inputOutputController.keyPressed(keyCode);
 }
 
 //when the window has been resized. Resize canvas to fit 

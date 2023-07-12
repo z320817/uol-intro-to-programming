@@ -1,5 +1,5 @@
 //constructor function to draw a
-class Needles {
+class Needles extends P5 {
 
 	#pad = 0;
 	#plotWidth = 0;
@@ -33,6 +33,7 @@ class Needles {
 	}
 
 	constructor(PI, TWO_PI) {
+		super()
 		this.configuration.minAngle = PI + PI / 10;
 		this.configuration.maxAngle = TWO_PI - PI / 10;
 		this.onResize();

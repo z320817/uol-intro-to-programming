@@ -1,7 +1,7 @@
 //global for the controls and input 
 var inputOutputController = null;
 //store visualisations in a container
-var vis = null;
+var visualisationController = null;
 //variable for the p5 sound object
 var sound = null;
 //variable for p5 fast fourier transform
@@ -14,24 +14,26 @@ function preload() {
 function setup() {
 	createCanvas(windowWidth, windowHeight);
 	background(0);
+
+	visualisationController = new VisualisationController();
 	inputOutputController = new InputOutputController();
 
 	//instantiate the fft object
 	fourier = new p5.FFT();
 
 	//create a new visualisation container and add visualisations
-	vis = new Visualisations();
-	vis.add(new Spectrum());
-	vis.add(new WavePattern());
 
-	vis.add(new Needles(PI, TWO_PI));
+	visualisationController.add(new Spectrum());
+	visualisationController.add(new WavePattern());
+
+	visualisationController.add(new Needles(PI, TWO_PI));
 
 }
 
 function draw() {
 	background(0);
 	//draw the selected visualisation
-	vis.selectedVisual.draw();
+	visualisationController.selectedVisual.draw();
 	//draw the controls on top.
 	inputOutputController.draw();
 }
@@ -49,7 +51,7 @@ function keyPressed() {
 function windowResized() {
 	resizeCanvas(windowWidth, windowHeight);
 
-	if (vis.selectedVisual.onResize) {
-		vis.selectedVisual.onResize();
+	if (visualisationController.selectedVisual.onResize) {
+		visualisationController.selectedVisual.onResize();
 	}
 }

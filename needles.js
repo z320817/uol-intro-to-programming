@@ -5,6 +5,7 @@ class Needles {
 	#plotWidth = 0;
 	#plotHeight = 0;
 	#dialRadius = 0;
+	#renderingProcessor;
 
 	static #configuration = {
 		name: "needles",
@@ -27,10 +28,16 @@ class Needles {
 		return Needles.onResize;
 	}
 
+	get draw() {
+		return this.#renderingProcessor;
+	}
+
 	constructor(PI, TWO_PI) {
 		this.configuration.minAngle = PI + PI / 10;
 		this.configuration.maxAngle = TWO_PI - PI / 10;
 		this.onResize();
+		//draws the needles UI
+		this.#setupRenderingProcessor();
 	}
 
 	static onResize() {
@@ -41,41 +48,7 @@ class Needles {
 		this.#dialRadius = (this.#plotWidth - this.#pad) / 2 - 5;
 	};
 
-	draw() {
-		const { plotsAcross, plotsDown, frequencyBins } = this.configuration;
-		//create an array amplitude values from the fft.
-		const spectrum = fourier.analyze();
-		//iterator for selecting frequency bin.
-		let currentBin = 0;
-		push();
-		fill('#f0f2d2');
-		//nested for loop to place plots in 2*2 grid.
-		for (let i = 0; i < plotsDown; i++) {
-			for (let j = 0; j < plotsAcross; j++) {
-
-				//calculate the size of the plots
-				const x = this.#pad + j * this.#plotWidth;
-				const y = this.#pad + i * this.#plotHeight;
-				const w = this.#plotWidth - this.#pad;
-				const h = this.#plotHeight - this.#pad;
-
-				//draw a rectangle at that location and size
-				rect(x, y, w, h);
-				//add on the ticks
-				this.ticks(x + w / 2, y + h, frequencyBins[currentBin]);
-
-				const energy = fourier.getEnergy(frequencyBins[currentBin]);
-
-				//add the needle
-				this.needle(energy, x + w / 2, y + h);
-				currentBin++;
-			}
-		}
-
-		pop();
-	};
-
-	needle(energy, centreX, bottomY) {
+	#needle(energy, centreX, bottomY) {
 		const { minAngle, maxAngle } = this.configuration;
 		push();
 		stroke('#333333');
@@ -93,7 +66,7 @@ class Needles {
 		pop();
 	};
 
-	ticks(centreX, bottomY, freqLabel) {
+	#ticks(centreX, bottomY, freqLabel) {
 		const { minAngle, } = this.configuration;
 		// 8 ticks from pi to 2pi
 		let nextTickAngle = minAngle;
@@ -121,4 +94,40 @@ class Needles {
 		}
 		pop();
 	};
+
+	#setupRenderingProcessor() {
+		this.#renderingProcessor = () => {
+			const { plotsAcross, plotsDown, frequencyBins } = this.configuration;
+			//create an array amplitude values from the fft.
+			const spectrum = fourier.analyze();
+			//iterator for selecting frequency bin.
+			let currentBin = 0;
+			push();
+			fill('#f0f2d2');
+			//nested for loop to place plots in 2*2 grid.
+			for (let i = 0; i < plotsDown; i++) {
+				for (let j = 0; j < plotsAcross; j++) {
+
+					//calculate the size of the plots
+					const x = this.#pad + j * this.#plotWidth;
+					const y = this.#pad + i * this.#plotHeight;
+					const w = this.#plotWidth - this.#pad;
+					const h = this.#plotHeight - this.#pad;
+
+					//draw a rectangle at that location and size
+					rect(x, y, w, h);
+					//add on the ticks
+					this.#ticks(x + w / 2, y + h, frequencyBins[currentBin]);
+
+					const energy = fourier.getEnergy(frequencyBins[currentBin]);
+
+					//add the needle
+					this.#needle(energy, x + w / 2, y + h);
+					currentBin++;
+				}
+			}
+
+			pop();
+		};
+	}
 }

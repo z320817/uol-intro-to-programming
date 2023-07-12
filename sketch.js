@@ -14,7 +14,7 @@ function preload() {
 function setup() {
 	createCanvas(windowWidth, windowHeight);
 	background(0);
-	controls = new ControlsAndInput();
+	controls = new inputOutputController();
 
 	//instantiate the fft object
 	fourier = new p5.FFT();

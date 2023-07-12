@@ -16,7 +16,7 @@ function setup() {
 	background(0);
 
 	visualisationController = new VisualisationController();
-	inputOutputController = new InputOutputController();
+	inputOutputController = new InputOutputController(visualisationController);
 
 	//instantiate the fft object
 	fourier = new p5.FFT();
@@ -25,9 +25,7 @@ function setup() {
 
 	visualisationController.add(new Spectrum());
 	visualisationController.add(new WavePattern());
-
 	visualisationController.add(new Needles(PI, TWO_PI));
-
 }
 
 function draw() {

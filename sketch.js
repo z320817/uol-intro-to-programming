@@ -2,21 +2,8 @@
 var inputOutputController = null;
 //store visualisations in a container
 var visualisationController = null;
-//variable for the p5 sound object
-var sound = null;
 //variable for p5 fast fourier transform
 var fourier;
-
-function preload() {
-	sound = loadSound('assets/music/stomper_reggae_bit.mp3');
-	let audioElement = createAudio(sound.url);
-	audioElement.position(20, 50);
-	audioElement.size(300);
-
-	// Show the audio controls
-	audioElement.showControls();
-	audioElement.connect()
-}
 
 function setup() {
 	createCanvas(windowWidth, windowHeight);

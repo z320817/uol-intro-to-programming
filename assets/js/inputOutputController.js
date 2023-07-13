@@ -4,6 +4,7 @@ class InputOutputController extends P5 {
 
 	#playbackButton;
 	#visualsMenu;
+	#needlseUiOutput;
 	#mousePressedEventObserver;
 	#keyPressedEventObserver;
 	#renderingProcessor;
@@ -35,6 +36,7 @@ class InputOutputController extends P5 {
 		//playback button displayed in the top left of the screen
 		this.#playbackButton = new PlaybackButton();
 		this.#visualsMenu = new VisualsMenu(visualisationController);
+		this.#needlseUiOutput = new Needles(PI, TWO_PI);
 	}
 
 	#setupEventObservers() {
@@ -60,7 +62,8 @@ class InputOutputController extends P5 {
 			stroke("black");
 			strokeWeight(2);
 			textSize(34);
-
+			//needles UI ouput
+			this.#needlseUiOutput.draw();
 			//playback button 
 			this.#playbackButton.draw();
 			//only draw the menu if menu displayed is set to true.

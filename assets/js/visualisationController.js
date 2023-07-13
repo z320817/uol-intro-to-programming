@@ -41,6 +41,7 @@ class VisualisationController {
 	 */
 	#add(visualisation) {
 		this.visuals = visualisation;
+
 		//if selectedVisual is null set the new visual as the 
 		//current visualiation
 		if (this.#selectedVisual == null) {

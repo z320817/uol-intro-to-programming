@@ -25,7 +25,6 @@ function setup() {
 
 	visualisationController.add(new Spectrum());
 	visualisationController.add(new WavePattern());
-	visualisationController.add(new Needles(PI, TWO_PI));
 }
 
 function draw() {

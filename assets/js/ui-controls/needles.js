@@ -115,6 +115,7 @@ class Needles extends P5 {
 			let currentBin = 0;
 			push();
 			fill('#f0f2d2');
+			stroke('#000');
 			//nested for loop to place plots in 2*2 grid.
 			for (let i = 0; i < plotsDown; i++) {
 				for (let j = 0; j < plotsAcross; j++) {

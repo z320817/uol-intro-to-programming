@@ -8,7 +8,6 @@ class Needles extends P5 {
 	#renderingProcessor;
 
 	static #configuration = {
-		name: "needles",
 		minAngle: 0,
 		maxAngle: 0,
 		plotsAcross: 2,
@@ -22,10 +21,6 @@ class Needles extends P5 {
 
 	get configuration() {
 		return Needles.#configuration;
-	}
-
-	get name() {
-		return Needles.#configuration.name;
 	}
 
 	get onResize() {

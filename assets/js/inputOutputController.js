@@ -5,6 +5,7 @@ class InputOutputController extends P5 {
 	#playbackButton;
 	#visualsMenu;
 	#needlseUiOutput;
+	#controlPannel;
 	#mousePressedEventObserver;
 	#keyPressedEventObserver;
 	#renderingProcessor;
@@ -37,6 +38,7 @@ class InputOutputController extends P5 {
 		this.#playbackButton = new PlaybackButton();
 		this.#visualsMenu = new VisualsMenu(visualisationController);
 		this.#needlseUiOutput = new Needles(PI, TWO_PI);
+		this.#controlPannel = new ControllPanel();
 	}
 
 	#setupEventObservers() {
@@ -62,6 +64,8 @@ class InputOutputController extends P5 {
 			stroke("black");
 			strokeWeight(2);
 			textSize(34);
+			//control panel UI 
+			this.#controlPannel.draw();
 			//needles UI ouput
 			this.#needlseUiOutput.draw();
 			//playback button 

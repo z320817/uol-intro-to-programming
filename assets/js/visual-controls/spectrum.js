@@ -19,11 +19,22 @@ class Spectrum extends P5 {
 		return this.#renderingProcessor;
 	}
 
+	get onResize() {
+		return Spectrum.onResize;
+	}
+
 	constructor() {
 		super();
-		this.configuration.heightOffset = height / 2.5;
+
+		//set initial position of elements
+		this.onResize();
+
 		this.#setupRenderingProcessor();
 	}
+
+	static onResize() {
+		this.configuration.heightOffset = height / 4;
+	};
 
 	#setupRenderingProcessor() {
 		const { heightOffset } = this.configuration;

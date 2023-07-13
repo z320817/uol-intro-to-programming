@@ -39,6 +39,10 @@ class ControlPanel extends P5 {
 		return this.#renderingProcessor;
 	}
 
+	get hitCheck() {
+		return ControlPanel.hitCheck;
+	}
+
 	constructor() {
 		super();
 
@@ -56,18 +60,33 @@ class ControlPanel extends P5 {
 	//checks for clicks on the button, changes control flows.
 	//@returns true if clicked false otherwise.
 	static hitCheck() {
-		const { x, y, width, height } = this.configuration;
+		const { heightOffset, musicButtonPosition, visualButtonPosition } = this.configuration;
+		const {
+			musicButtonX,
+			musicButtonY,
+			musicButtonWidth,
+			musicButtonHeight
+		} = musicButtonPosition(width, height, heightOffset);
 
-		if (mouseX > x && mouseX < x + width && mouseY > y && mouseY < y + height) {
-			if (sound.isPlaying()) {
-				sound.pause();
-			} else {
-				sound.loop();
-			}
-			this.#visualControlFlow = !this.#visualControlFlow;
+		const {
+			visualButtonX,
+			visualButtonY,
+			visualButtonWidth,
+			visualButtonHeight
+		} = visualButtonPosition(width, height, heightOffset)
+
+		if (mouseX > musicButtonX &&
+			mouseX < musicButtonX + musicButtonWidth &&
+			mouseY > musicButtonY && mouseY < musicButtonY + musicButtonHeight) {
+
+			return true;
+		} else if (mouseX > visualButtonX &&
+			mouseX < visualButtonX + visualButtonWidth &&
+			mouseY > visualButtonY && mouseY < visualButtonY + visualButtonHeight) {
 
 			return true;
 		}
+
 		return false;
 	};
 

@@ -50,6 +50,12 @@ class InputOutputController extends P5 {
 			}
 		};
 
+		this.#mousePressedEventObserver = () => {
+			if (this.#controlPannel.hitCheck()) {
+
+			}
+		};
+
 		//responds to keyboard presses
 		//@param keycode the ascii code of the keypressed
 		this.#keyPressedEventObserver = (keycode) => {

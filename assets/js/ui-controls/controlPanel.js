@@ -2,8 +2,8 @@
 class ControlPanel extends P5 {
 
 	#renderingProcessor;
-	#visualControlFlow;
-	#musicControlFlow;
+	#visualControlFlow = true;
+	#musicControlFlow = false;
 
 	static #configuration = {
 		heightOffset: 0,
@@ -78,11 +78,15 @@ class ControlPanel extends P5 {
 		if (mouseX > musicButtonX &&
 			mouseX < musicButtonX + musicButtonWidth &&
 			mouseY > musicButtonY && mouseY < musicButtonY + musicButtonHeight) {
+			this.#visualControlFlow = false;
+			this.#musicControlFlow = true;
 
 			return true;
 		} else if (mouseX > visualButtonX &&
 			mouseX < visualButtonX + visualButtonWidth &&
 			mouseY > visualButtonY && mouseY < visualButtonY + visualButtonHeight) {
+			this.#visualControlFlow = true;
+			this.#musicControlFlow = false;
 
 			return true;
 		}
@@ -103,6 +107,7 @@ class ControlPanel extends P5 {
 		};
 	}
 
+	//visual flow control button UI
 	#visualFlowBtn = () => {
 		const { heightOffset, visualButtonPosition } = this.configuration;
 		const {
@@ -112,12 +117,19 @@ class ControlPanel extends P5 {
 			visualButtonHeight
 		} = visualButtonPosition(width, height, heightOffset)
 
-		//visual flow control button
-		fill('#B2BEB5');
-		stroke('#000');
-		rect(visualButtonX, visualButtonY, visualButtonWidth, visualButtonHeight);
+		if (this.#visualControlFlow) {
+			fill('#B2BEB5');
+			stroke('#fff');
+			rect(visualButtonX, visualButtonY, visualButtonWidth, visualButtonHeight);
+		} else {
+			fill('#B2BEB5');
+			stroke('#000');
+			rect(visualButtonX, visualButtonY, visualButtonWidth, visualButtonHeight);
+		}
+
 	}
 
+	//music flow control button UI
 	#musicFlowBtn = () => {
 		const { heightOffset, musicButtonPosition } = this.configuration;
 		const {
@@ -127,9 +139,15 @@ class ControlPanel extends P5 {
 			musicButtonHeight
 		} = musicButtonPosition(width, height, heightOffset);
 
-		//music flow control button
-		fill('#36454F');
-		stroke('#000');
-		rect(musicButtonX, musicButtonY, musicButtonWidth, musicButtonHeight);
+		if (this.#musicControlFlow) {
+			fill('#36454F');
+			stroke('#fff');
+			rect(musicButtonX, musicButtonY, musicButtonWidth, musicButtonHeight);
+		} else {
+			fill('#36454F');
+			stroke('#000');
+			rect(musicButtonX, musicButtonY, musicButtonWidth, musicButtonHeight);
+		}
+
 	}
 }

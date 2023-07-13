@@ -56,6 +56,7 @@ class PlaybackButton extends P5 {
 				rect(x + (width / 2 + 2), y, width / 2 - 2, height);
 			}
 			else {
+				stroke('#000');
 				triangle(x, y, x + width, y + height / 2, x, y + height);
 			}
 		};

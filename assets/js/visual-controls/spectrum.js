@@ -4,6 +4,7 @@ class Spectrum extends P5 {
 
 	static #configuration = {
 		name: "spectrum",
+		heightOffset: 0
 	}
 
 	get configuration() {
@@ -20,10 +21,13 @@ class Spectrum extends P5 {
 
 	constructor() {
 		super();
+		this.configuration.heightOffset = height / 2.5;
 		this.#setupRenderingProcessor();
 	}
 
 	#setupRenderingProcessor() {
+		const { heightOffset } = this.configuration;
+
 		this.#renderingProcessor = () => {
 			push();
 			var spectrum = fourier.analyze();
@@ -37,7 +41,7 @@ class Spectrum extends P5 {
 
 				//draw each bin as a rectangle from the left of the screen
 				//across
-				var y = map(i, 0, spectrum.length, 0, height);
+				var y = map(i, 0, spectrum.length, 0, height - heightOffset);
 				var w = map(spectrum[i], 0, 255, 0, width);
 				rect(0, y, w, height / spectrum.length);
 			}

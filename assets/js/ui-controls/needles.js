@@ -13,8 +13,10 @@ class Needles extends P5 {
 		maxAngle: 0,
 		plotsAcross: 2,
 		plotsDown: 2,
-		canvasWidth: 0,
-		canvasHeight: 0,
+		canvasWidth: 3,
+		canvasHeight: 2.5,
+		canvasOffcetX: 2,
+		canvasOffcetY: 1.5,
 		frequencyBins: ["bass", "lowMid", "highMid", "treble"]
 	}
 
@@ -36,10 +38,10 @@ class Needles extends P5 {
 
 	constructor(PI, TWO_PI) {
 		super();
-		this.configuration.canvasWidth = width / 3;
-		this.configuration.canvasHeight = height / 2.5;
 		this.configuration.minAngle = PI + PI / 10;
 		this.configuration.maxAngle = TWO_PI - PI / 10;
+
+		//set initial position of elements
 		this.onResize();
 		//draws the needles UI
 		this.#setupRenderingProcessor();
@@ -47,9 +49,9 @@ class Needles extends P5 {
 
 	static onResize() {
 		const { plotsAcross, plotsDown, canvasWidth, canvasHeight } = this.configuration;
-		this.#pad = canvasWidth / 20;
-		this.#plotWidth = (canvasWidth - this.#pad) / plotsAcross;
-		this.#plotHeight = (canvasHeight - this.#pad) / plotsDown;
+		this.#pad = (width / canvasWidth) / 20;
+		this.#plotWidth = ((width / canvasWidth) - this.#pad) / plotsAcross;
+		this.#plotHeight = ((height / canvasHeight) - this.#pad) / plotsDown;
 		this.#dialRadius = (this.#plotWidth - this.#pad) / 2 - 5;
 	};
 
@@ -102,7 +104,16 @@ class Needles extends P5 {
 
 	#setupRenderingProcessor() {
 		this.#renderingProcessor = () => {
-			const { plotsAcross, plotsDown, frequencyBins, canvasWidth, canvasHeight } = this.configuration;
+			const {
+				plotsAcross,
+				plotsDown,
+				frequencyBins,
+				canvasWidth,
+				canvasHeight,
+				canvasOffcetX,
+				canvasOffcetY
+			} = this.configuration;
+
 			//create an array amplitude values from the fft.
 			const spectrum = fourier.analyze();
 			//iterator for selecting frequency bin.
@@ -114,8 +125,8 @@ class Needles extends P5 {
 				for (let j = 0; j < plotsAcross; j++) {
 
 					//calculate the size of the plots
-					const x = this.#pad + j * this.#plotWidth + canvasWidth * 2;
-					const y = this.#pad + i * this.#plotHeight + canvasHeight * 1.5;
+					const x = this.#pad + j * this.#plotWidth + (width / canvasWidth) * canvasOffcetX;
+					const y = this.#pad + i * this.#plotHeight + (height / canvasHeight) * canvasOffcetY;
 					const w = this.#plotWidth - this.#pad;
 					const h = this.#plotHeight - this.#pad;
 

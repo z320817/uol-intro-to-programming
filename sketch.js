@@ -12,7 +12,7 @@ function preload() {
 }
 
 function setup() {
-	let canvas = createCanvas(windowWidth, windowHeight);
+	createCanvas(windowWidth, windowHeight);
 	background(0);
 
 	visualisationController = new VisualisationController();
@@ -26,7 +26,6 @@ function setup() {
 	visualisationController.add(new Spectrum());
 	visualisationController.add(new WavePattern());
 	visualisationController.add(new Needles(PI, TWO_PI));
-	visualisationController.add(new WaveExample(canvas.canvas, sound.url));
 }
 
 function draw() {

@@ -30,7 +30,7 @@ class ControllPanel extends P5 {
 	}
 
 	static onResize() {
-		this.configuration.heightOffset = height / 1.7;
+		this.configuration.heightOffset = height / 2.5;
 	};
 
 	#setupRenderingProcessor() {
@@ -38,7 +38,7 @@ class ControllPanel extends P5 {
 
 		this.#renderingProcessor = () => {
 
-			rect(0, heightOffset, width, heightOffset);
+			rect(0, height - heightOffset, width, heightOffset);
 		};
 	}
 }

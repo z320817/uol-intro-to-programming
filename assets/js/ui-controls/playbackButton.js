@@ -3,6 +3,7 @@ class PlaybackButton extends P5 {
 
 	#playing = false;
 	#renderingProcessor;
+	#audioElementRef;
 
 	static #configuration = {
 		x: 20,
@@ -11,8 +12,13 @@ class PlaybackButton extends P5 {
 		height: 20
 	}
 
-	constructor() {
+	/**
+	 * @param { MediaElement } audioElementRef, 
+	 */
+	constructor(audioElementRef) {
 		super();
+
+		this.#audioElementRef = audioElementRef;
 		//draws the playback button UI
 		this.#setupRenderingProcessor();
 	}
@@ -34,13 +40,18 @@ class PlaybackButton extends P5 {
 	static hitCheck() {
 		const { x, y, width, height } = this.configuration;
 
-		if (mouseX > x && mouseX < x + width && mouseY > y && mouseY < y + height) {
-			if (sound.isPlaying()) {
-				sound.pause();
+		if (mouseX > x && 
+			mouseX < x + width && 
+			mouseY > y && 
+			mouseY < y + height) {
+
+			if (this.#audioElementRef.time()) {
+				this.#audioElementRef.stop();
+				this.#playing = false;
 			} else {
-				sound.loop();
+				this.#audioElementRef.play();
+				this.#playing = true;;
 			}
-			this.#playing = !this.#playing;
 
 			return true;
 		}

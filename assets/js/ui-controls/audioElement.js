@@ -24,6 +24,10 @@ class AudioElement extends P5 {
         return AudioElement.onResize;
     }
 
+    get audioElementRef() {
+        return this.#audioElement;
+    }
+
     /**
 	 * @param { string } soundSourceURL
 	 */

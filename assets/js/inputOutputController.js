@@ -44,24 +44,22 @@ class InputOutputController extends P5 {
 	 * @param { string } soundSourceURL, 
 	 */
 	#instantiateUiControls(visualisationController, soundSourceURL) {
-		//playback button displayed in the top left of the screen
-		this.#playbackButton = new PlaybackButton();
+		this.#audioElement = new AudioElement(soundSourceURL);
+		this.#playbackButton = new PlaybackButton(this.#audioElement.audioElementRef);
 		this.#visualsMenu = new VisualsMenu(visualisationController);
 		this.#needlseUiOutput = new Needles(PI, TWO_PI);
 		this.#controlPannel = new ControlPanel();
-		this.#audioElement = new AudioElement(soundSourceURL);
 	}
 
 	#setupEventObservers() {
 		//make the window fullscreen or revert to windowed
 		this.#mousePressedEventObserver = () => {
+
 			if (!this.#playbackButton.hitCheck()) {
 				var fs = fullscreen();
 				fullscreen(!fs);
 			}
-		};
 
-		this.#mousePressedEventObserver = () => {
 			if (this.#controlPannel.hitCheck()) {
 
 			}

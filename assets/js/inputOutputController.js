@@ -60,8 +60,12 @@ class InputOutputController extends P5 {
 				// fullscreen(!fs);
 			}
 
-			if (this.#controlPannel.hitCheck()) {
+			if (this.#controlPannel.visualButtonHitCheck()) {
+				this.#audioElement.hide();
+			}
 
+			if (this.#controlPannel.musicButtonHitCheck()) {
+				this.#audioElement.show();
 			}
 		};
 

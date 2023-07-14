@@ -35,6 +35,14 @@ class ControlPanel extends P5 {
 		return ControlPanel.onResize;
 	}
 
+	get visualButtonHitCheck() {
+		return ControlPanel.visualButtonHitCheck;
+	}
+
+	get musicButtonHitCheck() {
+		return ControlPanel.musicButtonHitCheck;
+	}
+
 	get draw() {
 		return this.#renderingProcessor;
 	}
@@ -57,9 +65,9 @@ class ControlPanel extends P5 {
 		this.configuration.heightOffset = height / 2.5;
 	};
 
-	//checks for clicks on the button, changes control flows.
+	//checks for clicks on the music flow button, changes control flows.
 	//@returns true if clicked false otherwise.
-	static hitCheck() {
+	static musicButtonHitCheck() {
 		const { heightOffset, musicButtonPosition, visualButtonPosition } = this.configuration;
 		const {
 			musicButtonX,
@@ -68,13 +76,6 @@ class ControlPanel extends P5 {
 			musicButtonHeight
 		} = musicButtonPosition(width, height, heightOffset);
 
-		const {
-			visualButtonX,
-			visualButtonY,
-			visualButtonWidth,
-			visualButtonHeight
-		} = visualButtonPosition(width, height, heightOffset)
-
 		if (mouseX > musicButtonX &&
 			mouseX < musicButtonX + musicButtonWidth &&
 			mouseY > musicButtonY && mouseY < musicButtonY + musicButtonHeight) {
@@ -82,7 +83,25 @@ class ControlPanel extends P5 {
 			this.#musicControlFlow = true;
 
 			return true;
-		} else if (mouseX > visualButtonX &&
+		}
+
+		return false;
+	};
+
+
+	//checks for clicks on the visuals flow button, changes control flows.
+	//@returns true if clicked false otherwise.
+	static visualButtonHitCheck() {
+		const { heightOffset, musicButtonPosition, visualButtonPosition } = this.configuration;
+
+		const {
+			visualButtonX,
+			visualButtonY,
+			visualButtonWidth,
+			visualButtonHeight
+		} = visualButtonPosition(width, height, heightOffset)
+
+		if (mouseX > visualButtonX &&
 			mouseX < visualButtonX + visualButtonWidth &&
 			mouseY > visualButtonY && mouseY < visualButtonY + visualButtonHeight) {
 			this.#visualControlFlow = true;

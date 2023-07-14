@@ -2,6 +2,7 @@ class AudioElement extends P5 {
 
     #renderingProcessor;
     #audioElement;
+    #controllIsHidden = false;
 
     static #configuration = {
         name: "spectrum",
@@ -26,6 +27,14 @@ class AudioElement extends P5 {
 
     get draw() {
         return this.#renderingProcessor;
+    }
+
+    get hide() {
+        return this.#hideAudioElement;
+    }
+
+    get show() {
+        return this.#showAudioElement;
     }
 
     get onResize() {
@@ -80,5 +89,13 @@ class AudioElement extends P5 {
                 return this.#audioElement;
             }
         };
+    }
+
+    #hideAudioElement() {
+        this.#audioElement.hideControls();
+    }
+
+    #showAudioElement() {
+        this.#audioElement.showControls();
     }
 }

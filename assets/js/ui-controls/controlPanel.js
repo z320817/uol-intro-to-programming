@@ -117,7 +117,7 @@ class ControlPanel extends P5 {
 			visualButtonHeight
 		} = visualButtonPosition(width, height, heightOffset)
 
-		if (this.#visualControlFlow) {
+		if (!this.#visualControlFlow) {
 			fill('#B2BEB5');
 			stroke('#fff');
 			rect(visualButtonX, visualButtonY, visualButtonWidth, visualButtonHeight);
@@ -139,7 +139,7 @@ class ControlPanel extends P5 {
 			musicButtonHeight
 		} = musicButtonPosition(width, height, heightOffset);
 
-		if (this.#musicControlFlow) {
+		if (!this.#musicControlFlow) {
 			fill('#36454F');
 			stroke('#fff');
 			rect(musicButtonX, musicButtonY, musicButtonWidth, musicButtonHeight);

@@ -56,8 +56,8 @@ class InputOutputController extends P5 {
 		this.#mousePressedEventObserver = () => {
 
 			if (!this.#playbackButton.hitCheck()) {
-				var fs = fullscreen();
-				fullscreen(!fs);
+				// var fs = fullscreen();
+				// fullscreen(!fs);
 			}
 
 			if (this.#controlPannel.hitCheck()) {

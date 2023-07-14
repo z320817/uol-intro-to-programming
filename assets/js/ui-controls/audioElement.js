@@ -5,7 +5,15 @@ class AudioElement extends P5 {
 
     static #configuration = {
         name: "spectrum",
-        heightOffset: 0
+        heightOffset: 0,
+        audioControlsPosition: (width, height, heightOffset) => {
+
+			return {
+				x: width / 54,
+				y: height - heightOffset + 10,
+				size: width / 4,
+			}
+		},
     }
 
     get configuration() {
@@ -36,16 +44,7 @@ class AudioElement extends P5 {
 
         //set initial position of elements
         this.onResize();
-
-        
-        this.#audioElement = createAudio(soundSourceURL);
-        this.#audioElement.position(20, 50);
-        this.#audioElement.size(300);
-
-        // Show the audio controls
-        this.#audioElement.showControls();
-        this.#audioElement.connect()
-
+        this.#createAudioControl(soundSourceURL);
         this.#setupRenderingProcessor();
     }
 
@@ -53,16 +52,30 @@ class AudioElement extends P5 {
         this.configuration.heightOffset = height / 4;
     };
 
+    /**
+	 * @param { string } soundSourceURL
+	 */
+    #createAudioControl(soundSourceURL) {
+        const { heightOffset } = this.configuration;
+        const { size, x, y } = this.configuration.audioControlsPosition(width, height, heightOffset);
+
+        this.#audioElement = createAudio(soundSourceURL);
+        this.#audioElement.position(x, y);
+        this.#audioElement.size(size);
+
+        // Show the audio controls
+        this.#audioElement.showControls();
+        this.#audioElement.connect()
+    }
+
     #setupRenderingProcessor() {
         const { heightOffset } = this.configuration;
+        const { size, x, y } = this.configuration.audioControlsPosition(width, height, heightOffset);
 
         this.#renderingProcessor = () => {
             if (!this.#audioElement) {
-                this.audioElement.position(20, 50);
-                this.audioElement.size(300);
-
-                // Show the audio controls
-                this.audioElement.showControls();
+                this.audioElement.position(x, y);
+                this.audioElement.size(size);
             } else {
                 return this.#audioElement;
             }

@@ -5,12 +5,18 @@ var visualisationController = null;
 //variable for p5 fast fourier transform
 var fourier;
 
+var sound;
+
+function preload() {
+	sound = loadSound('assets/music/stomper_reggae_bit.mp3');
+}
+
 function setup() {
 	createCanvas(windowWidth, windowHeight);
 	background(0);
 
 	visualisationController = new VisualisationController();
-	inputOutputController = new InputOutputController(visualisationController);
+	inputOutputController = new InputOutputController(visualisationController, sound.url);
 
 	//instantiate the fft object
 	fourier = new p5.FFT();

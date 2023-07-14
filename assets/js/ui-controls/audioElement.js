@@ -24,14 +24,17 @@ class AudioElement extends P5 {
         return AudioElement.onResize;
     }
 
-    constructor() {
+    /**
+	 * @param { string } soundSourceURL
+	 */
+    constructor(soundSourceURL) {
         super();
 
         //set initial position of elements
         this.onResize();
 
-        let sound = loadSound('assets/music/stomper_reggae_bit.mp3');
-        this.#audioElement = createAudio(sound.url);
+        
+        this.#audioElement = createAudio(soundSourceURL);
         this.#audioElement.position(20, 50);
         this.#audioElement.size(300);
 

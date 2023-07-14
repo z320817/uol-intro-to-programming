@@ -24,23 +24,32 @@ class InputOutputController extends P5 {
 	}
 
 	/**
-	 * @param { VisualisationController } visualisationController
+	 * @param { VisualisationController } visualisationController, 
 	 */
-	constructor(visualisationController) {
+	/**
+	 * @param { string } soundSourceURL, 
+	 */
+	constructor(visualisationController, soundSourceURL) {
 		super();
-		this.#instantiateUiControls(visualisationController);
+		this.#instantiateUiControls(visualisationController, soundSourceURL);
 		this.#setupEventObservers();
 		//draws the playback button and potentially the menu
 		this.#setupRenderingProcessor();
 	}
 
-	#instantiateUiControls() {
+	/**
+	 * @param { VisualisationController } visualisationController, 
+	 */
+	/**
+	 * @param { string } soundSourceURL, 
+	 */
+	#instantiateUiControls(visualisationController, soundSourceURL) {
 		//playback button displayed in the top left of the screen
 		this.#playbackButton = new PlaybackButton();
 		this.#visualsMenu = new VisualsMenu(visualisationController);
 		this.#needlseUiOutput = new Needles(PI, TWO_PI);
 		this.#controlPannel = new ControlPanel();
-		this.#audioElement = new AudioElement();
+		this.#audioElement = new AudioElement(soundSourceURL);
 	}
 
 	#setupEventObservers() {

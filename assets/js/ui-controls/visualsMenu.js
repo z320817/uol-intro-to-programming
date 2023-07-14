@@ -2,6 +2,7 @@
 //controls
 class VisualsMenu extends P5 {
     #menuDisplayed = false;
+    #controlsDisplayed = false;
     #visualisationController;
 
     /**
@@ -12,12 +13,54 @@ class VisualsMenu extends P5 {
         this.#visualisationController = visualisationController;
     }
 
+    static onResize() {
+        this.configuration.heightOffset = height / 4;
+        this.configuration.widthOffset = width / 4;
+    };
+
+    static #configuration = {
+        heightOffset: 0,
+        widthOffset: 0,
+        visualsMenuPosition: (width, widthOffset, height, heightOffset, i) => {
+
+            return {
+				x: width / widthOffset,
+				y:  heightOffset + i * height,
+			}
+		},
+    }
+
+    get configuration() {
+        return VisualsMenu.#configuration;
+    }
+
+
     get menuDisplayed() {
         return this.#menuDisplayed;
     }
 
+    get controlsDisplayed() {
+        return this.#controlsDisplayed;
+    }
+
     get menu() {
         return this.#menu;
+    }
+
+    get controls() {
+        return this.#controls;
+    }
+
+    get hide() {
+        return this.#hideVisualsMenu;
+    }
+
+    get show() {
+        return this.#showVisualsMenue;
+    }
+    
+    get onResize() {
+        return VisualsMenu.onResize;
     }
 
     //responds to keyboard presses
@@ -44,6 +87,11 @@ class VisualsMenu extends P5 {
             text("Select a visualisation:", 100, 30);
             this.#menu();
         }
+
+        if (this.#controlsDisplayed) {
+            text("Controls for visualisation:", 100, 30);
+            this.#controls();
+        }
         pop();
     };
 
@@ -54,6 +102,25 @@ class VisualsMenu extends P5 {
             text((i + 1) + ":  " + this.#visualisationController.visuals[i].name, 100, yLoc);
         }
     };
+
+    #controls() {
+        const { heightOffset, widthOffset } = this.configuration;
+
+        //draw out menu items for each visualisation
+        for (let i = 0; i < this.#visualisationController.visuals.length; i++) {
+            const yLoc = 770 + i * 40;
+            text((i + 1) + ":  " + this.#visualisationController.visuals[i].name, 100, yLoc);
+        }
+    };
+
+    #hideVisualsMenu() {
+        this.#controlsDisplayed = false;
+    }
+
+    #showVisualsMenue() {
+        this.#controlsDisplayed = true;
+        this.#controls();
+    }
 }
 
 

@@ -62,10 +62,12 @@ class InputOutputController extends P5 {
 
 			if (this.#controlPannel.visualButtonHitCheck()) {
 				this.#audioElement.hide();
+				this.#visualsMenu.show();
 			}
 
 			if (this.#controlPannel.musicButtonHitCheck()) {
 				this.#audioElement.show();
+				this.#visualsMenu.hide();
 			}
 		};
 
@@ -94,6 +96,12 @@ class InputOutputController extends P5 {
 
 				text("Select a visualisation:", 100, 30);
 				this.#visualsMenu.menu();
+			}
+
+			if (this.#visualsMenu.controlsDisplayed) {
+
+				text("Select a visualisation:", 100, 700);
+				this.#visualsMenu.controls();
 			}
 			pop();
 		};

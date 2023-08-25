@@ -10,12 +10,14 @@ class VisualsMenu extends P5 {
      */
     constructor(visualisationController) {
         super();
+
+        this.onResize();
         this.#visualisationController = visualisationController;
     }
 
     static onResize() {
-        this.configuration.heightOffset = height / 4;
-        this.configuration.widthOffset = width / 4;
+        this.configuration.heightOffset = height / 1.2;
+        this.configuration.widthOffset = width / 20;
     };
 
     static #configuration = {
@@ -108,8 +110,8 @@ class VisualsMenu extends P5 {
 
         //draw out menu items for each visualisation
         for (let i = 0; i < this.#visualisationController.visuals.length; i++) {
-            const yLoc = 770 + i * 40;
-            text((i + 1) + ":  " + this.#visualisationController.visuals[i].name, 100, yLoc);
+            const yLoc = heightOffset + i * widthOffset;
+            text((i + 1) + ":  " + this.#visualisationController.visuals[i].name, widthOffset, yLoc);
         }
     };
 

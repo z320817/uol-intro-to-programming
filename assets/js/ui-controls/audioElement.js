@@ -86,6 +86,7 @@ class AudioElement extends P5 {
 
             this.#audioElement.position(x, y);
             this.#audioElement.size(size);
+            getAudioContext().resume();
 
             return this.#audioElement;
 

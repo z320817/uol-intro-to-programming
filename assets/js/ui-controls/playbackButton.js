@@ -40,9 +40,9 @@ class PlaybackButton extends P5 {
 	static hitCheck() {
 		const { x, y, width, height } = this.configuration;
 
-		if (mouseX > x && 
-			mouseX < x + width && 
-			mouseY > y && 
+		if (mouseX > x &&
+			mouseX < x + width &&
+			mouseY > y &&
 			mouseY < y + height) {
 
 			if (this.#audioElementRef.time()) {
@@ -50,7 +50,8 @@ class PlaybackButton extends P5 {
 				this.#playing = false;
 			} else {
 				this.#audioElementRef.play();
-				this.#playing = true;;
+				getAudioContext().resume();
+				this.#playing = true;
 			}
 
 			return true;

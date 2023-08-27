@@ -54,7 +54,6 @@ class Needles extends P5 {
 		const { canvasHeight, canvasWidth } = needlesUiPosition(width, height, heightOffset)
 
 		this.#pad = width / height * 10;
-		console.log(this.#pad)
 		this.#plotWidth = canvasWidth / plotsAcross - this.#pad;
 		this.#plotHeight = canvasHeight / plotsDown - this.#pad;
 		this.#dialRadius = this.#plotWidth / 2 - this.#pad * 2;
@@ -111,7 +110,7 @@ class Needles extends P5 {
 		const { heightOffset } = this.configuration;
 
 		this.#renderingProcessor = () => {
-
+			this.onResize();
 
 			const { plotsAcross, plotsDown, needlesUiPosition, frequencyBins } = this.configuration;
 			const { canvasHeight, canvasWidth, canvasOffcetX, canvasOffcetY } = needlesUiPosition(width, height, heightOffset)

@@ -1,14 +1,24 @@
 //global for the controls and input 
-var inputOutputController = null;
+let inputOutputController = null;
 //store visualisations in a container
-var visualisationController = null;
-//variable for p5 fast fourier transform
-var fourier;
+let visualisationController = null;
+//letiable for p5 fast fourier transform
+let fourier;
 
-var sound;
+let sound;
+let icons = {
+	inputOutputController: {
+		sound: {
+			whiteSound: null,
+			blackSound: null,
+		}
+	}
+}
 
 function preload() {
 	sound = loadSound('assets/music/stomper_reggae_bit.mp3');
+	icons.inputOutputController.sound.whiteSound = loadImage('assets/images/inputOutputController/sound/white-sound.svg');
+	icons.inputOutputController.sound.blackSound = loadImage('assets/images/inputOutputController/sound/black-sound.svg');
 }
 
 function setup() {

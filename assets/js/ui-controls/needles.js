@@ -129,11 +129,6 @@ class Needles extends P5 {
 					const y = (i * this.#plotHeight) + height / canvasHeight + canvasOffcetY + this.#pad;
 					const w = this.#plotWidth - this.#pad;
 					const h = this.#plotHeight - this.#pad;
-					console.log("x", x);
-					console.log("y", y);
-					console.log("w", w);
-					console.log("h", h);
-
 
 					//draw a rectangle at that location and size
 					rect(x, y, w, h);

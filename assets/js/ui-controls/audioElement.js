@@ -9,12 +9,12 @@ class AudioElement extends P5 {
         heightOffset: 0,
         audioControlsPosition: (width, height, heightOffset) => {
 
-			return {
-				x: width / 54,
-				y: height - heightOffset + 10,
-				size: width / 4,
-			}
-		},
+            return {
+                x: width / 54,
+                y: height - heightOffset + 10,
+                size: width / 4,
+            }
+        },
     }
 
     get configuration() {
@@ -46,8 +46,8 @@ class AudioElement extends P5 {
     }
 
     /**
-	 * @param { string } soundSourceURL
-	 */
+     * @param { string } soundSourceURL
+     */
     constructor(soundSourceURL) {
         super();
 
@@ -62,8 +62,8 @@ class AudioElement extends P5 {
     };
 
     /**
-	 * @param { string } soundSourceURL
-	 */
+     * @param { string } soundSourceURL
+     */
     #createAudioControl(soundSourceURL) {
         const { heightOffset } = this.configuration;
         const { size, x, y } = this.configuration.audioControlsPosition(width, height, heightOffset);
@@ -79,15 +79,16 @@ class AudioElement extends P5 {
 
     #setupRenderingProcessor() {
         const { heightOffset } = this.configuration;
-        const { size, x, y } = this.configuration.audioControlsPosition(width, height, heightOffset);
+
 
         this.#renderingProcessor = () => {
-            if (!this.#audioElement) {
-                this.audioElement.position(x, y);
-                this.audioElement.size(size);
-            } else {
-                return this.#audioElement;
-            }
+            const { size, x, y } = this.configuration.audioControlsPosition(width, height, heightOffset);
+
+            this.#audioElement.position(x, y);
+            this.#audioElement.size(size);
+
+            return this.#audioElement;
+
         };
     }
 

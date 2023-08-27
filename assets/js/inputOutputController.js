@@ -91,6 +91,8 @@ class InputOutputController extends P5 {
 			this.#needlseUiOutput.draw();
 			//playback button 
 			this.#playbackButton.draw();
+			//audio element
+			this.#audioElement.draw();
 			//only draw the menu if menu displayed is set to true.
 			if (this.#visualsMenu.menuDisplayed) {
 

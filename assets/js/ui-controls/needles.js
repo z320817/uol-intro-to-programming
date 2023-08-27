@@ -1,10 +1,10 @@
 //constructor function to draw a
 class Needles extends P5 {
 
-	#pad = 0;
 	#plotWidth = 0;
 	#plotHeight = 0;
 	#dialRadius = 0;
+	#pad = 0;
 	#renderingProcessor;
 
 	static #configuration = {
@@ -12,11 +12,17 @@ class Needles extends P5 {
 		maxAngle: 0,
 		plotsAcross: 2,
 		plotsDown: 2,
-		canvasWidth: 3,
-		canvasHeight: 2.5,
-		canvasOffcetX: 2,
-		canvasOffcetY: 1.5,
-		frequencyBins: ["bass", "lowMid", "highMid", "treble"]
+		frequencyBins: ["bass", "lowMid", "highMid", "treble"],
+		heightOffset: 0,
+		needlesUiPosition: (width, height, heightOffset) => {
+
+			return {
+				canvasOffcetX: width / 1.8,
+				canvasOffcetY: height - heightOffset + 10,
+				canvasWidth: width / 2.4,
+				canvasHeight: heightOffset / 1.2
+			}
+		},
 	}
 
 	get configuration() {
@@ -43,11 +49,14 @@ class Needles extends P5 {
 	}
 
 	static onResize() {
-		const { plotsAcross, plotsDown, canvasWidth, canvasHeight } = this.configuration;
-		this.#pad = (width / canvasWidth) / 20;
-		this.#plotWidth = ((width / canvasWidth) - this.#pad) / plotsAcross;
-		this.#plotHeight = ((height / canvasHeight) - this.#pad) / plotsDown;
-		this.#dialRadius = (this.#plotWidth - this.#pad) / 2 - 5;
+		this.configuration.heightOffset = height / 2.5;
+		const { plotsAcross, plotsDown, needlesUiPosition, heightOffset } = this.configuration;
+		const { canvasHeight, canvasWidth } = needlesUiPosition(width, height, heightOffset)
+
+		this.#pad = 20;
+		this.#plotWidth = canvasWidth / plotsAcross;
+		this.#plotHeight = canvasHeight / plotsDown;
+		this.#dialRadius = this.#plotWidth / 2 - this.#pad;
 	};
 
 	#needle(energy, centreX, bottomY) {
@@ -98,16 +107,11 @@ class Needles extends P5 {
 	};
 
 	#setupRenderingProcessor() {
+		const { heightOffset } = this.configuration;
+
 		this.#renderingProcessor = () => {
-			const {
-				plotsAcross,
-				plotsDown,
-				frequencyBins,
-				canvasWidth,
-				canvasHeight,
-				canvasOffcetX,
-				canvasOffcetY
-			} = this.configuration;
+			const { plotsAcross, plotsDown, needlesUiPosition, frequencyBins } = this.configuration;
+			const { canvasHeight, canvasWidth, canvasOffcetX, canvasOffcetY } = needlesUiPosition(width, height, heightOffset)
 
 			//create an array amplitude values from the fft.
 			const spectrum = fourier.analyze();
@@ -121,10 +125,15 @@ class Needles extends P5 {
 				for (let j = 0; j < plotsAcross; j++) {
 
 					//calculate the size of the plots
-					const x = this.#pad + j * this.#plotWidth + (width / canvasWidth) * canvasOffcetX;
-					const y = this.#pad + i * this.#plotHeight + (height / canvasHeight) * canvasOffcetY;
+					const x = (j * this.#plotWidth) + width / canvasWidth + canvasOffcetX + this.#pad;
+					const y = (i * this.#plotHeight) + height / canvasHeight + canvasOffcetY + this.#pad;
 					const w = this.#plotWidth - this.#pad;
 					const h = this.#plotHeight - this.#pad;
+					console.log("x", x);
+					console.log("y", y);
+					console.log("w", w);
+					console.log("h", h);
+
 
 					//draw a rectangle at that location and size
 					rect(x, y, w, h);

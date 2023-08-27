@@ -111,9 +111,15 @@ class Needles extends P5 {
 		const { heightOffset } = this.configuration;
 
 		this.#renderingProcessor = () => {
+
+
 			const { plotsAcross, plotsDown, needlesUiPosition, frequencyBins } = this.configuration;
 			const { canvasHeight, canvasWidth, canvasOffcetX, canvasOffcetY } = needlesUiPosition(width, height, heightOffset)
 
+			//needles area
+			noStroke();
+			fill('#808080')
+			rect(canvasOffcetX, canvasOffcetY, width, heightOffset);
 			//create an array amplitude values from the fft.
 			const spectrum = fourier.analyze();
 			//iterator for selecting frequency bin.

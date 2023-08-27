@@ -68,7 +68,7 @@ class ControlPanel extends P5 {
 	//checks for clicks on the music flow button, changes control flows.
 	//@returns true if clicked false otherwise.
 	static musicButtonHitCheck() {
-		const { heightOffset, musicButtonPosition, visualButtonPosition } = this.configuration;
+		const { heightOffset, musicButtonPosition } = this.configuration;
 		const {
 			musicButtonX,
 			musicButtonY,

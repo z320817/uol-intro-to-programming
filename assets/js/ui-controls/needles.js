@@ -18,9 +18,9 @@ class Needles extends P5 {
 
 			return {
 				canvasOffcetX: width / 1.8,
-				canvasOffcetY: height - heightOffset + 10,
+				canvasOffcetY: height - heightOffset,
 				canvasWidth: width / 2.4,
-				canvasHeight: heightOffset / 1.2
+				canvasHeight: heightOffset
 			}
 		},
 	}
@@ -53,10 +53,11 @@ class Needles extends P5 {
 		const { plotsAcross, plotsDown, needlesUiPosition, heightOffset } = this.configuration;
 		const { canvasHeight, canvasWidth } = needlesUiPosition(width, height, heightOffset)
 
-		this.#pad = 20;
-		this.#plotWidth = canvasWidth / plotsAcross;
-		this.#plotHeight = canvasHeight / plotsDown;
-		this.#dialRadius = this.#plotWidth / 2 - this.#pad;
+		this.#pad = width / height * 10;
+		console.log(this.#pad)
+		this.#plotWidth = canvasWidth / plotsAcross - this.#pad;
+		this.#plotHeight = canvasHeight / plotsDown - this.#pad;
+		this.#dialRadius = this.#plotWidth / 2 - this.#pad * 2;
 	};
 
 	#needle(energy, centreX, bottomY) {
@@ -125,8 +126,8 @@ class Needles extends P5 {
 				for (let j = 0; j < plotsAcross; j++) {
 
 					//calculate the size of the plots
-					const x = (j * this.#plotWidth) + width / canvasWidth + canvasOffcetX + this.#pad;
-					const y = (i * this.#plotHeight) + height / canvasHeight + canvasOffcetY + this.#pad;
+					const x = (j * this.#plotWidth) + width / canvasWidth + canvasOffcetX + this.#pad * 2;
+					const y = (i * this.#plotHeight) + height / canvasHeight + canvasOffcetY + this.#pad * 2;
 					const w = this.#plotWidth - this.#pad;
 					const h = this.#plotHeight - this.#pad;
 

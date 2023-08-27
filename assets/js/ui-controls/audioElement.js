@@ -89,7 +89,6 @@ class AudioElement extends P5 {
             getAudioContext().resume();
 
             return this.#audioElement;
-
         };
     }
 

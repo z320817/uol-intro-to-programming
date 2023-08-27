@@ -147,10 +147,14 @@ class ControlPanel extends P5 {
 			fill('#B2BEB5');
 			stroke('#fff');
 			rect(visualButtonX, visualButtonY, visualButtonWidth, visualButtonHeight);
+			noStroke();
+			image(this.#icons.inputOutputController.visual.blackVisual, visualButtonX + visualButtonWidth / 2.4, visualButtonY + visualButtonHeight / 2.4, 32, 24);
 		} else {
 			fill('#B2BEB5');
 			stroke('#000');
 			rect(visualButtonX, visualButtonY, visualButtonWidth, visualButtonHeight);
+			noStroke();
+			image(this.#icons.inputOutputController.visual.whiteVisual, visualButtonX + visualButtonWidth / 2.4, visualButtonY + visualButtonHeight / 2.4, 32, 24);
 		}
 
 	}

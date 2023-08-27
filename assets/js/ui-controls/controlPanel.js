@@ -1,6 +1,7 @@
 //constructor function to draw a
 class ControlPanel extends P5 {
 
+	#icons;
 	#renderingProcessor;
 	#visualControlFlow = true;
 	#musicControlFlow = false;
@@ -51,8 +52,14 @@ class ControlPanel extends P5 {
 		return ControlPanel.hitCheck;
 	}
 
-	constructor() {
+	/**
+	 * @param { icons } icons, 
+	 */
+	constructor(icons) {
 		super();
+
+		//icons reference
+		this.#icons = icons;
 
 		//set initial position of elements
 		this.onResize();
@@ -162,10 +169,14 @@ class ControlPanel extends P5 {
 			fill('#36454F');
 			stroke('#fff');
 			rect(musicButtonX, musicButtonY, musicButtonWidth, musicButtonHeight);
+			noStroke();
+			image(this.#icons.inputOutputController.sound.blackSound, musicButtonX + musicButtonWidth / 2.4, musicButtonY + musicButtonHeight / 2.4, 24, 24);
 		} else {
 			fill('#36454F');
 			stroke('#000');
 			rect(musicButtonX, musicButtonY, musicButtonWidth, musicButtonHeight);
+			noStroke();
+			image(this.#icons.inputOutputController.sound.whiteSound, musicButtonX + musicButtonWidth / 2.4, musicButtonY + musicButtonHeight / 2.4, 24, 24);
 		}
 
 	}

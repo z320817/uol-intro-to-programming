@@ -10,6 +10,7 @@ class InputOutputController extends P5 {
 	#mousePressedEventObserver;
 	#keyPressedEventObserver;
 	#renderingProcessor;
+	#icons;
 
 	get mousePressed() {
 		return this.#mousePressedEventObserver;
@@ -29,10 +30,20 @@ class InputOutputController extends P5 {
 	/**
 	 * @param { string } soundSourceURL, 
 	 */
-	constructor(visualisationController, soundSourceURL) {
+	/**
+	 * @param { icons } icons, 
+	 */
+	constructor(visualisationController, soundSourceURL, icons) {
 		super();
+		// Save preloaded icons reference
+		this.#icons = icons;
+
+		// Creates UI controls
 		this.#instantiateUiControls(visualisationController, soundSourceURL);
+
+		// Creates event observers and handlers
 		this.#setupEventObservers();
+
 		//draws the playback button and potentially the menu
 		this.#setupRenderingProcessor();
 	}
@@ -48,7 +59,7 @@ class InputOutputController extends P5 {
 		this.#playbackButton = new PlaybackButton(this.#audioElement.audioElementRef);
 		this.#visualsMenu = new VisualsMenu(visualisationController);
 		this.#needlseUiOutput = new Needles(PI, TWO_PI);
-		this.#controlPannel = new ControlPanel();
+		this.#controlPannel = new ControlPanel(this.#icons);
 	}
 
 	#setupEventObservers() {

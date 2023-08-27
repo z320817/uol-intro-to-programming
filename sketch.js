@@ -26,7 +26,7 @@ function setup() {
 	background(0);
 
 	visualisationController = new VisualisationController();
-	inputOutputController = new InputOutputController(visualisationController, sound.url);
+	inputOutputController = new InputOutputController(visualisationController, sound.url, icons);
 
 	//instantiate the fft object
 	fourier = new p5.FFT();

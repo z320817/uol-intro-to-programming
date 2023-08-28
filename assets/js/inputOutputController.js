@@ -11,6 +11,7 @@ class InputOutputController extends P5 {
 	#keyPressedEventObserver;
 	#renderingProcessor;
 	#icons;
+	audioElementRef;
 
 	get mousePressed() {
 		return this.#mousePressedEventObserver;
@@ -56,6 +57,7 @@ class InputOutputController extends P5 {
 	 */
 	#instantiateUiControls(visualisationController, soundSourceURL) {
 		this.#audioElement = new AudioElement(soundSourceURL);
+		this.audioElementRef = this.#audioElement.audioElementRef;
 		this.#playbackButton = new PlaybackButton(this.#audioElement.audioElementRef);
 		this.#visualsMenu = new VisualsMenu(visualisationController);
 		this.#needlseUiOutput = new Needles(PI, TWO_PI);

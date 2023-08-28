@@ -41,6 +41,7 @@ function setup() {
 
 	visualisationController.add(new Spectrum());
 	visualisationController.add(new WavePattern());
+	visualisationController.add(new WaveExample(drawingContext.canvas, inputOutputController.audioElementRef.audioSourceNode));
 }
 
 function draw() {

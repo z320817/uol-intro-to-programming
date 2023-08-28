@@ -3,8 +3,8 @@ class ControlPanel extends P5 {
 
 	#icons;
 	#renderingProcessor;
-	#visualControlFlow = true;
-	#musicControlFlow = false;
+	#visualControlFlow = false;
+	#musicControlFlow = true;
 
 	static #configuration = {
 		heightOffset: 0,

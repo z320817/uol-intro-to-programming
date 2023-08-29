@@ -74,7 +74,7 @@ class AudioElement extends P5 {
 
         // Show the audio controls
         this.#audioElement.showControls();
-        this.#audioElement.connect()
+        this.#audioElement.connect();
     }
 
     #setupRenderingProcessor() {

@@ -56,8 +56,4 @@ function keyPressed() {
 //if the visualisation needs to be resized call its onResize method
 function windowResized() {
 	resizeCanvas(windowWidth, windowHeight);
-
-	if (visualisationController.selectedVisual.onResize) {
-		visualisationController.selectedVisual.onResize();
-	}
 }

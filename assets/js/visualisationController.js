@@ -61,7 +61,6 @@ class VisualisationController extends P5 {
 
 	#setupRenderingProcessor() {
 		this.#renderingProcessor = () => {
-
 			push();
 
 			//draw the selected visualisation

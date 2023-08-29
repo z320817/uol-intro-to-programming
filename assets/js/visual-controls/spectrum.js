@@ -33,13 +33,15 @@ class Spectrum extends P5 {
 	}
 
 	static onResize() {
-		this.configuration.heightOffset = height / 4;
+		this.configuration.heightOffset = height - (height / 2.5);
 	};
 
 	#setupRenderingProcessor() {
 		const { heightOffset } = this.configuration;
 
 		this.#renderingProcessor = () => {
+			this.onResize();
+
 			push();
 			var spectrum = fourier.analyze();
 			noStroke();
@@ -52,7 +54,7 @@ class Spectrum extends P5 {
 
 				//draw each bin as a rectangle from the left of the screen
 				//across
-				var y = map(i, 0, spectrum.length, 0, height - heightOffset);
+				var y = map(i, 0, spectrum.length, 0, heightOffset);
 				var w = map(spectrum[i], 0, 255, 0, width);
 				rect(0, y, w, height / spectrum.length);
 			}

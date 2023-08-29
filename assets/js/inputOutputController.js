@@ -113,22 +113,28 @@ class InputOutputController extends P5 {
 
 	#setupRenderingProcessor() {
 		this.#renderingProcessor = () => {
-			//draw the selected visualisation
-			this.#visualisationController.selectedVisual.draw();
 			push();
 			fill("white");
 			stroke("black");
 			strokeWeight(2);
 			textSize(34);
-			//control panel UI 
+
+			// control panel UI 
 			this.#controlPannel.draw();
-			//needles UI ouput
+
+			// needles UI ouput
 			this.#needlseUiOutput.draw();
-			//playback button 
+
+			// playback button 
 			this.#playbackButton.draw();
-			//audio element
+
+			// audio element
 			this.#audioElement.draw();
-			//only draw the menu if menu displayed is set to true.
+
+			//draw the selected visualisation
+			this.#visualisationController.draw();
+
+			// only draw the menu if menu displayed is set to true.
 			if (this.#visualsMenu.menuDisplayed) {
 
 				text("Select a visualisation:", 100, 30);

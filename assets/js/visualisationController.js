@@ -1,8 +1,13 @@
-//container function for the visualisations
-class VisualisationController {
+//container class for the visualisations
+class VisualisationController extends P5 {
 
 	#visuals = [];
 	#selectedVisual;
+	#renderingProcessor;
+
+	get draw() {
+		return this.#renderingProcessor;
+	}
 
 	get visuals() {
 		return this.#visuals;
@@ -34,7 +39,12 @@ class VisualisationController {
 		return this.#add;
 	}
 
-	constructor() { }
+	constructor() {
+		super();
+
+		// Draws selected visualisation
+		this.#setupRenderingProcessor();
+	}
 
 	/**
 	 * @param { P5 } visualisation
@@ -47,5 +57,17 @@ class VisualisationController {
 		if (this.#selectedVisual == null) {
 			this.selectedVisual = visualisation.name;
 		}
+	}
+
+	#setupRenderingProcessor() {
+		this.#renderingProcessor = () => {
+
+			push();
+
+			//draw the selected visualisation
+			this.#selectedVisual.draw();
+
+			pop();
+		};
 	}
 }

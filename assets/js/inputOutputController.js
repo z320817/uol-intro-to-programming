@@ -61,6 +61,10 @@ class InputOutputController extends P5 {
 		this.#setupRenderingProcessor();
 	}
 
+	#instatiateAudioControls() {
+		this.#audioElement = new AudioElement(this.#soundSourceURL);
+		this.audioElementRef = this.#audioElement.audioElementRef;
+	}
 
 	#instantiateUiControls() {
 		this.#playbackButton = new PlaybackButton(this.#audioElement.audioElementRef);
@@ -68,20 +72,15 @@ class InputOutputController extends P5 {
 		this.#controlPannel = new ControlPanel(this.#icons);
 	}
 
-	#instatiateAudioControls() {
-		this.#audioElement = new AudioElement(this.#soundSourceURL);
-		this.audioElementRef = this.#audioElement.audioElementRef;
-	}
-
-	#instatiateVisualisationControls() {
-		this.#visualsMenu = new VisualsMenu(this.#visualisationController);
-	}
-
 	#instantiateVisualisations() {
 		this.#visualisationController = new VisualisationController();
 		this.#visualisationController.add(new Spectrum());
 		this.#visualisationController.add(new WavePattern());
 		this.#visualisationController.add(new WaveExample(drawingContext.canvas, this.audioElementRef.audioSourceNode));
+	}
+
+	#instatiateVisualisationControls() {
+		this.#visualsMenu = new VisualsMenu(this.#visualisationController);
 	}
 
 	#setupEventObservers() {

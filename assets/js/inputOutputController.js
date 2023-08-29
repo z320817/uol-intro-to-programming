@@ -67,7 +67,7 @@ class InputOutputController extends P5 {
 	}
 
 	#instantiateUiControls() {
-		this.#playbackButton = new PlaybackButton(this.#audioElement.audioElementRef);
+		this.#playbackButton = new PlaybackButton(this.audioElementRef);
 		this.#needlseUiOutput = new Needles(PI, TWO_PI);
 		this.#controlPannel = new ControlPanel(this.#icons);
 	}

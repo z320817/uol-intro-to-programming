@@ -31,23 +31,15 @@ function setup() {
 	createCanvas(windowWidth, windowHeight);
 	background(0);
 
-	visualisationController = new VisualisationController();
-	inputOutputController = new InputOutputController(visualisationController, sound.url, icons);
-
 	//instantiate the fft object
 	fourier = new p5.FFT();
 
-	//create a new visualisation container and add visualisations
-
-	visualisationController.add(new Spectrum());
-	visualisationController.add(new WavePattern());
-	visualisationController.add(new WaveExample(drawingContext.canvas, inputOutputController.audioElementRef.audioSourceNode));
+	inputOutputController = new InputOutputController(sound.url, icons);
 }
 
 function draw() {
 	background(0);
-	//draw the selected visualisation
-	visualisationController.selectedVisual.draw();
+
 	//draw the controls on top.
 	inputOutputController.draw();
 }

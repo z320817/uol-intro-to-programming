@@ -2,15 +2,17 @@
 //controls
 class InputOutputController extends P5 {
 
+	#visualisationController;
+	#controlPannel;
 	#playbackButton;
 	#visualsMenu;
 	#needlseUiOutput;
-	#controlPannel;
 	#audioElement;
 	#mousePressedEventObserver;
 	#keyPressedEventObserver;
 	#renderingProcessor;
 	#icons;
+	#soundSourceURL;
 	audioElementRef;
 
 	get mousePressed() {
@@ -34,34 +36,52 @@ class InputOutputController extends P5 {
 	/**
 	 * @param { icons } icons, 
 	 */
-	constructor(visualisationController, soundSourceURL, icons) {
+	constructor(soundSourceURL, icons) {
 		super();
 		// Save preloaded icons reference
 		this.#icons = icons;
+		this.#soundSourceURL = soundSourceURL;
 
-		// Creates UI controls
-		this.#instantiateUiControls(visualisationController, soundSourceURL);
+		// Instatiate audio controls
+		this.#instatiateAudioControls();
+
+		// Instatiate ui controls
+		this.#instantiateUiControls();
+
+		// Instatiate visualisations
+		this.#instantiateVisualisations();
+
+		// Instatiate visualisation controls
+		this.#instatiateVisualisationControls();
 
 		// Creates event observers and handlers
 		this.#setupEventObservers();
 
-		//draws the playback button and potentially the menu
+		// Draws the playback button and potentially the menu
 		this.#setupRenderingProcessor();
 	}
 
-	/**
-	 * @param { VisualisationController } visualisationController, 
-	 */
-	/**
-	 * @param { string } soundSourceURL, 
-	 */
-	#instantiateUiControls(visualisationController, soundSourceURL) {
-		this.#audioElement = new AudioElement(soundSourceURL);
-		this.audioElementRef = this.#audioElement.audioElementRef;
+
+	#instantiateUiControls() {
 		this.#playbackButton = new PlaybackButton(this.#audioElement.audioElementRef);
-		this.#visualsMenu = new VisualsMenu(visualisationController);
 		this.#needlseUiOutput = new Needles(PI, TWO_PI);
 		this.#controlPannel = new ControlPanel(this.#icons);
+	}
+
+	#instatiateAudioControls() {
+		this.#audioElement = new AudioElement(this.#soundSourceURL);
+		this.audioElementRef = this.#audioElement.audioElementRef;
+	}
+
+	#instatiateVisualisationControls() {
+		this.#visualsMenu = new VisualsMenu(this.#visualisationController);
+	}
+
+	#instantiateVisualisations() {
+		this.#visualisationController = new VisualisationController();
+		this.#visualisationController.add(new Spectrum());
+		this.#visualisationController.add(new WavePattern());
+		this.#visualisationController.add(new WaveExample(drawingContext.canvas, this.audioElementRef.audioSourceNode));
 	}
 
 	#setupEventObservers() {
@@ -93,6 +113,8 @@ class InputOutputController extends P5 {
 
 	#setupRenderingProcessor() {
 		this.#renderingProcessor = () => {
+			//draw the selected visualisation
+			this.#visualisationController.selectedVisual.draw();
 			push();
 			fill("white");
 			stroke("black");

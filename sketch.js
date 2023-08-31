@@ -15,6 +15,12 @@ let icons = {
 		visual: {
 			whiteVisual: null,
 			blackVisual: null,
+		},
+	},
+	audioElement: {
+		playBtn: {
+			pressedBtn: null,
+			releasedBtn: null,
 		}
 	}
 }
@@ -25,6 +31,8 @@ function preload() {
 	icons.inputOutputController.sound.blackSound = loadImage('assets/images/inputOutputController/sound/black-sound.svg');
 	icons.inputOutputController.visual.whiteVisual = loadImage('assets/images/inputOutputController/visual/white-visual.svg');
 	icons.inputOutputController.visual.blackVisual = loadImage('assets/images/inputOutputController/visual/black-visual.svg');
+	icons.audioElement.playBtn.pressedBtn = loadImage('assets/images/audioElement/playBtn/pressedBtn.svg');
+	icons.audioElement.playBtn.releasedBtn = loadImage('assets/images/audioElement/playBtn/releasedBtn.svg');
 }
 
 function setup() {

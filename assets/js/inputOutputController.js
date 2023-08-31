@@ -13,7 +13,6 @@ class InputOutputController extends P5 {
 	#renderingProcessor;
 	#icons;
 	#soundSourceURL;
-	audioElementRef;
 
 	get mousePressed() {
 		return this.#mousePressedEventObserver;
@@ -62,12 +61,11 @@ class InputOutputController extends P5 {
 	}
 
 	#instatiateAudioControls() {
-		this.#audioElement = new AudioElement(this.#soundSourceURL);
-		this.audioElementRef = this.#audioElement.audioElementRef;
+		this.#audioElement = new AudioElement(this.#soundSourceURL, this.#icons);
 	}
 
 	#instantiateUiControls() {
-		this.#playbackButton = new PlaybackButton(this.audioElementRef);
+		this.#playbackButton = new PlaybackButton(this.#audioElement.p5audioElement);
 		this.#needlseUiOutput = new Needles(PI, TWO_PI);
 		this.#controlPannel = new ControlPanel(this.#icons);
 	}
@@ -76,7 +74,7 @@ class InputOutputController extends P5 {
 		this.#visualisationController = new VisualisationController();
 		this.#visualisationController.add(new Spectrum());
 		this.#visualisationController.add(new WavePattern());
-		this.#visualisationController.add(new WaveExample(drawingContext.canvas, this.audioElementRef.audioSourceNode));
+		this.#visualisationController.add(new WaveExample(drawingContext.canvas, this.#audioElement.waveAudioElement));
 	}
 
 	#instatiateVisualisationControls() {
@@ -100,6 +98,10 @@ class InputOutputController extends P5 {
 			if (this.#controlPannel.musicButtonHitCheck()) {
 				this.#audioElement.show();
 				this.#visualsMenu.hide();
+			}
+
+			if (this.#audioElement.playControlHitCheck()) {
+				console.log('play')
 			}
 		};
 

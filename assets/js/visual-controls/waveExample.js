@@ -2,7 +2,7 @@ class WaveExample extends P5 {
 
 	#waveCanvas;
 	#p5Canvas;
-	#sound;
+	#audioElement;
 	#renderingProcessor;
 	#wave;
 
@@ -27,9 +27,10 @@ class WaveExample extends P5 {
 		return WaveExample.onResize;
 	}
 
-	constructor(canvas, sound) {
+	constructor(canvas, audioElement) {
 		super();
 		this.#p5Canvas = canvas;
+		this.#audioElement = audioElement;
 
 		//set initial position of elements
 		this.onResize();
@@ -38,10 +39,10 @@ class WaveExample extends P5 {
 		this.#createWaveCanvas();
 
 		// Get audio reference for Wave
-		this.#getWaveAudioElement();
+		// this.#getWaveAudioElement();
 
 		// Configure initial wave settings
-		this.#configureWaveSettings(this.#sound, this.#waveCanvas)
+		this.#configureWaveSettings(this.#audioElement, this.#waveCanvas)
 
 		// Run rendering process to syncronize wave and p5 canvases
 		this.#setupRenderingProcessor();
@@ -51,21 +52,21 @@ class WaveExample extends P5 {
 		this.configuration.heightOffset = height / 2.5;
 	};
 
-	#getWaveAudioElement() {
-		// Create an audio element
-		this.#sound = document.createElement('audio');
+	// #getWaveAudioElement() {
+	// 	// Create an audio element
+	// 	this.#sound = document.createElement('audio');
 
-		// Set the source of the audio
-		this.#sound.src = 'assets/music/stomper_reggae_bit.mp3'; // Replace with the actual path to your audio file
+	// 	// Set the source of the audio
+	// 	this.#sound.src = 'assets/music/stomper_reggae_bit.mp3'; // Replace with the actual path to your audio file
 
-		// Add controls for playback
-		this.#sound.controls = true;
+	// 	// Add controls for playback
+	// 	this.#sound.controls = true;
 
-		// Append the audio element to the document body or another element
-		document.body.appendChild(this.#sound);
+	// 	// Append the audio element to the document body or another element
+	// 	document.body.appendChild(this.#sound);
 
-		console.log(this.#sound)
-	}
+	// 	console.log(this.#sound)
+	// }
 
 	#createWaveCanvas() {
 		// Create a canvas element

@@ -1,18 +1,24 @@
 class AudioElement extends P5 {
 
     #renderingProcessor;
-    #audioElement;
-    #controllIsHidden = false;
+    #p5audioElement;
+    #waveAudioElement;
+    #isPlaying;
+    #p5audioControlsIsHidden = false;
+    #waveControlsIsHidden = false;
+    #controlsAreHidden = false;
+    #icons;
 
     static #configuration = {
         name: "spectrum",
         heightOffset: 0,
-        audioControlsPosition: (width, height, heightOffset) => {
+        playControlPosition: (width, height, heightOffset) => {
 
             return {
-                x: width / 54,
-                y: height - heightOffset + 10,
-                size: width / 4,
+                playControlX: width / 54,
+                playControlY: height - heightOffset + 10,
+                playControlWidth: (width / 4) / 6,
+                playControlHeight: heightOffset / 6
             }
         },
     }
@@ -29,31 +35,53 @@ class AudioElement extends P5 {
         return this.#renderingProcessor;
     }
 
-    get hide() {
-        return this.#hideAudioElement;
+    hide() {
+        return this.#hideAudioElement();
     }
 
-    get show() {
-        return this.#showAudioElement;
+    show() {
+        return this.#showAudioElement();
     }
 
     get onResize() {
         return AudioElement.onResize;
     }
 
-    get audioElementRef() {
-        return this.#audioElement;
+    get p5audioElementTime() {
+        return this.#p5audioElement.time();
+    }
+
+    get waveAudioElementTime() {
+        return this.#waveAudioElement.time;
+    }
+
+    get p5audioElement() {
+        return this.#p5audioElement;
+    }
+
+    get waveAudioElement() {
+        return this.#waveAudioElement;
+    }
+
+    get playControlHitCheck() {
+        return AudioElement.playControlHitCheck;
     }
 
     /**
      * @param { string } soundSourceURL
      */
-    constructor(soundSourceURL) {
+    /**
+     * @param { icons } icons
+     */
+    constructor(soundSourceURL, icons) {
         super();
+
+        this.#icons = icons;
 
         //set initial position of elements
         this.onResize();
-        this.#createAudioControl(soundSourceURL);
+        this.#createP5AudioControl(soundSourceURL);
+        this.#createWaveAudioControl(soundSourceURL);
         this.#setupRenderingProcessor();
     }
 
@@ -64,39 +92,87 @@ class AudioElement extends P5 {
     /**
      * @param { string } soundSourceURL
      */
-    #createAudioControl(soundSourceURL) {
-        const { heightOffset } = this.configuration;
-        const { size, x, y } = this.configuration.audioControlsPosition(width, height, heightOffset);
+    #createP5AudioControl(soundSourceURL) {
+        this.#p5audioElement = createAudio(soundSourceURL);
+        this.#p5audioElement.connect();
+    }
 
-        this.#audioElement = createAudio(soundSourceURL);
-        this.#audioElement.position(x, y);
-        this.#audioElement.size(size);
+    /**
+     * @param { string } soundSourceURL
+     */
+    #createWaveAudioControl(soundSourceURL) {
+        // Create an audio element
+        this.#waveAudioElement = document.createElement('audio');
 
-        // Show the audio controls
-        this.#audioElement.showControls();
-        this.#audioElement.connect();
+        // Set the source of the audio
+        this.#waveAudioElement.src = soundSourceURL;
+    }
+
+    // if (this.#audioElementRef.time()) {
+    //     this.#audioElementRef.stop();
+    //     this.#playing = false;
+    // } else {
+    //     this.#audioElementRef.play();
+    //     getAudioContext().resume();
+    //     this.#playing = true;
+    // }
+
+    #renderPlayControl() {
+
+    }
+
+    //checks for clicks on the visuals flow button, changes control flows.
+    //@returns true if clicked false otherwise.
+    static playControlHitCheck() {
+        const { heightOffset, playControlPosition } = this.configuration;
+
+        const {
+            playControlWidth, playControlHeight, playControlX, playControlY
+        } = playControlPosition(width, height, heightOffset)
+
+        if (mouseX > playControlX &&
+            mouseX < playControlX + playControlWidth &&
+            mouseY > playControlY && mouseY < playControlY + playControlHeight) {
+            this.#isPlaying = !this.#isPlaying;
+
+            return true;
+        }
+
+        return false;
+    };
+
+    //play control button UI
+    #playControlRendering = () => {
+        if (this.#controlsAreHidden) {
+            return;
+        } else {
+            const { heightOffset, playControlPosition } = this.configuration;
+
+            const {
+                playControlWidth, playControlHeight, playControlX, playControlY
+            } = playControlPosition(width, height, heightOffset)
+
+            if (!this.#isPlaying) {
+                noStroke();
+                image(this.#icons.audioElement.playBtn.releasedBtn, playControlX + playControlWidth / 2.4, playControlY + playControlHeight / 2.4, 32, 24);
+            } else {
+                noStroke();
+                image(this.#icons.audioElement.playBtn.pressedBtn, playControlX + playControlWidth / 2.4, playControlY + playControlHeight / 2.4, 32, 24);
+            }
+        }
     }
 
     #setupRenderingProcessor() {
-        const { heightOffset } = this.configuration;
-
-
         this.#renderingProcessor = () => {
-            const { size, x, y } = this.configuration.audioControlsPosition(width, height, heightOffset);
-
-            this.#audioElement.position(x, y);
-            this.#audioElement.size(size);
-            getAudioContext().resume();
-
-            return this.#audioElement;
+            this.#playControlRendering();
         };
     }
 
     #hideAudioElement() {
-        this.#audioElement.hideControls();
+        this.#controlsAreHidden = true;
     }
 
     #showAudioElement() {
-        this.#audioElement.showControls();
+        this.#controlsAreHidden = false;
     }
 }

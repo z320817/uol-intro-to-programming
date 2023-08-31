@@ -3,6 +3,7 @@ class AudioElement extends P5 {
     #renderingProcessor;
     #p5audioElement;
     #waveAudioElement;
+    #currentAudioElement;
     #isPlaying;
     #p5audioControlsIsHidden = false;
     #waveControlsIsHidden = false;
@@ -33,14 +34,6 @@ class AudioElement extends P5 {
 
     get draw() {
         return this.#renderingProcessor;
-    }
-
-    hide() {
-        return this.#hideAudioElement();
-    }
-
-    show() {
-        return this.#showAudioElement();
     }
 
     get onResize() {
@@ -85,6 +78,34 @@ class AudioElement extends P5 {
         this.#setupRenderingProcessor();
     }
 
+    hide() {
+        return this.#hideAudioElement();
+    }
+
+    show() {
+        return this.#showAudioElement();
+    }
+
+    getCurrentAudioElement() {
+        this.#p5audioControlsIsHidden = false;
+        this.#waveControlsIsHidden = false;
+        this.#p5audioElement;
+        this.#waveAudioElement;
+
+        this.#currentAudioElement = this.#p5audioElement;
+
+        // if (this.#audioElementRef.time()) {
+        //     this.#audioElementRef.stop();
+        //     this.#playing = false;
+        // } else {
+        //     this.#audioElementRef.play();
+        //     getAudioContext().resume();
+        //     this.#playing = true;
+        // }
+
+        return this.#currentAudioElement;
+    }
+
     static onResize() {
         this.configuration.heightOffset = height / 4;
     };
@@ -108,19 +129,6 @@ class AudioElement extends P5 {
         this.#waveAudioElement.src = soundSourceURL;
     }
 
-    // if (this.#audioElementRef.time()) {
-    //     this.#audioElementRef.stop();
-    //     this.#playing = false;
-    // } else {
-    //     this.#audioElementRef.play();
-    //     getAudioContext().resume();
-    //     this.#playing = true;
-    // }
-
-    #renderPlayControl() {
-
-    }
-
     //checks for clicks on the visuals flow button, changes control flows.
     //@returns true if clicked false otherwise.
     static playControlHitCheck() {
@@ -134,12 +142,17 @@ class AudioElement extends P5 {
             mouseX < playControlX + playControlWidth &&
             mouseY > playControlY && mouseY < playControlY + playControlHeight) {
             this.#isPlaying = !this.#isPlaying;
+            this.#handlePlayControl();
 
             return true;
         }
 
         return false;
     };
+
+    #handlePlayControl() {
+        const currentAudioElement = this.getCurrentAudioElement();
+    }
 
     //play control button UI
     #playControlRendering = () => {

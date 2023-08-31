@@ -6,8 +6,14 @@ class AudioElement extends P5 {
     #currentAudioElement;
     #isPlaying;
     #p5audioControlsIsHidden = false;
-    #waveControlsIsHidden = false;
+    #waveControlsIsHidden = true;
     #controlsAreHidden = false;
+    #controls = {
+        play: () => { },
+        pause: () => { },
+        stop: () => { },
+        time: () => { },
+    };
     #icons;
 
     static #configuration = {
@@ -86,24 +92,73 @@ class AudioElement extends P5 {
         return this.#showAudioElement();
     }
 
-    getCurrentAudioElement() {
+    requestP5audioControls() {
         this.#p5audioControlsIsHidden = false;
+        this.#waveControlsIsHidden = true;
+
+        this.#setCurrentAudioControls();
+
+        return this.getAudioControls();
+    };
+
+    requestWaveAudioControls() {
         this.#waveControlsIsHidden = false;
-        this.#p5audioElement;
-        this.#waveAudioElement;
+        this.#p5audioControlsIsHidden = true;
 
-        this.#currentAudioElement = this.#p5audioElement;
+        this.#setCurrentAudioControls();
 
-        // if (this.#audioElementRef.time()) {
-        //     this.#audioElementRef.stop();
-        //     this.#playing = false;
-        // } else {
-        //     this.#audioElementRef.play();
-        //     getAudioContext().resume();
-        //     this.#playing = true;
-        // }
+        return this.getAudioControls();
+    };
 
+    getAudioControls() {
+        return this.#controls;
+    }
+
+    getCurrentAudioElement() {
         return this.#currentAudioElement;
+    }
+
+    #setCurrentAudioControls() {
+        if (this.#waveControlsIsHidden) {
+            this.#controls.play = () => {
+                this.#p5audioElement.play();
+                getAudioContext().resume();
+                this.#isPlaying = true;
+            };
+            this.#controls.pause = () => {
+                this.#p5audioElement.pause();
+                this.#isPlaying = false;
+            };
+            this.#controls.stop = () => {
+                this.#p5audioElement.stop();
+                this.#isPlaying = stop;
+            };
+            this.#controls.time = () => {
+                return this.#p5audioElement.time();
+            };
+
+            this.#currentAudioElement = this.#p5audioElement;
+        }
+
+        if (this.#p5audioControlsIsHidden) {
+            this.#controls.play = () => {
+                this.#waveAudioElement.play();
+                this.#isPlaying = true;
+            };
+            this.#controls.pause = () => {
+                this.#waveAudioElement.pause();
+                this.#isPlaying = false;
+            };
+            this.#controls.stop = () => {
+                this.#waveAudioElement.stop();
+                this.#isPlaying = false;
+            };
+            this.#controls.time = () => {
+                return this.#waveAudioElement.currentTime.toFixed(2);;
+            };
+
+            this.#currentAudioElement = this.#waveAudioElement;
+        }
     }
 
     static onResize() {

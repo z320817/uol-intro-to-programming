@@ -101,7 +101,12 @@ class InputOutputController extends P5 {
 			}
 
 			if (this.#audioElement.playControlHitCheck()) {
-				console.log('play')
+				console.log(this.#audioElement.isPlaying)
+				if (!this.#audioElement.isPlaying) {
+					this.#audioElement.controls.play();
+				} else {
+					this.#audioElement.controls.pause();
+				}
 			}
 		};
 

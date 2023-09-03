@@ -4,7 +4,7 @@ class AudioElement extends P5 {
     #p5audioElement;
     #waveAudioElement;
     #currentAudioElement;
-    #isPlaying;
+    #isPlaying = false;
     #p5audioControlsIsHidden = false;
     #waveControlsIsHidden = true;
     #controlsAreHidden = false;
@@ -46,14 +46,6 @@ class AudioElement extends P5 {
         return AudioElement.onResize;
     }
 
-    get p5audioElementTime() {
-        return this.#p5audioElement.time();
-    }
-
-    get waveAudioElementTime() {
-        return this.#waveAudioElement.time;
-    }
-
     get p5audioElement() {
         return this.#p5audioElement;
     }
@@ -64,6 +56,14 @@ class AudioElement extends P5 {
 
     get playControlHitCheck() {
         return AudioElement.playControlHitCheck;
+    }
+
+    get controls() {
+        return this.#controls;
+    }
+
+    get isPlaying() {
+        return this.#isPlaying;
     }
 
     /**
@@ -81,6 +81,7 @@ class AudioElement extends P5 {
         this.onResize();
         this.#createP5AudioControl(soundSourceURL);
         this.#createWaveAudioControl(soundSourceURL);
+        this.#setCurrentAudioControls();
         this.#setupRenderingProcessor();
     }
 
@@ -196,18 +197,12 @@ class AudioElement extends P5 {
         if (mouseX > playControlX &&
             mouseX < playControlX + playControlWidth &&
             mouseY > playControlY && mouseY < playControlY + playControlHeight) {
-            this.#isPlaying = !this.#isPlaying;
-            this.#handlePlayControl();
 
             return true;
         }
 
         return false;
     };
-
-    #handlePlayControl() {
-        const currentAudioElement = this.getCurrentAudioElement();
-    }
 
     //play control button UI
     #playControlRendering = () => {

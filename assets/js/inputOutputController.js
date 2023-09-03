@@ -65,7 +65,7 @@ class InputOutputController extends P5 {
 	}
 
 	#instantiateUiControls() {
-		this.#playbackButton = new PlaybackButton(this.#audioElement.p5audioElement);
+		this.#playbackButton = new PlaybackButton(this.#audioElement);
 		this.#needlseUiOutput = new Needles(PI, TWO_PI);
 		this.#controlPannel = new ControlPanel(this.#icons);
 	}
@@ -101,7 +101,6 @@ class InputOutputController extends P5 {
 			}
 
 			if (this.#audioElement.playControlHitCheck()) {
-				console.log(this.#audioElement.isPlaying)
 				if (!this.#audioElement.isPlaying) {
 					this.#audioElement.controls.play();
 				} else {

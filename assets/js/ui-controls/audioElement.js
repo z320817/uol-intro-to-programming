@@ -135,6 +135,8 @@ class AudioElement extends P5 {
                 this.#isPlaying = stop;
             };
             this.#controls.time = () => {
+                const time = this.#p5audioElement.time();
+                console.log(time);
                 return this.#p5audioElement.time();
             };
 

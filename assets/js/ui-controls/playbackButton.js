@@ -1,9 +1,8 @@
 //displays and handles clicks on the playback button.
 class PlaybackButton extends P5 {
 
-	#playing = false;
 	#renderingProcessor;
-	#audioElementRef;
+	#audioElement;
 
 	static #configuration = {
 		x: 20,
@@ -13,12 +12,12 @@ class PlaybackButton extends P5 {
 	}
 
 	/**
-	 * @param { MediaElement } audioElementRef, 
+	 * @param { audioElement } audioElement, 
 	 */
-	constructor(audioElementRef) {
+	constructor(audioElement) {
 		super();
 
-		this.#audioElementRef = audioElementRef;
+		this.#audioElement = audioElement;
 		//draws the playback button UI
 		this.#setupRenderingProcessor();
 	}
@@ -45,13 +44,11 @@ class PlaybackButton extends P5 {
 			mouseY > y &&
 			mouseY < y + height) {
 
-			if (this.#audioElementRef.time()) {
-				this.#audioElementRef.stop();
-				this.#playing = false;
+			if (this.#audioElement.isPlaying) {
+				this.#audioElement.controls.pause();
 			} else {
-				this.#audioElementRef.play();
-				getAudioContext().resume();
-				this.#playing = true;
+				console.log(this.#audioElement.controls)
+				this.#audioElement.controls.play();
 			}
 
 			return true;
@@ -63,7 +60,7 @@ class PlaybackButton extends P5 {
 		this.#renderingProcessor = () => {
 			const { x, y, width, height } = this.configuration;
 
-			if (this.#playing) {
+			if (this.#audioElement.isPlaying) {
 				rect(x, y, width / 2 - 2, height);
 				rect(x + (width / 2 + 2), y, width / 2 - 2, height);
 			}

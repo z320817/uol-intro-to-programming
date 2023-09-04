@@ -24,6 +24,15 @@ class AudioElement extends P5 {
     static #configuration = {
         name: "spectrum",
         heightOffset: 0,
+        timerPosition: (width, height, heightOffset) => {
+
+            return {
+                timerX: width / 18,
+                timerY: height - heightOffset - 25,
+                timerWidth: (width / 4) / 6,
+                timerHeight: heightOffset / 6
+            }
+        },
         playControlPosition: (width, height, heightOffset) => {
 
             return {
@@ -33,7 +42,6 @@ class AudioElement extends P5 {
                 playControlHeight: heightOffset / 6
             }
         },
-
         progressBarPosition: (width, height, heightOffset) => {
 
             return {
@@ -215,6 +223,32 @@ class AudioElement extends P5 {
         return false;
     };
 
+    //timer counter UI
+    #timerRendering = () => {
+        const timeInSeconds = this.controls.duration().toFixed(2);
+        const minutes = Math.floor(timeInSeconds/60);
+        const seconds = timeInSeconds - (60 * minutes);
+
+        if (this.controlsAreHidden) {
+            return;
+        } else {
+            const { heightOffset, timerPosition } = this.configuration;
+
+            const {
+                timerHeight, timerWidth, timerX, timerY
+            } = timerPosition(width, height, heightOffset)
+
+            textSize(16); // Set the text size to 32 pixels
+            fill(0); // Set the fill color to black
+            text(minutes, timerX + 65, timerY + 33);
+            text(":", timerX + 78, timerY + 33);
+            text(seconds, timerX + 85, timerY + 33);
+
+            noStroke();
+            image(this.#icons.audioElement.timer, timerX + timerWidth / 2.4, timerY + timerHeight / 2.4, 32, 24);
+        }
+    }
+
     //play control button UI
     #playControlRendering = () => {
         if (this.controlsAreHidden) {
@@ -242,8 +276,6 @@ class AudioElement extends P5 {
         const {
             progressBarHeight, progressBarWidth, progressBarX, progressBarY
         } = progressBarPosition(width, height, heightOffset)
-
-
 
         const spacing = this.peaks.length / progressBarWidth;
         const peakStep = Math.ceil(progressBarWidth / spacing);
@@ -275,9 +307,7 @@ class AudioElement extends P5 {
                 } else {
                     currentPeakIndex = 0;
                 }
-
             }
-
         }
     }
 
@@ -285,6 +315,7 @@ class AudioElement extends P5 {
         this.#renderingProcessor = () => {
             this.#playControlRendering();
             this.#progressBarRendering();
+            this.#timerRendering();
         };
     }
 

@@ -21,7 +21,8 @@ let icons = {
 		playBtn: {
 			pressedBtn: null,
 			releasedBtn: null,
-		}
+		},
+		timer: null,
 	}
 }
 
@@ -33,6 +34,7 @@ function preload() {
 	icons.inputOutputController.visual.blackVisual = loadImage('assets/images/inputOutputController/visual/black-visual.svg');
 	icons.audioElement.playBtn.pressedBtn = loadImage('assets/images/audioElement/playBtn/pressedBtn.svg');
 	icons.audioElement.playBtn.releasedBtn = loadImage('assets/images/audioElement/playBtn/releasedBtn.svg');
+	icons.audioElement.timer = loadImage('assets/images/audioElement/timer/timer.svg');
 }
 
 function setup() {

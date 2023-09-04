@@ -237,36 +237,45 @@ class AudioElement extends P5 {
     }
 
     #progressBarRendering = () => {
+        const { heightOffset, progressBarPosition } = this.configuration;
+
+        const {
+            progressBarHeight, progressBarWidth, progressBarX, progressBarY
+        } = progressBarPosition(width, height, heightOffset)
+
+
+
+        const spacing = this.peaks.length / progressBarWidth;
+        const peakStep = Math.ceil(progressBarWidth / spacing);
+        const progressBarSpacing = progressBarWidth / peakStep;
+
+        let x1 = progressBarX - progressBarSpacing / 2;
+        let x2 = progressBarX - progressBarSpacing / 2;
+
+        const progressBarLength = Math.ceil(progressBarWidth);
+        let currentPeakIndex = 0;
+
         if (this.controlsAreHidden) {
             return;
         } else {
-            const { heightOffset, progressBarPosition } = this.configuration;
-
-            const {
-                progressBarHeight, progressBarWidth, progressBarX, progressBarY
-            } = progressBarPosition(width, height, heightOffset)
-
             fill(0);
             rect(progressBarX, progressBarY, progressBarWidth, progressBarHeight);
 
-            let progressBarLength = map(progressBarWidth, 0, this.peaks.length, 0, progressBarWidth);
-            let spacing = this.peaks.length / progressBarWidth;
-
-            let x1 = progressBarX - spacing / 2;
-            let x2 = progressBarX - spacing / 2;
-
-            for (let i = 0; i < progressBarLength; i++) {
-
-                let peakStep = Math.ceil(progressBarLength);
-                let currentPeakIndex = Math.floor(this.peaks.length / peakStep * i);
+            for (let i = 0; i < progressBarLength; i += progressBarSpacing) {
                 let currentPeakValue = Math.abs(this.peaks[currentPeakIndex]) * 500;
-
-                x1 += spacing;
+                x1 += progressBarSpacing;
                 let y1 = progressBarY + progressBarHeight;
-                x2 += spacing;
+                x2 += progressBarSpacing;
                 let y2 = progressBarY + currentPeakValue;
                 stroke(255);
                 line(x1, y1, x2, y2);
+
+                if (currentPeakIndex <= progressBarLength) {
+                    currentPeakIndex += peakStep;
+                } else {
+                    currentPeakIndex = 0;
+                }
+
             }
 
         }

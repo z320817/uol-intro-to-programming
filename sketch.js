@@ -39,10 +39,7 @@ function setup() {
 	createCanvas(windowWidth, windowHeight);
 	background(0);
 
-	//instantiate the fft object
-	fourier = new p5.FFT();
-
-	inputOutputController = new InputOutputController(sound.url, icons);
+	inputOutputController = new InputOutputController(sound, icons);
 }
 
 function draw() {

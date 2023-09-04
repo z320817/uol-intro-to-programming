@@ -1,5 +1,6 @@
 class Spectrum extends P5 {
 
+	#audioElement;
 	#renderingProcessor;
 
 	static #configuration = {
@@ -23,8 +24,13 @@ class Spectrum extends P5 {
 		return Spectrum.onResize;
 	}
 
-	constructor() {
+	/**
+	 * @param { AudioElement } audioElement, 
+	 */
+	constructor(audioElement) {
 		super();
+
+		this.#audioElement = audioElement;
 
 		//set initial position of elements
 		this.onResize();
@@ -42,7 +48,7 @@ class Spectrum extends P5 {
 		this.#renderingProcessor = () => {
 			push();
 			this.onResize();
-			var spectrum = fourier.analyze();
+			var spectrum = this.#audioElement.fourier.analyze();
 			noStroke();
 
 			for (var i = 0; i < spectrum.length; i++) {

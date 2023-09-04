@@ -5,6 +5,7 @@ class Needles extends P5 {
 	#plotHeight = 0;
 	#dialRadius = 0;
 	#pad = 0;
+	#audioElement;
 	#renderingProcessor;
 
 	static #configuration = {
@@ -36,9 +37,19 @@ class Needles extends P5 {
 	get draw() {
 		return this.#renderingProcessor;
 	}
-
-	constructor(PI, TWO_PI) {
+	/**
+	 * @param { PI } PI, 
+	 */
+	/**
+	 * @param { TWO_PI } TWO_PI, 
+	 */
+	/**
+	 * @param { AudioElement } audioElement, 
+	 */
+	constructor(PI, TWO_PI, audioElement) {
 		super();
+
+		this.#audioElement = audioElement;
 		this.configuration.minAngle = PI + PI / 10;
 		this.configuration.maxAngle = TWO_PI - PI / 10;
 
@@ -119,13 +130,13 @@ class Needles extends P5 {
 			noStroke();
 			fill('#808080')
 			rect(canvasOffcetX, canvasOffcetY, width, heightOffset);
-			//create an array amplitude values from the fft.
-			const spectrum = fourier.analyze();
 			//iterator for selecting frequency bin.
 			let currentBin = 0;
 			push();
 			fill('#f0f2d2');
 			stroke('#000');
+			// Spectrum used here to update needles energy levels
+			var spectrum = this.#audioElement.fourier.analyze();
 			//nested for loop to place plots in 2*2 grid.
 			for (let i = 0; i < plotsDown; i++) {
 				for (let j = 0; j < plotsAcross; j++) {
@@ -141,7 +152,7 @@ class Needles extends P5 {
 					//add on the ticks
 					this.#ticks(x + w / 2, y + h, frequencyBins[currentBin]);
 
-					const energy = fourier.getEnergy(frequencyBins[currentBin]);
+					const energy = this.#audioElement.fourier.getEnergy(frequencyBins[currentBin]);
 
 					//add the needle
 					this.#needle(energy, x + w / 2, y + h);

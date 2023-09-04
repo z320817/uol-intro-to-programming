@@ -1,6 +1,7 @@
 //draw the waveform to the screen
 class WavePattern extends P5 {
 
+	#audioElement;
 	#renderingProcessor;
 
 	static #configuration = {
@@ -24,8 +25,13 @@ class WavePattern extends P5 {
 		return WavePattern.onResize;
 	}
 
-	constructor() {
+	/**
+	 * @param { AudioElement } audioElement, 
+	 */
+	constructor(audioElement) {
 		super();
+
+		this.#audioElement = audioElement;
 
 		//set initial position of elements
 		this.onResize();
@@ -48,7 +54,7 @@ class WavePattern extends P5 {
 
 			beginShape();
 			//calculate the waveform from the fft.
-			var wave = fourier.waveform();
+			var wave = this.#audioElement.fourier.waveform();
 			for (var i = 0; i < wave.length; i++) {
 				//for each element of the waveform map it to screen
 				//coordinates and make a new vertex at the point.

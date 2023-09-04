@@ -10,9 +10,9 @@ class InputOutputController extends P5 {
 	#audioElement;
 	#mousePressedEventObserver;
 	#keyPressedEventObserver;
-	#renderingProcessor;
+	#sound;
 	#icons;
-	#soundSourceURL;
+	#renderingProcessor;
 
 	get mousePressed() {
 		return this.#mousePressedEventObserver;
@@ -27,19 +27,16 @@ class InputOutputController extends P5 {
 	}
 
 	/**
-	 * @param { VisualisationController } visualisationController, 
-	 */
-	/**
-	 * @param { string } soundSourceURL, 
+	 * @param { sound } sound, 
 	 */
 	/**
 	 * @param { icons } icons, 
 	 */
-	constructor(soundSourceURL, icons) {
+	constructor(sound, icons) {
 		super();
 		// Save preloaded icons reference
 		this.#icons = icons;
-		this.#soundSourceURL = soundSourceURL;
+		this.#sound = sound;
 
 		// Instatiate audio controls
 		this.#instatiateAudioControls();
@@ -61,20 +58,20 @@ class InputOutputController extends P5 {
 	}
 
 	#instatiateAudioControls() {
-		this.#audioElement = new AudioElement(this.#soundSourceURL, this.#icons);
+		this.#audioElement = new AudioElement(this.#sound, this.#icons);
 	}
 
 	#instantiateUiControls() {
 		this.#playbackButton = new PlaybackButton(this.#audioElement);
-		this.#needlseUiOutput = new Needles(PI, TWO_PI);
+		this.#needlseUiOutput = new Needles(PI, TWO_PI, this.#audioElement);
 		this.#controlPannel = new ControlPanel(this.#icons);
 	}
 
 	#instantiateVisualisations() {
 		this.#visualisationController = new VisualisationController();
-		this.#visualisationController.add(new Spectrum());
-		this.#visualisationController.add(new WavePattern());
-		this.#visualisationController.add(new WaveExample(drawingContext.canvas, this.#audioElement.waveAudioElement));
+		this.#visualisationController.add(new Spectrum(this.#audioElement));
+		this.#visualisationController.add(new WavePattern(this.#audioElement));
+		this.#visualisationController.add(new WaveExample(drawingContext.canvas, this.#audioElement));
 	}
 
 	#instatiateVisualisationControls() {

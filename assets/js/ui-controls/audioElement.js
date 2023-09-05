@@ -225,10 +225,10 @@ class AudioElement extends P5 {
     #timerRendering = () => {
         const timeInSeconds = this.controls.duration().toFixed(2);
         const minutes = Math.floor(timeInSeconds/60);
-        const seconds = timeInSeconds - (60 * minutes);
+        const seconds = (timeInSeconds - (60 * minutes)).toFixed();
         const currentTimeInSeconds = this.controls.time().toFixed(2);
         const currentMinutes = Math.floor(currentTimeInSeconds/60);
-        const currentSeconds = currentTimeInSeconds - (60 * currentMinutes);
+        const currentSeconds = (currentTimeInSeconds - (60 * currentMinutes)).toFixed();
 
         if (this.controlsAreHidden) {
             return;
@@ -243,18 +243,20 @@ class AudioElement extends P5 {
                 timerX, timerY
             } = timerPosition(width, height, heightOffset);
 
-            textSize(16); // Set the text size to 32 pixels
-            fill(0); // Set the fill color to black
+            textSize(16);
+            fill(0);
+            // total time
             text(minutes, timerX + 35, timerY + 33);
             text(":", timerX + 45, timerY + 33);
             text(seconds, timerX + 50, timerY + 33);
-            text(currentMinutes, timerX + progressBarWidth - 70, timerY + 33);
-            text(":", timerX + progressBarWidth - 60, timerY + 33);
-            text(currentSeconds, timerX + progressBarWidth - 55, timerY + 33);
+            // current time
+            text(currentMinutes, timerX + progressBarWidth - 45, timerY + 33);
+            text(":", timerX + progressBarWidth - 35, timerY + 33);
+            text(currentSeconds, timerX + progressBarWidth - 30, timerY + 33);
 
             noStroke();
             image(this.#icons.audioElement.timer, timerX - 5, timerY + 15, 32, 24);
-            image(this.#icons.audioElement.currentTime, timerX + progressBarWidth - 105, timerY + 15, 32, 24);
+            image(this.#icons.audioElement.currentTime, timerX + progressBarWidth - 80, timerY + 15, 32, 24);
         }
     }
 
@@ -293,6 +295,10 @@ class AudioElement extends P5 {
         let x1 = progressBarX - progressBarSpacing / 2;
         let x2 = progressBarX - progressBarSpacing / 2;
 
+        let progressPos = map(this.controls.time(), 0, this.controls.duration(), 0, progressBarWidth);
+        let progressStart = progressBarX;
+        let currentProgress = progressStart + progressPos;
+
         const progressBarLength = Math.ceil(progressBarWidth);
         let currentPeakIndex = 0;
 
@@ -303,6 +309,7 @@ class AudioElement extends P5 {
             rect(progressBarX, progressBarY, progressBarWidth, progressBarHeight);
 
             for (let i = 0; i < progressBarLength; i += progressBarSpacing) {
+                
                 let currentPeakValue = Math.abs(this.peaks[currentPeakIndex]) * 500;
                 x1 += progressBarSpacing;
                 let y1 = progressBarY + progressBarHeight;
@@ -311,12 +318,26 @@ class AudioElement extends P5 {
                 stroke(255);
                 strokeWeight(3);
                 line(x1, y1, x2, y2);
+                noStroke();
 
                 if (currentPeakIndex <= progressBarLength) {
                     currentPeakIndex += peakStep;
                 } else {
                     currentPeakIndex = 0;
                 }
+            }
+
+            
+            if (this.isPlaying) {
+                stroke("#FF0000");
+                strokeWeight(3);
+                line(progressStart + progressPos, progressBarY, progressStart + progressPos, progressBarY + progressBarHeight);
+                noStroke();
+            } else {
+                stroke("#000000");
+                strokeWeight(3);
+                line(currentProgress, progressBarY, currentProgress, progressBarY + progressBarHeight);
+                noStroke();
             }
         }
     }

@@ -104,6 +104,10 @@ class InputOutputController extends P5 {
 					this.#audioElement.controls.pause();
 				}
 			}
+
+			if (this.#audioElement.volumeControlHitCheck()) {
+
+			}
 		};
 
 		//responds to keyboard presses

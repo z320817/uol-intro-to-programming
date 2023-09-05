@@ -6,12 +6,15 @@ class AudioElement extends P5 {
         stop: () => { },
         time: () => { },
         duration: () => { },
+        setVolume: () => { },
+        getVolume: () => { },
     };
     amplitude = new p5.Amplitude();
     fourier = new p5.FFT();
     waveAudioElement;
     currentAudioElement;
     isPlaying = false;
+    volumeLevel = 0;
 
     #p5audioElement;
     #p5audioControlsIsHidden = false;
@@ -34,10 +37,10 @@ class AudioElement extends P5 {
         playControlPosition: (width, height, heightOffset) => {
 
             return {
-                playControlX: width / 54,
-                playControlY: height - heightOffset + 10,
-                playControlWidth: (width / 4) / 6,
-                playControlHeight: heightOffset / 6
+                playControlX: (width / 54) - 10,
+                playControlY: height - heightOffset / 1.14,
+                playControlWidth: 32,
+                playControlHeight: 24
             }
         },
         progressBarPosition: (width, height, heightOffset) => {
@@ -47,6 +50,17 @@ class AudioElement extends P5 {
                 progressBarY: height - heightOffset + 20,
                 progressBarWidth: (width / 6),
                 progressBarHeight: heightOffset / 6
+            }
+        },
+        volumeControlPosition: (width, height, heightOffset) => {
+
+            return {
+                volumeControlX: (width / 54) - 10,
+                volumeControlY: height - 30,
+                volumeControlIconWidth: 32,
+                volumeControlIconHeight: 24,
+                volumeControlWidth: (width / 6),
+                volumeControlHeight: heightOffset / 6
             }
         },
     }
@@ -70,6 +84,11 @@ class AudioElement extends P5 {
 
     get playControlHitCheck() {
         return AudioElement.playControlHitCheck;
+    }
+
+
+    get volumeControlHitCheck() {
+        return AudioElement.volumeControlHitCheck;
     }
 
     get draw() {
@@ -134,6 +153,7 @@ class AudioElement extends P5 {
             this.controls.play = () => {
                 this.#p5audioElement.play();
                 getAudioContext().resume();
+                this.volumeLevel = this.controls.getVolume();
                 this.isPlaying = true;
             };
             this.controls.pause = () => {
@@ -151,6 +171,14 @@ class AudioElement extends P5 {
             this.controls.duration = () => {
                 return this.#p5audioElement.duration();
             };
+            this.controls.setVolume = (level) => {
+                const volume = (level / 100).toFixed(2);
+
+                return this.#p5audioElement.setVolume(volume);
+            };
+            this.controls.getVolume = () => {
+                return this.#p5audioElement.volume();
+            };
 
             this.currentAudioElement = this.#p5audioElement;
         }
@@ -158,6 +186,7 @@ class AudioElement extends P5 {
         if (this.#p5audioControlsIsHidden) {
             this.controls.play = () => {
                 this.waveAudioElement.play();
+                this.volumeLevel = this.controls.getVolume();
                 this.isPlaying = true;
             };
             this.controls.pause = () => {
@@ -173,6 +202,14 @@ class AudioElement extends P5 {
             };
             this.controls.duration = () => {
                 return this.waveAudioElement.duration;
+            };
+            this.controls.setVolume = (level) => {
+                const volume = (level / 100).toFixed(2);
+
+                return this.waveAudioElement.volume(volume);
+            };
+            this.controls.getVolume = () => {
+                return this.waveAudioElement.volume;
             };
 
             this.currentAudioElement = this.waveAudioElement;
@@ -221,13 +258,32 @@ class AudioElement extends P5 {
         return false;
     };
 
+    //checks for clicks on volumebar and gets desired value.
+    static volumeControlHitCheck() {
+        const { heightOffset, volumeControlPosition } = this.configuration;
+
+        const {
+            volumeControlHeight, volumeControlWidth, volumeControlX, volumeControlY
+        } = volumeControlPosition(width, height, heightOffset)
+
+        if (mouseX > volumeControlX &&
+            mouseX < volumeControlX + volumeControlWidth &&
+            mouseY > volumeControlY && mouseY < volumeControlY + volumeControlHeight) {
+
+            console.log("hit!")
+            return true;
+        }
+
+        return false;
+    };
+
     //timer counter UI
     #timerRendering = () => {
         const timeInSeconds = this.controls.duration().toFixed(2);
-        const minutes = Math.floor(timeInSeconds/60);
+        const minutes = Math.floor(timeInSeconds / 60);
         const seconds = (timeInSeconds - (60 * minutes)).toFixed();
         const currentTimeInSeconds = this.controls.time().toFixed(2);
-        const currentMinutes = Math.floor(currentTimeInSeconds/60);
+        const currentMinutes = Math.floor(currentTimeInSeconds / 60);
         const currentSeconds = (currentTimeInSeconds - (60 * currentMinutes)).toFixed();
 
         if (this.controlsAreHidden) {
@@ -236,7 +292,7 @@ class AudioElement extends P5 {
             const { heightOffset, timerPosition, progressBarPosition } = this.configuration;
 
             const {
-               progressBarWidth
+                progressBarWidth
             } = progressBarPosition(width, height, heightOffset);
 
             const {
@@ -273,10 +329,50 @@ class AudioElement extends P5 {
 
             if (!this.isPlaying) {
                 noStroke();
-                image(this.#icons.audioElement.playBtn.releasedBtn, playControlX, playControlY + playControlHeight / 2.4, 32, 24);
+                image(this.#icons.audioElement.playBtn.releasedBtn, playControlX, playControlY, playControlWidth, playControlHeight);
             } else {
                 noStroke();
-                image(this.#icons.audioElement.playBtn.pressedBtn, playControlX, playControlY + playControlHeight / 2.4, 32, 24);
+                image(this.#icons.audioElement.playBtn.pressedBtn, playControlX, playControlY, playControlWidth, playControlHeight);
+            }
+        }
+    }
+
+    //volume control button UI
+    #volumeControlRendering = () => {
+
+        if (this.controlsAreHidden) {
+            return;
+        } else {
+            const { heightOffset, volumeControlPosition } = this.configuration;
+
+            const {
+                volumeControlHeight, volumeControlWidth, volumeControlX, volumeControlY, volumeControlIconHeight, volumeControlIconWidth
+            } = volumeControlPosition(width, height, heightOffset)
+
+            let maxLines = Math.abs((((volumeControlWidth - volumeControlIconWidth) / 2) - 100).toFixed());
+            let initialXForSoundBar = volumeControlX + volumeControlIconWidth + 10;
+            let initialYForSoundBar = volumeControlY + volumeControlHeight;
+
+            stroke(0);
+            for (let i = 0; i < maxLines; i++) {
+                let x = map(i, 0, maxLines, 0, volumeControlWidth);
+                let lineHeight = map(i, 0, maxLines, 0, volumeControlHeight);
+                line(initialXForSoundBar + x, initialYForSoundBar, initialXForSoundBar + x, initialYForSoundBar - lineHeight);
+
+                // if (i < currentLines) {
+                //     line(x, volumeControlHeight, x, volumeControlHeight - lineHeight);
+                // } else {
+                //     line(x, volumeControlHeight, x, volumeControlHeight - 5);
+                // }
+            }
+            noStroke();
+
+            if (this.volumeLevel !== 0) {
+                noStroke();
+                image(this.#icons.audioElement.volume.volumeOn, volumeControlX, volumeControlY, volumeControlIconWidth, volumeControlIconHeight);
+            } else {
+                noStroke();
+                image(this.#icons.audioElement.volume.volumeOff, volumeControlX, volumeControlY, volumeControlIconWidth, volumeControlIconHeight);
             }
         }
     }
@@ -309,7 +405,7 @@ class AudioElement extends P5 {
             rect(progressBarX, progressBarY, progressBarWidth, progressBarHeight);
 
             for (let i = 0; i < progressBarLength; i += progressBarSpacing) {
-                
+
                 let currentPeakValue = Math.abs(this.peaks[currentPeakIndex]) * 500;
                 x1 += progressBarSpacing;
                 let y1 = progressBarY + progressBarHeight;
@@ -327,7 +423,7 @@ class AudioElement extends P5 {
                 }
             }
 
-            
+
             if (this.isPlaying) {
                 stroke("#FF0000");
                 strokeWeight(3);
@@ -347,6 +443,7 @@ class AudioElement extends P5 {
             this.#playControlRendering();
             this.#progressBarRendering();
             this.#timerRendering();
+            this.#volumeControlRendering();
         };
     }
 

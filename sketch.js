@@ -23,6 +23,11 @@ let icons = {
 			releasedBtn: null,
 		},
 		timer: null,
+		currentTime: null,
+		volume: {
+			volumeOff: null,
+			volumeOn: null,
+		}
 	}
 }
 
@@ -36,6 +41,8 @@ function preload() {
 	icons.audioElement.playBtn.releasedBtn = loadImage('assets/images/audioElement/playBtn/releasedBtn.svg');
 	icons.audioElement.timer = loadImage('assets/images/audioElement/timer/timer.svg');
 	icons.audioElement.currentTime = loadImage('assets/images/audioElement/timer/current.svg');
+	icons.audioElement.volume.volumeOn = loadImage('assets/images/audioElement/volume/volumeOn.svg');
+	icons.audioElement.volume.volumeOff = loadImage('assets/images/audioElement/volume/volumeOff.svg');
 }
 
 function setup() {

@@ -35,6 +35,7 @@ function preload() {
 	icons.audioElement.playBtn.pressedBtn = loadImage('assets/images/audioElement/playBtn/pressedBtn.svg');
 	icons.audioElement.playBtn.releasedBtn = loadImage('assets/images/audioElement/playBtn/releasedBtn.svg');
 	icons.audioElement.timer = loadImage('assets/images/audioElement/timer/timer.svg');
+	icons.audioElement.currentTime = loadImage('assets/images/audioElement/timer/current.svg');
 }
 
 function setup() {

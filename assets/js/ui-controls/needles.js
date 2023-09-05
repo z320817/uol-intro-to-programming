@@ -66,7 +66,7 @@ class Needles extends P5 {
 
 		this.#pad = width / height * 10;
 		this.#plotWidth = canvasWidth / plotsAcross - this.#pad;
-		this.#plotHeight = canvasHeight / plotsDown - this.#pad;
+		this.#plotHeight = canvasHeight / plotsDown;
 		this.#dialRadius = this.#plotWidth / 2 - this.#pad * 2;
 	};
 
@@ -100,8 +100,9 @@ class Needles extends P5 {
 		arc(0, 0, 20, 20, PI, 2 * PI);
 		textAlign(CENTER);
 		textSize(14);
-		text(freqLabel, 0, -(this.#plotHeight / 2));
-
+		noStroke();
+		text(freqLabel, 0, -(this.#plotHeight / 2.6));
+		stroke('#333333');
 		for (let i = 0; i < 9; i++) {
 			//for each tick work out the start and end coordinates of
 			//based on its angle from the needle's origin.
@@ -142,8 +143,8 @@ class Needles extends P5 {
 				for (let j = 0; j < plotsAcross; j++) {
 
 					//calculate the size of the plots
-					const x = (j * this.#plotWidth) + width / canvasWidth + canvasOffcetX + this.#pad * 2;
-					const y = (i * this.#plotHeight) + height / canvasHeight + canvasOffcetY + this.#pad * 2;
+					const x = (j * this.#plotWidth) + width / canvasWidth + canvasOffcetX + this.#pad*3;
+					const y = (i * this.#plotHeight) + height / canvasHeight + canvasOffcetY + this.#pad/2;
 					const w = this.#plotWidth - this.#pad;
 					const h = this.#plotHeight - this.#pad;
 

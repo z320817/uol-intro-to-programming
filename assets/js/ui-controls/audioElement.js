@@ -27,10 +27,8 @@ class AudioElement extends P5 {
         timerPosition: (width, height, heightOffset) => {
 
             return {
-                timerX: width / 18,
+                timerX: width / 20,
                 timerY: height - heightOffset - 25,
-                timerWidth: (width / 4) / 6,
-                timerHeight: heightOffset / 6
             }
         },
         playControlPosition: (width, height, heightOffset) => {
@@ -45,9 +43,9 @@ class AudioElement extends P5 {
         progressBarPosition: (width, height, heightOffset) => {
 
             return {
-                progressBarX: width / 14,
+                progressBarX: width / 22,
                 progressBarY: height - heightOffset + 20,
-                progressBarWidth: (width / 8),
+                progressBarWidth: (width / 6),
                 progressBarHeight: heightOffset / 6
             }
         },
@@ -228,24 +226,35 @@ class AudioElement extends P5 {
         const timeInSeconds = this.controls.duration().toFixed(2);
         const minutes = Math.floor(timeInSeconds/60);
         const seconds = timeInSeconds - (60 * minutes);
+        const currentTimeInSeconds = this.controls.time().toFixed(2);
+        const currentMinutes = Math.floor(currentTimeInSeconds/60);
+        const currentSeconds = currentTimeInSeconds - (60 * currentMinutes);
 
         if (this.controlsAreHidden) {
             return;
         } else {
-            const { heightOffset, timerPosition } = this.configuration;
+            const { heightOffset, timerPosition, progressBarPosition } = this.configuration;
 
             const {
-                timerHeight, timerWidth, timerX, timerY
-            } = timerPosition(width, height, heightOffset)
+               progressBarWidth
+            } = progressBarPosition(width, height, heightOffset);
+
+            const {
+                timerX, timerY
+            } = timerPosition(width, height, heightOffset);
 
             textSize(16); // Set the text size to 32 pixels
             fill(0); // Set the fill color to black
-            text(minutes, timerX + 65, timerY + 33);
-            text(":", timerX + 78, timerY + 33);
-            text(seconds, timerX + 85, timerY + 33);
+            text(minutes, timerX + 35, timerY + 33);
+            text(":", timerX + 45, timerY + 33);
+            text(seconds, timerX + 50, timerY + 33);
+            text(currentMinutes, timerX + progressBarWidth - 70, timerY + 33);
+            text(":", timerX + progressBarWidth - 60, timerY + 33);
+            text(currentSeconds, timerX + progressBarWidth - 55, timerY + 33);
 
             noStroke();
-            image(this.#icons.audioElement.timer, timerX + timerWidth / 2.4, timerY + timerHeight / 2.4, 32, 24);
+            image(this.#icons.audioElement.timer, timerX - 5, timerY + 15, 32, 24);
+            image(this.#icons.audioElement.currentTime, timerX + progressBarWidth - 105, timerY + 15, 32, 24);
         }
     }
 
@@ -262,10 +271,10 @@ class AudioElement extends P5 {
 
             if (!this.isPlaying) {
                 noStroke();
-                image(this.#icons.audioElement.playBtn.releasedBtn, playControlX + playControlWidth / 2.4, playControlY + playControlHeight / 2.4, 32, 24);
+                image(this.#icons.audioElement.playBtn.releasedBtn, playControlX, playControlY + playControlHeight / 2.4, 32, 24);
             } else {
                 noStroke();
-                image(this.#icons.audioElement.playBtn.pressedBtn, playControlX + playControlWidth / 2.4, playControlY + playControlHeight / 2.4, 32, 24);
+                image(this.#icons.audioElement.playBtn.pressedBtn, playControlX, playControlY + playControlHeight / 2.4, 32, 24);
             }
         }
     }
@@ -300,6 +309,7 @@ class AudioElement extends P5 {
                 x2 += progressBarSpacing;
                 let y2 = progressBarY + currentPeakValue;
                 stroke(255);
+                strokeWeight(3);
                 line(x1, y1, x2, y2);
 
                 if (currentPeakIndex <= progressBarLength) {

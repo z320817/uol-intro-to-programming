@@ -172,9 +172,7 @@ class AudioElement extends P5 {
                 return this.#p5audioElement.duration();
             };
             this.controls.setVolume = (level) => {
-                const volume = (level / 100).toFixed(2);
-
-                return this.#p5audioElement.volume(volume);
+                return this.#p5audioElement.volume(level);
             };
             this.controls.getVolume = () => {
                 return this.#p5audioElement.volume();
@@ -204,9 +202,7 @@ class AudioElement extends P5 {
                 return this.waveAudioElement.duration;
             };
             this.controls.setVolume = (level) => {
-                const volume = (level / 100).toFixed(2);
-
-                return this.waveAudioElement.volume(volume);
+                return this.waveAudioElement.volume(level);
             };
             this.controls.getVolume = () => {
                 return this.waveAudioElement.volume;
@@ -352,30 +348,55 @@ class AudioElement extends P5 {
             let initialYForSoundBar = volumeControlY + volumeControlHeight;
             let edgeXForSoundBarIcon = volumeControlX + volumeControlIconWidth;
             let soundBarLength = (volumeControlWidth - edgeXForSoundBarIcon).toFixed();
-
-            stroke(0);
+            
             for (let i = 0; i < maxLines; i++) {
                 let x = map(i, 0, maxLines, 0, volumeControlWidth);
                 let lineHeight = map(i, 0, maxLines, 0, volumeControlHeight);
-                strokeWeight(6);
-                line(initialXForSoundBar + x, initialYForSoundBar, initialXForSoundBar + x, initialYForSoundBar - lineHeight);
-                // console.log(Math.ceil(initialXForSoundBar))
-                // if (i < currentLines) {
-                //     line(x, volumeControlHeight, x, volumeControlHeight - lineHeight);
-                // } else {
-                //     line(x, volumeControlHeight, x, volumeControlHeight - 5);
-                // }
+
+                if (this.#volumeLevel !== 0) {
+                    // Fix this
+                    const currentVolumeLevel =  Math.ceil((maxLines/this.#volumeLevel));
+  
+                    console.log(currentVolumeLevel)
+                    if (i <= currentVolumeLevel) {
+                        stroke("#8F9779");
+                        strokeWeight(6);
+                        line(initialXForSoundBar + x, initialYForSoundBar, initialXForSoundBar + x, initialYForSoundBar - lineHeight);
+                        noStroke();
+                    } else {
+                        stroke(0);
+                        strokeWeight(6);
+                        line(initialXForSoundBar + x, initialYForSoundBar, initialXForSoundBar + x, initialYForSoundBar - lineHeight);
+                        noStroke();
+                    }
+                } else {
+                    stroke(0);
+                        strokeWeight(6);
+                        line(initialXForSoundBar + x, initialYForSoundBar, initialXForSoundBar + x, initialYForSoundBar - lineHeight);
+                        noStroke();
+                }
             }
-            noStroke();
+            
 
             if (this.volumeControlHitCheck()) {
-
                 const newLevel = mouseX.toFixed();
+                
 
                 if (newLevel > edgeXForSoundBarIcon || newLevel < soundBarLength) {
+                    const result = ((newLevel * 100 / maxLines) / 1000).toFixed(2);
+                    //console.log(result)
+                    
+                    if(result > 1) {
+                        this.#volumeLevel = Math.floor(result);
+                    } else if(result < 0.1) {
+                        this.#volumeLevel = Math.floor(result);
+                    } else {
+                        this.#volumeLevel = Number(result).toFixed(1);
+                    }
 
-                    console.log(newLevel);
-                    //this.controls.setVolume(this.#volumeLevel);
+                    //console.log(this.#volumeLevel)
+                    
+                    this.controls.setVolume(this.#volumeLevel);
                 }
             }
 

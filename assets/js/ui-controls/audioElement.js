@@ -14,12 +14,12 @@ class AudioElement extends P5 {
     waveAudioElement;
     currentAudioElement;
     isPlaying = false;
-    volumeLevel = 0;
 
     #p5audioElement;
     #p5audioControlsIsHidden = false;
     #waveControlsIsHidden = true;
     #controlsAreHidden = false;
+    #volumeLevel = 0;
     #sound;
     #icons;
     #renderingProcessor;
@@ -56,9 +56,9 @@ class AudioElement extends P5 {
 
             return {
                 volumeControlX: (width / 54) - 10,
-                volumeControlY: height - 30,
-                volumeControlIconWidth: 32,
-                volumeControlIconHeight: 24,
+                volumeControlY: height - heightOffset / 8,
+                volumeControlIconWidth: heightOffset / 8,
+                volumeControlIconHeight: heightOffset / 8,
                 volumeControlWidth: (width / 6),
                 volumeControlHeight: heightOffset / 6
             }
@@ -153,7 +153,7 @@ class AudioElement extends P5 {
             this.controls.play = () => {
                 this.#p5audioElement.play();
                 getAudioContext().resume();
-                this.volumeLevel = this.controls.getVolume();
+                this.#volumeLevel = this.controls.getVolume();
                 this.isPlaying = true;
             };
             this.controls.pause = () => {
@@ -174,7 +174,7 @@ class AudioElement extends P5 {
             this.controls.setVolume = (level) => {
                 const volume = (level / 100).toFixed(2);
 
-                return this.#p5audioElement.setVolume(volume);
+                return this.#p5audioElement.volume(volume);
             };
             this.controls.getVolume = () => {
                 return this.#p5audioElement.volume();
@@ -186,7 +186,7 @@ class AudioElement extends P5 {
         if (this.#p5audioControlsIsHidden) {
             this.controls.play = () => {
                 this.waveAudioElement.play();
-                this.volumeLevel = this.controls.getVolume();
+                this.#volumeLevel = this.controls.getVolume();
                 this.isPlaying = true;
             };
             this.controls.pause = () => {
@@ -270,7 +270,6 @@ class AudioElement extends P5 {
             mouseX < volumeControlX + volumeControlWidth &&
             mouseY > volumeControlY && mouseY < volumeControlY + volumeControlHeight) {
 
-            console.log("hit!")
             return true;
         }
 
@@ -339,7 +338,6 @@ class AudioElement extends P5 {
 
     //volume control button UI
     #volumeControlRendering = () => {
-
         if (this.controlsAreHidden) {
             return;
         } else {
@@ -350,15 +348,18 @@ class AudioElement extends P5 {
             } = volumeControlPosition(width, height, heightOffset)
 
             let maxLines = Math.abs((((volumeControlWidth - volumeControlIconWidth) / 2) - 100).toFixed());
-            let initialXForSoundBar = volumeControlX + volumeControlIconWidth + 10;
+            let initialXForSoundBar = volumeControlX;
             let initialYForSoundBar = volumeControlY + volumeControlHeight;
+            let edgeXForSoundBarIcon = volumeControlX + volumeControlIconWidth;
+            let soundBarLength = (volumeControlWidth - edgeXForSoundBarIcon).toFixed();
 
             stroke(0);
             for (let i = 0; i < maxLines; i++) {
                 let x = map(i, 0, maxLines, 0, volumeControlWidth);
                 let lineHeight = map(i, 0, maxLines, 0, volumeControlHeight);
+                strokeWeight(6);
                 line(initialXForSoundBar + x, initialYForSoundBar, initialXForSoundBar + x, initialYForSoundBar - lineHeight);
-
+                // console.log(Math.ceil(initialXForSoundBar))
                 // if (i < currentLines) {
                 //     line(x, volumeControlHeight, x, volumeControlHeight - lineHeight);
                 // } else {
@@ -367,7 +368,18 @@ class AudioElement extends P5 {
             }
             noStroke();
 
-            if (this.volumeLevel !== 0) {
+            if (this.volumeControlHitCheck()) {
+
+                const newLevel = mouseX.toFixed();
+
+                if (newLevel > edgeXForSoundBarIcon || newLevel < soundBarLength) {
+
+                    console.log(newLevel);
+                    //this.controls.setVolume(this.#volumeLevel);
+                }
+            }
+
+            if (this.#volumeLevel !== 0) {
                 noStroke();
                 image(this.#icons.audioElement.volume.volumeOn, volumeControlX, volumeControlY, volumeControlIconWidth, volumeControlIconHeight);
             } else {

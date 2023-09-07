@@ -39,7 +39,7 @@ class Spectrum extends P5 {
 	}
 
 	static onResize() {
-		this.configuration.heightOffset = height / 4;
+		this.configuration.heightOffset = (height / 4.3);
 	};
 
 	#setupRenderingProcessor() {

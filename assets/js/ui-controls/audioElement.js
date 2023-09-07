@@ -495,7 +495,7 @@ class AudioElement extends P5 {
                 line(progressStart + progressPos, progressBarY, progressStart + progressPos, progressBarY + progressBarHeight);
                 noStroke();
             } else {
-                stroke("#000000");
+                stroke("#FFCCCC");
                 strokeWeight(3);
                 line(currentProgress, progressBarY, currentProgress, progressBarY + progressBarHeight);
                 noStroke();

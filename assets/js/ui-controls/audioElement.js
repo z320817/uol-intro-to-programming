@@ -20,8 +20,8 @@ class AudioElement extends P5 {
     #p5audioControlsIsHidden = false;
     #waveControlsIsHidden = true;
     #controlsAreHidden = false;
-    #volumeLevel = 0;
-    #currentVolumeLine = 0;
+    #volumeLevel = 1;
+    #currentVolumeLine = 1;
     #sound;
     #icons;
     #renderingProcessor;
@@ -150,8 +150,11 @@ class AudioElement extends P5 {
         return this.currentAudioElement;
     }
 
-    setVolumeLevel() {
-        return this.#setVolumeLevel();
+    /**
+     * @param { Number } level
+     */
+    setVolumeLevel(level) {
+        return this.#setVolumeLevel(level);
     }
 
     #setCurrentAudioControls() {
@@ -178,9 +181,7 @@ class AudioElement extends P5 {
                 return this.#p5audioElement.duration();
             };
             this.controls.setVolume = (level) => {
-                const volume = (level / 100).toFixed(2);
-
-                return this.#p5audioElement.volume(volume);
+                return this.#p5audioElement.volume(level);
             };
             this.controls.getVolume = () => {
                 return this.#p5audioElement.volume();
@@ -210,9 +211,7 @@ class AudioElement extends P5 {
                 return this.waveAudioElement.duration;
             };
             this.controls.setVolume = (level) => {
-                const volume = (level / 100).toFixed(2);
-
-                return this.waveAudioElement.volume(volume);
+                return this.waveAudioElement.volume(level);
             };
             this.controls.getVolume = () => {
                 return this.waveAudioElement.volume;
@@ -282,7 +281,7 @@ class AudioElement extends P5 {
         return false;
     };
 
-    #getCurrentVolumeLine() {
+    #setVolumeFromVolumeControl() {
         const { heightOffset, volumeControlPosition } = this.configuration;
 
         const {
@@ -294,24 +293,38 @@ class AudioElement extends P5 {
         const currentX = Math.floor(mouseX.toFixed() - (volumeControlX + volumeControlIconWidth + (heightOffset / 6)));
         const length = Math.ceil((volumeControlX + volumeControlWidth - (heightOffset / 48)) - (volumeControlX + volumeControlIconWidth + (heightOffset / 6)));
         const linesInUnitofLenght = (maxLines / length).toFixed(3);
-
         this.#currentVolumeLine = Math.ceil(linesInUnitofLenght * currentX);
-    }
-
-    #setVolumeLevel() {
-        if (this.volumeChanged) {
-            this.#getCurrentVolumeLine();
-        }
-
-        if (this.#currentVolumeLine > 1) {
-            this.#volumeLevel = Math.floor(this.#currentVolumeLine);
-        } else if (this.#currentVolumeLine < 0.1) {
-            this.#volumeLevel = Math.floor(this.#currentVolumeLine);
-        } else {
-            this.#volumeLevel = Number(this.#currentVolumeLine).toFixed(1);
-        }
+        this.#volumeLevel = (linesInUnitofLenght * currentX / maxLines).toFixed(1);
 
         this.controls.setVolume(this.#volumeLevel);
+    }
+
+    #setVolumeFromAudioElement() {
+        const { heightOffset, volumeControlPosition } = this.configuration;
+
+        const {
+            volumeControlWidth, volumeControlIconWidth
+        } = volumeControlPosition(width, height, heightOffset)
+
+        let maxLines = (((volumeControlWidth - volumeControlIconWidth) / 2) - 100).toFixed();
+        this.#volumeLevel = this.controls.getVolume();
+        this.#currentVolumeLine = (maxLines * this.#volumeLevel).toFixed();
+
+        this.controls.setVolume(this.#volumeLevel);
+    }
+
+    /**
+     * @param { boolean } isFromAudioElement
+     */
+    #setVolumeLevel(isFromAudioElement) {
+
+        if (this.volumeChanged) {
+            this.#setVolumeFromVolumeControl();
+        }
+
+        if (isFromAudioElement) {
+            this.#setVolumeFromAudioElement();
+        }
     }
 
     //timer counter UI

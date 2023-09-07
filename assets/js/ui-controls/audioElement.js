@@ -14,12 +14,14 @@ class AudioElement extends P5 {
     waveAudioElement;
     currentAudioElement;
     isPlaying = false;
+    volumeChanged = false;
 
     #p5audioElement;
     #p5audioControlsIsHidden = false;
     #waveControlsIsHidden = true;
     #controlsAreHidden = false;
     #volumeLevel = 0;
+    #currentVolumeLine = 0;
     #sound;
     #icons;
     #renderingProcessor;
@@ -259,11 +261,11 @@ class AudioElement extends P5 {
         const { heightOffset, volumeControlPosition } = this.configuration;
 
         const {
-            volumeControlHeight, volumeControlWidth, volumeControlX, volumeControlY
+            volumeControlHeight, volumeControlWidth, volumeControlX, volumeControlY, volumeControlIconWidth
         } = volumeControlPosition(width, height, heightOffset)
 
-        if (mouseX > volumeControlX &&
-            mouseX < volumeControlX + volumeControlWidth &&
+        if (mouseX > volumeControlX + volumeControlIconWidth + (heightOffset / 6) &&
+            mouseX < volumeControlX + volumeControlWidth - (heightOffset / 48) &&
             mouseY > volumeControlY && mouseY < volumeControlY + volumeControlHeight) {
 
             return true;
@@ -271,6 +273,22 @@ class AudioElement extends P5 {
 
         return false;
     };
+
+    #getCurrentVolumeLine() {
+        const { heightOffset, volumeControlPosition } = this.configuration;
+
+        const {
+            volumeControlWidth, volumeControlX, volumeControlIconWidth
+        } = volumeControlPosition(width, height, heightOffset)
+
+        let maxLines = (((volumeControlWidth - volumeControlIconWidth) / 2) - 100).toFixed();
+
+        const currentX = Math.floor(mouseX.toFixed() - (volumeControlX + volumeControlIconWidth + (heightOffset / 6)));
+        const length = Math.ceil((volumeControlX + volumeControlWidth - (heightOffset / 48)) - (volumeControlX + volumeControlIconWidth + (heightOffset / 6)));
+        const linesInUnitofLenght = (maxLines / length).toFixed(3);
+
+        this.#currentVolumeLine = Math.ceil(linesInUnitofLenght * currentX);
+    }
 
     //timer counter UI
     #timerRendering = () => {
@@ -343,60 +361,43 @@ class AudioElement extends P5 {
                 volumeControlHeight, volumeControlWidth, volumeControlX, volumeControlY, volumeControlIconHeight, volumeControlIconWidth
             } = volumeControlPosition(width, height, heightOffset)
 
-            let maxLines = Math.abs((((volumeControlWidth - volumeControlIconWidth) / 2) - 100).toFixed());
+            let maxLines = (((volumeControlWidth - volumeControlIconWidth) / 2) - 100).toFixed();
             let initialXForSoundBar = volumeControlX;
             let initialYForSoundBar = volumeControlY + volumeControlHeight;
-            let edgeXForSoundBarIcon = volumeControlX + volumeControlIconWidth;
-            let soundBarLength = (volumeControlWidth - edgeXForSoundBarIcon).toFixed();
-            
+
+            if (this.volumeChanged) {
+                this.#getCurrentVolumeLine();
+            }
+
+            if (this.#currentVolumeLine > 1) {
+                this.#volumeLevel = Math.floor(this.#currentVolumeLine);
+            } else if (this.#currentVolumeLine < 0.1) {
+                this.#volumeLevel = Math.floor(this.#currentVolumeLine);
+            } else {
+                this.#volumeLevel = Number(this.#currentVolumeLine).toFixed(1);
+            }
+
             for (let i = 0; i < maxLines; i++) {
                 let x = map(i, 0, maxLines, 0, volumeControlWidth);
                 let lineHeight = map(i, 0, maxLines, 0, volumeControlHeight);
 
                 if (this.#volumeLevel !== 0) {
-                    // Fix this
-                    const currentVolumeLevel =  Math.ceil((maxLines/this.#volumeLevel));
-  
-                    console.log(currentVolumeLevel)
-                    if (i <= currentVolumeLevel) {
+                    if (i <= this.#currentVolumeLine) {
                         stroke("#8F9779");
-                        strokeWeight(6);
+
                         line(initialXForSoundBar + x, initialYForSoundBar, initialXForSoundBar + x, initialYForSoundBar - lineHeight);
                         noStroke();
                     } else {
                         stroke(0);
-                        strokeWeight(6);
+
                         line(initialXForSoundBar + x, initialYForSoundBar, initialXForSoundBar + x, initialYForSoundBar - lineHeight);
                         noStroke();
                     }
                 } else {
                     stroke(0);
-                        strokeWeight(6);
-                        line(initialXForSoundBar + x, initialYForSoundBar, initialXForSoundBar + x, initialYForSoundBar - lineHeight);
-                        noStroke();
-                }
-            }
-            
 
-            if (this.volumeControlHitCheck()) {
-                const newLevel = mouseX.toFixed();
-                
-
-                if (newLevel > edgeXForSoundBarIcon || newLevel < soundBarLength) {
-                    const result = ((newLevel * 100 / maxLines) / 1000).toFixed(2);
-                    //console.log(result)
-                    
-                    if(result > 1) {
-                        this.#volumeLevel = Math.floor(result);
-                    } else if(result < 0.1) {
-                        this.#volumeLevel = Math.floor(result);
-                    } else {
-                        this.#volumeLevel = Number(result).toFixed(1);
-                    }
-
-                    //console.log(this.#volumeLevel)
-                    
-                    this.controls.setVolume(this.#volumeLevel);
+                    line(initialXForSoundBar + x, initialYForSoundBar, initialXForSoundBar + x, initialYForSoundBar - lineHeight);
+                    noStroke();
                 }
             }
 

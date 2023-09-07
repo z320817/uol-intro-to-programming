@@ -9,6 +9,7 @@ class InputOutputController extends P5 {
 	#needlseUiOutput;
 	#audioElement;
 	#mousePressedEventObserver;
+	#mouseReleasedEventObserver;
 	#keyPressedEventObserver;
 	#sound;
 	#icons;
@@ -16,6 +17,10 @@ class InputOutputController extends P5 {
 
 	get mousePressed() {
 		return this.#mousePressedEventObserver;
+	}
+
+	get mouseReleased() {
+		return this.#mouseReleasedEventObserver;
 	}
 
 	get keyPressed() {
@@ -104,7 +109,18 @@ class InputOutputController extends P5 {
 					this.#audioElement.controls.pause();
 				}
 			}
+
+			if (this.#audioElement.volumeControlHitCheck()) {
+				this.#audioElement.volumeChanged = true;
+			}
 		};
+
+		// this response to mouse release events
+		this.#mouseReleasedEventObserver = () => {
+			if (this.#audioElement.volumeControlHitCheck()) {
+				this.#audioElement.volumeChanged = false;
+			}
+		}
 
 		//responds to keyboard presses
 		//@param keycode the ascii code of the keypressed

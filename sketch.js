@@ -59,8 +59,13 @@ function draw() {
 	inputOutputController.draw();
 }
 
-function mouseClicked() {
+function mousePressed() {
 	inputOutputController.mousePressed();
+
+}
+
+function mouseReleased() {
+	inputOutputController.mouseReleased();
 }
 
 function keyPressed() {

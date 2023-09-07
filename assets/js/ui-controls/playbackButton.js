@@ -47,7 +47,6 @@ class PlaybackButton extends P5 {
 			if (this.#audioElement.isPlaying) {
 				this.#audioElement.controls.pause();
 			} else {
-				console.log(this.#audioElement.controls)
 				this.#audioElement.controls.play();
 			}
 

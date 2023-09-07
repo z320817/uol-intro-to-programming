@@ -271,8 +271,11 @@ class AudioElement extends P5 {
             volumeControlHeight, volumeControlWidth, volumeControlX, volumeControlY, volumeControlIconWidth
         } = volumeControlPosition(width, height, heightOffset)
 
-        if (mouseX > volumeControlX + volumeControlIconWidth + (heightOffset / 6) &&
-            mouseX < volumeControlX + volumeControlWidth - (heightOffset / 48) &&
+        const leftEdge = volumeControlX + volumeControlIconWidth + (heightOffset / 6);
+        const rightEdge = volumeControlX + volumeControlWidth - (heightOffset / 48);
+
+        if (mouseX > leftEdge &&
+            mouseX < rightEdge &&
             mouseY > volumeControlY && mouseY < volumeControlY + volumeControlHeight) {
 
             return true;
@@ -288,10 +291,13 @@ class AudioElement extends P5 {
             volumeControlWidth, volumeControlX, volumeControlIconWidth
         } = volumeControlPosition(width, height, heightOffset)
 
+        const leftEdge = volumeControlX + volumeControlIconWidth + (heightOffset / 6);
+        const rightEdge = volumeControlX + volumeControlWidth - (heightOffset / 48);
+
         let maxLines = (((volumeControlWidth - volumeControlIconWidth) / 2) - 100).toFixed();
 
-        const currentX = Math.floor(mouseX.toFixed() - (volumeControlX + volumeControlIconWidth + (heightOffset / 6)));
-        const length = Math.ceil((volumeControlX + volumeControlWidth - (heightOffset / 48)) - (volumeControlX + volumeControlIconWidth + (heightOffset / 6)));
+        const currentX = Math.floor(mouseX.toFixed() - (leftEdge));
+        const length = Math.ceil(rightEdge - leftEdge);
         const linesInUnitofLenght = (maxLines / length).toFixed(3);
         this.#currentVolumeLine = Math.ceil(linesInUnitofLenght * currentX);
         this.#volumeLevel = (linesInUnitofLenght * currentX / maxLines).toFixed(1);

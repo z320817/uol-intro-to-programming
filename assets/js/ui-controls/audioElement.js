@@ -89,8 +89,12 @@ class AudioElement extends P5 {
     }
 
 
-    get volumeControlHitCheck() {
-        return AudioElement.volumeControlHitCheck;
+    get volumeControlBarHitCheck() {
+        return AudioElement.volumeControlBarHitCheck;
+    }
+
+    get volumeControlIconHitCheck() {
+        return AudioElement.volumeControlIconHitCheck;
     }
 
     get draw() {
@@ -263,8 +267,8 @@ class AudioElement extends P5 {
         return false;
     };
 
-    //checks for clicks on volumebar and gets desired value.
-    static volumeControlHitCheck() {
+    //checks for clicks on volume icon.
+    static volumeControlBarHitCheck() {
         const { heightOffset, volumeControlPosition } = this.configuration;
 
         const {
@@ -284,6 +288,27 @@ class AudioElement extends P5 {
         return false;
     };
 
+    //checks for clicks on volumebar.
+    static volumeControlIconHitCheck() {
+        const { heightOffset, volumeControlPosition } = this.configuration;
+
+        const {
+            volumeControlX, volumeControlY, volumeControlIconWidth, volumeControlIconHeight
+        } = volumeControlPosition(width, height, heightOffset)
+
+        const leftEdge = volumeControlX;
+        const rightEdge = volumeControlX + volumeControlIconWidth;
+
+        if (mouseX > leftEdge &&
+            mouseX < rightEdge &&
+            mouseY > volumeControlY && mouseY < volumeControlY + volumeControlIconHeight) {
+
+            return true;
+        }
+
+        return false;
+    };
+
     #setVolumeFromVolumeControl() {
         const { heightOffset, volumeControlPosition } = this.configuration;
 
@@ -291,7 +316,7 @@ class AudioElement extends P5 {
             volumeControlWidth, volumeControlX, volumeControlIconWidth
         } = volumeControlPosition(width, height, heightOffset)
 
-        const leftEdge = volumeControlX + volumeControlIconWidth + (heightOffset / 6);
+        const leftEdge = volumeControlX + volumeControlIconWidth;
         const rightEdge = volumeControlX + volumeControlWidth - (heightOffset / 48);
 
         let maxLines = (((volumeControlWidth - volumeControlIconWidth) / 2) - 100).toFixed();
@@ -300,7 +325,7 @@ class AudioElement extends P5 {
         const length = Math.ceil(rightEdge - leftEdge);
         const linesInUnitofLenght = (maxLines / length).toFixed(3);
         this.#currentVolumeLine = Math.ceil(linesInUnitofLenght * currentX);
-        this.#volumeLevel = (linesInUnitofLenght * currentX / maxLines).toFixed(1);
+        this.#volumeLevel = Math.abs((linesInUnitofLenght * currentX / maxLines).toFixed(1));
 
         this.controls.setVolume(this.#volumeLevel);
     }
@@ -415,18 +440,15 @@ class AudioElement extends P5 {
                 if (this.#volumeLevel !== 0) {
                     if (i <= this.#currentVolumeLine) {
                         stroke("#8F9779");
-
                         line(initialXForSoundBar + x, initialYForSoundBar, initialXForSoundBar + x, initialYForSoundBar - lineHeight);
                         noStroke();
                     } else {
                         stroke(0);
-
                         line(initialXForSoundBar + x, initialYForSoundBar, initialXForSoundBar + x, initialYForSoundBar - lineHeight);
                         noStroke();
                     }
                 } else {
                     stroke(0);
-
                     line(initialXForSoundBar + x, initialYForSoundBar, initialXForSoundBar + x, initialYForSoundBar - lineHeight);
                     noStroke();
                 }

@@ -112,15 +112,27 @@ class InputOutputController extends P5 {
 				}
 			}
 
-			if (this.#audioElement.volumeControlHitCheck()) {
+			if (this.#audioElement.volumeControlBarHitCheck()) {
 				this.#audioElement.volumeChanged = true;
 				this.#audioElement.setVolumeLevel();
+			}
+
+			if (this.#audioElement.volumeControlIconHitCheck()) {
+				const isMuted = !Boolean(this.#audioElement.controls.getVolume());
+
+				if (isMuted) {
+					this.#audioElement.controls.setVolume(1);
+					this.#audioElement.setVolumeLevel(true);
+				} else {
+					this.#audioElement.controls.setVolume(0);
+					this.#audioElement.setVolumeLevel(true);
+				}
 			}
 		};
 
 		// this response to mouse release events
 		this.#mouseReleasedEventObserver = () => {
-			if (this.#audioElement.volumeControlHitCheck()) {
+			if (this.#audioElement.volumeControlBarHitCheck()) {
 				this.#audioElement.volumeChanged = false;
 			}
 		}

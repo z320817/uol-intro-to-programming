@@ -150,6 +150,10 @@ class AudioElement extends P5 {
         return this.currentAudioElement;
     }
 
+    setVolumeLevel() {
+        return this.#setVolumeLevel();
+    }
+
     #setCurrentAudioControls() {
         if (this.#waveControlsIsHidden) {
             this.controls.play = () => {
@@ -174,7 +178,9 @@ class AudioElement extends P5 {
                 return this.#p5audioElement.duration();
             };
             this.controls.setVolume = (level) => {
-                return this.#p5audioElement.volume(level);
+                const volume = (level / 100).toFixed(2);
+
+                return this.#p5audioElement.volume(volume);
             };
             this.controls.getVolume = () => {
                 return this.#p5audioElement.volume();
@@ -204,7 +210,9 @@ class AudioElement extends P5 {
                 return this.waveAudioElement.duration;
             };
             this.controls.setVolume = (level) => {
-                return this.waveAudioElement.volume(level);
+                const volume = (level / 100).toFixed(2);
+
+                return this.waveAudioElement.volume(volume);
             };
             this.controls.getVolume = () => {
                 return this.waveAudioElement.volume;
@@ -290,6 +298,22 @@ class AudioElement extends P5 {
         this.#currentVolumeLine = Math.ceil(linesInUnitofLenght * currentX);
     }
 
+    #setVolumeLevel() {
+        if (this.volumeChanged) {
+            this.#getCurrentVolumeLine();
+        }
+
+        if (this.#currentVolumeLine > 1) {
+            this.#volumeLevel = Math.floor(this.#currentVolumeLine);
+        } else if (this.#currentVolumeLine < 0.1) {
+            this.#volumeLevel = Math.floor(this.#currentVolumeLine);
+        } else {
+            this.#volumeLevel = Number(this.#currentVolumeLine).toFixed(1);
+        }
+
+        this.controls.setVolume(this.#volumeLevel);
+    }
+
     //timer counter UI
     #timerRendering = () => {
         const timeInSeconds = this.controls.duration().toFixed(2);
@@ -364,18 +388,6 @@ class AudioElement extends P5 {
             let maxLines = (((volumeControlWidth - volumeControlIconWidth) / 2) - 100).toFixed();
             let initialXForSoundBar = volumeControlX;
             let initialYForSoundBar = volumeControlY + volumeControlHeight;
-
-            if (this.volumeChanged) {
-                this.#getCurrentVolumeLine();
-            }
-
-            if (this.#currentVolumeLine > 1) {
-                this.#volumeLevel = Math.floor(this.#currentVolumeLine);
-            } else if (this.#currentVolumeLine < 0.1) {
-                this.#volumeLevel = Math.floor(this.#currentVolumeLine);
-            } else {
-                this.#volumeLevel = Number(this.#currentVolumeLine).toFixed(1);
-            }
 
             for (let i = 0; i < maxLines; i++) {
                 let x = map(i, 0, maxLines, 0, volumeControlWidth);

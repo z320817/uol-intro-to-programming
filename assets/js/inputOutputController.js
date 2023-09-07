@@ -112,6 +112,7 @@ class InputOutputController extends P5 {
 
 			if (this.#audioElement.volumeControlHitCheck()) {
 				this.#audioElement.volumeChanged = true;
+				this.#audioElement.setVolumeLevel();
 			}
 		};
 

@@ -128,6 +128,10 @@ class InputOutputController extends P5 {
 					this.#audioElement.setVolumeLevel(true);
 				}
 			}
+
+			if (this.#audioElement.adderControlHitCheck()) {
+				console.log("hit")
+			}
 		};
 
 		// this response to mouse release events

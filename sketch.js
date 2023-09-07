@@ -24,6 +24,7 @@ let icons = {
 		},
 		timer: null,
 		currentTime: null,
+		adder: null,
 		volume: {
 			volumeOff: null,
 			volumeOn: null,
@@ -43,6 +44,7 @@ function preload() {
 	icons.audioElement.currentTime = loadImage('assets/images/audioElement/timer/current.svg');
 	icons.audioElement.volume.volumeOn = loadImage('assets/images/audioElement/volume/volumeOn.svg');
 	icons.audioElement.volume.volumeOff = loadImage('assets/images/audioElement/volume/volumeOff.svg');
+	icons.audioElement.adder = loadImage('assets/images/audioElement/adder/add.svg');
 }
 
 function setup() {

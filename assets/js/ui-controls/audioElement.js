@@ -33,7 +33,9 @@ class AudioElement extends P5 {
 
             return {
                 timerX: width / 20,
-                timerY: height - heightOffset - 25,
+                timerY: (height - heightOffset) - 35,
+                timerHeight: 32,
+                timerWidth: 32,
             }
         },
         playControlPosition: (width, height, heightOffset) => {
@@ -42,7 +44,16 @@ class AudioElement extends P5 {
                 playControlX: (width / 54) - 10,
                 playControlY: height - heightOffset / 1.14,
                 playControlWidth: 32,
-                playControlHeight: 24
+                playControlHeight: 32
+            }
+        },
+        adderControlPosition: (width, height, heightOffset) => {
+
+            return {
+                adderX: (width / 9),
+                adderY: height - heightOffset + 90,
+                adderWidth: 32,
+                adderHeight: 32
             }
         },
         progressBarPosition: (width, height, heightOffset) => {
@@ -95,6 +106,10 @@ class AudioElement extends P5 {
 
     get volumeControlIconHitCheck() {
         return AudioElement.volumeControlIconHitCheck;
+    }
+
+    get adderControlHitCheck() {
+        return AudioElement.adderControlHitCheck;
     }
 
     get draw() {
@@ -267,6 +282,25 @@ class AudioElement extends P5 {
         return false;
     };
 
+    //checks for clicks on the songs adder button
+    //@returns true if clicked false otherwise.
+    static adderControlHitCheck() {
+        const { heightOffset, adderControlPosition } = this.configuration;
+
+        const {
+            adderX, adderY, adderHeight, adderWidth
+        } = adderControlPosition(width, height, heightOffset)
+
+        if (mouseX > adderX &&
+            mouseX < adderX + adderWidth &&
+            mouseY > adderY && mouseY < adderY + adderHeight) {
+
+            return true;
+        }
+
+        return false;
+    };
+
     //checks for clicks on volume icon.
     static volumeControlBarHitCheck() {
         const { heightOffset, volumeControlPosition } = this.configuration;
@@ -358,6 +392,17 @@ class AudioElement extends P5 {
         }
     }
 
+    #adderRendering = () => {
+        const { heightOffset, adderControlPosition } = this.configuration;
+
+        const {
+            adderX, adderY, adderHeight, adderWidth
+        } = adderControlPosition(width, height, heightOffset);
+
+        noStroke();
+        image(this.#icons.audioElement.adder, adderX, adderY, adderHeight, adderWidth);
+    }
+
     //timer counter UI
     #timerRendering = () => {
         const timeInSeconds = this.controls.duration().toFixed(2);
@@ -367,100 +412,90 @@ class AudioElement extends P5 {
         const currentMinutes = Math.floor(currentTimeInSeconds / 60);
         const currentSeconds = (currentTimeInSeconds - (60 * currentMinutes)).toFixed();
 
-        if (this.controlsAreHidden) {
-            return;
-        } else {
-            const { heightOffset, timerPosition, progressBarPosition } = this.configuration;
 
-            const {
-                progressBarWidth
-            } = progressBarPosition(width, height, heightOffset);
 
-            const {
-                timerX, timerY
-            } = timerPosition(width, height, heightOffset);
+        const { heightOffset, timerPosition, progressBarPosition } = this.configuration;
 
-            textSize(16);
-            fill(0);
-            // total time
-            text(minutes, timerX + 35, timerY + 33);
-            text(":", timerX + 45, timerY + 33);
-            text(seconds, timerX + 50, timerY + 33);
-            // current time
-            text(currentMinutes, timerX + progressBarWidth - 45, timerY + 33);
-            text(":", timerX + progressBarWidth - 35, timerY + 33);
-            text(currentSeconds, timerX + progressBarWidth - 30, timerY + 33);
+        const {
+            progressBarWidth
+        } = progressBarPosition(width, height, heightOffset);
 
-            noStroke();
-            image(this.#icons.audioElement.timer, timerX - 5, timerY + 15, 32, 24);
-            image(this.#icons.audioElement.currentTime, timerX + progressBarWidth - 80, timerY + 15, 32, 24);
-        }
+        const {
+            timerX, timerY, timerWidth, timerHeight
+        } = timerPosition(width, height, heightOffset);
+
+        textSize(16);
+        fill(0);
+        // total time
+        text(minutes, timerX + 35, timerY + timerHeight + 5);
+        text(":", timerX + 45, timerY + timerHeight + 5);
+        text(seconds, timerX + 50, timerY + timerHeight + 5);
+        // current time
+        text(currentMinutes, timerX + progressBarWidth - 45, timerY + timerHeight + 5);
+        text(":", timerX + progressBarWidth - 35, timerY + timerHeight + 5);
+        text(currentSeconds, timerX + progressBarWidth - 30, timerY + timerHeight + 5);
+
+        noStroke();
+        image(this.#icons.audioElement.timer, timerX, timerY + 15, timerWidth, timerHeight);
+        image(this.#icons.audioElement.currentTime, timerX + progressBarWidth - 80, timerY + 15, timerWidth, timerHeight);
     }
 
     //play control button UI
     #playControlRendering = () => {
-        if (this.controlsAreHidden) {
-            return;
+        const { heightOffset, playControlPosition } = this.configuration;
+
+        const {
+            playControlWidth, playControlHeight, playControlX, playControlY
+        } = playControlPosition(width, height, heightOffset)
+
+        if (!this.isPlaying) {
+            noStroke();
+            image(this.#icons.audioElement.playBtn.releasedBtn, playControlX, playControlY, playControlWidth, playControlHeight);
         } else {
-            const { heightOffset, playControlPosition } = this.configuration;
-
-            const {
-                playControlWidth, playControlHeight, playControlX, playControlY
-            } = playControlPosition(width, height, heightOffset)
-
-            if (!this.isPlaying) {
-                noStroke();
-                image(this.#icons.audioElement.playBtn.releasedBtn, playControlX, playControlY, playControlWidth, playControlHeight);
-            } else {
-                noStroke();
-                image(this.#icons.audioElement.playBtn.pressedBtn, playControlX, playControlY, playControlWidth, playControlHeight);
-            }
+            noStroke();
+            image(this.#icons.audioElement.playBtn.pressedBtn, playControlX, playControlY, playControlWidth, playControlHeight);
         }
     }
 
     //volume control button UI
     #volumeControlRendering = () => {
-        if (this.controlsAreHidden) {
-            return;
-        } else {
-            const { heightOffset, volumeControlPosition } = this.configuration;
+        const { heightOffset, volumeControlPosition } = this.configuration;
 
-            const {
-                volumeControlHeight, volumeControlWidth, volumeControlX, volumeControlY, volumeControlIconHeight, volumeControlIconWidth
-            } = volumeControlPosition(width, height, heightOffset)
+        const {
+            volumeControlHeight, volumeControlWidth, volumeControlX, volumeControlY, volumeControlIconHeight, volumeControlIconWidth
+        } = volumeControlPosition(width, height, heightOffset)
 
-            let maxLines = (((volumeControlWidth - volumeControlIconWidth) / 2) - 100).toFixed();
-            let initialXForSoundBar = volumeControlX;
-            let initialYForSoundBar = volumeControlY + volumeControlHeight;
+        let maxLines = (((volumeControlWidth - volumeControlIconWidth) / 2) - 100).toFixed();
+        let initialXForSoundBar = volumeControlX;
+        let initialYForSoundBar = volumeControlY + volumeControlHeight;
 
-            for (let i = 0; i < maxLines; i++) {
-                let x = map(i, 0, maxLines, 0, volumeControlWidth);
-                let lineHeight = map(i, 0, maxLines, 0, volumeControlHeight);
+        for (let i = 0; i < maxLines; i++) {
+            let x = map(i, 0, maxLines, 0, volumeControlWidth);
+            let lineHeight = map(i, 0, maxLines, 0, volumeControlHeight);
 
-                if (this.#volumeLevel !== 0) {
-                    if (i <= this.#currentVolumeLine) {
-                        stroke("#8F9779");
-                        line(initialXForSoundBar + x, initialYForSoundBar, initialXForSoundBar + x, initialYForSoundBar - lineHeight);
-                        noStroke();
-                    } else {
-                        stroke(0);
-                        line(initialXForSoundBar + x, initialYForSoundBar, initialXForSoundBar + x, initialYForSoundBar - lineHeight);
-                        noStroke();
-                    }
+            if (this.#volumeLevel !== 0) {
+                if (i <= this.#currentVolumeLine) {
+                    stroke("#8F9779");
+                    line(initialXForSoundBar + x, initialYForSoundBar, initialXForSoundBar + x, initialYForSoundBar - lineHeight);
+                    noStroke();
                 } else {
                     stroke(0);
                     line(initialXForSoundBar + x, initialYForSoundBar, initialXForSoundBar + x, initialYForSoundBar - lineHeight);
                     noStroke();
                 }
-            }
-
-            if (this.#volumeLevel !== 0) {
-                noStroke();
-                image(this.#icons.audioElement.volume.volumeOn, volumeControlX, volumeControlY, volumeControlIconWidth, volumeControlIconHeight);
             } else {
+                stroke(0);
+                line(initialXForSoundBar + x, initialYForSoundBar, initialXForSoundBar + x, initialYForSoundBar - lineHeight);
                 noStroke();
-                image(this.#icons.audioElement.volume.volumeOff, volumeControlX, volumeControlY, volumeControlIconWidth, volumeControlIconHeight);
             }
+        }
+
+        if (this.#volumeLevel !== 0) {
+            noStroke();
+            image(this.#icons.audioElement.volume.volumeOn, volumeControlX, volumeControlY, volumeControlIconWidth, volumeControlIconHeight);
+        } else {
+            noStroke();
+            image(this.#icons.audioElement.volume.volumeOff, volumeControlX, volumeControlY, volumeControlIconWidth, volumeControlIconHeight);
         }
     }
 
@@ -485,52 +520,55 @@ class AudioElement extends P5 {
         const progressBarLength = Math.ceil(progressBarWidth);
         let currentPeakIndex = 0;
 
-        if (this.controlsAreHidden) {
-            return;
-        } else {
-            fill(0);
-            rect(progressBarX, progressBarY, progressBarWidth, progressBarHeight);
 
-            for (let i = 0; i < progressBarLength; i += progressBarSpacing) {
+        fill(0);
+        rect(progressBarX, progressBarY, progressBarWidth, progressBarHeight);
 
-                let currentPeakValue = Math.abs(this.peaks[currentPeakIndex]) * 500;
-                x1 += progressBarSpacing;
-                let y1 = progressBarY + progressBarHeight;
-                x2 += progressBarSpacing;
-                let y2 = progressBarY + currentPeakValue;
-                stroke(255);
-                strokeWeight(3);
-                line(x1, y1, x2, y2);
-                noStroke();
+        for (let i = 0; i < progressBarLength; i += progressBarSpacing) {
 
-                if (currentPeakIndex <= progressBarLength) {
-                    currentPeakIndex += peakStep;
-                } else {
-                    currentPeakIndex = 0;
-                }
-            }
+            let currentPeakValue = Math.abs(this.peaks[currentPeakIndex]) * 500;
+            x1 += progressBarSpacing;
+            let y1 = progressBarY + progressBarHeight;
+            x2 += progressBarSpacing;
+            let y2 = progressBarY + currentPeakValue;
+            stroke(255);
+            strokeWeight(3);
+            line(x1, y1, x2, y2);
+            noStroke();
 
-
-            if (this.isPlaying) {
-                stroke("#FF0000");
-                strokeWeight(3);
-                line(progressStart + progressPos, progressBarY, progressStart + progressPos, progressBarY + progressBarHeight);
-                noStroke();
+            if (currentPeakIndex <= progressBarLength) {
+                currentPeakIndex += peakStep;
             } else {
-                stroke("#FFCCCC");
-                strokeWeight(3);
-                line(currentProgress, progressBarY, currentProgress, progressBarY + progressBarHeight);
-                noStroke();
+                currentPeakIndex = 0;
             }
         }
+
+
+        if (this.isPlaying) {
+            stroke("#FF0000");
+            strokeWeight(3);
+            line(progressStart + progressPos, progressBarY, progressStart + progressPos, progressBarY + progressBarHeight);
+            noStroke();
+        } else {
+            stroke("#FFCCCC");
+            strokeWeight(3);
+            line(currentProgress, progressBarY, currentProgress, progressBarY + progressBarHeight);
+            noStroke();
+        }
+
     }
 
     #setupRenderingProcessor() {
         this.#renderingProcessor = () => {
-            this.#playControlRendering();
-            this.#progressBarRendering();
-            this.#timerRendering();
-            this.#volumeControlRendering();
+            if (this.controlsAreHidden) {
+                return;
+            } else {
+                this.#playControlRendering();
+                this.#progressBarRendering();
+                this.#timerRendering();
+                this.#volumeControlRendering();
+                this.#adderRendering();
+            }
         };
     }
 

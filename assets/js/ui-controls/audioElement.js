@@ -399,8 +399,30 @@ class AudioElement extends P5 {
             adderX, adderY, adderHeight, adderWidth
         } = adderControlPosition(width, height, heightOffset);
 
+        let input = createFileInput(this.#handleNewSongFile);
+        input.position(adderX, adderY);
+        input.style('color', 'rgba(0, 0, 0, 0.0)');
+        input.style('background-color', 'rgba(0, 0, 0, 0.0)');
+        input.style('border', 'none');
+        input.style('cursor', 'pointer');
+
         noStroke();
         image(this.#icons.audioElement.adder, adderX, adderY, adderHeight, adderWidth);
+    }
+
+    /**
+     * @param { file } file
+     */
+    #handleNewSongFile = (file) => {
+        if (file.type === 'audio') {
+            if (this.isPlaying) {
+                this.controls.stop();
+            }
+
+            sound = loadSound(file.data, loaded);
+        } else {
+            alert('Please select an audio file (e.g., MP3 or WAV).');
+        }
     }
 
     //timer counter UI

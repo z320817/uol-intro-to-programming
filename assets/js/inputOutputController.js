@@ -130,7 +130,7 @@ class InputOutputController extends P5 {
 			}
 
 			if (this.#audioElement.adderControlHitCheck()) {
-				console.log("hit")
+				this.#audioElement.fileInput.elt.click();
 			}
 		};
 

@@ -11,6 +11,7 @@ class AudioElement extends P5 {
     };
     amplitude = new p5.Amplitude();
     fourier = new p5.FFT();
+    fileInput;
     waveAudioElement;
     currentAudioElement;
     isPlaying = false;
@@ -133,6 +134,7 @@ class AudioElement extends P5 {
         this.#createWaveAudioControl(this.#sound.url);
         this.#setCurrentAudioControls();
         this.#setupRenderingProcessor();
+        this.#createFileInput();
     }
 
     hide() {
@@ -392,22 +394,9 @@ class AudioElement extends P5 {
         }
     }
 
-    #adderRendering = () => {
-        const { heightOffset, adderControlPosition } = this.configuration;
-
-        const {
-            adderX, adderY, adderHeight, adderWidth
-        } = adderControlPosition(width, height, heightOffset);
-
-        let input = createFileInput(this.#handleNewSongFile);
-        input.position(adderX, adderY);
-        input.style('color', 'rgba(0, 0, 0, 0.0)');
-        input.style('background-color', 'rgba(0, 0, 0, 0.0)');
-        input.style('border', 'none');
-        input.style('cursor', 'pointer');
-
-        noStroke();
-        image(this.#icons.audioElement.adder, adderX, adderY, adderHeight, adderWidth);
+    #createFileInput() {
+        this.fileInput = createFileInput(this.#handleNewSongFile);
+        this.fileInput.style("display", "none");
     }
 
     /**
@@ -415,14 +404,67 @@ class AudioElement extends P5 {
      */
     #handleNewSongFile = (file) => {
         if (file.type === 'audio') {
+
             if (this.isPlaying) {
                 this.controls.stop();
             }
+            // const reader = new FileReader();
+            // reader.onload = (event) => {
+            //     localStorage.setItem("file", event.target.result);
+            // }
 
-            sound = loadSound(file.data, loaded);
+            // const blob = new Blob([file.file], { type: file.type });
+
+            // reader.readAsDataURL(blob);
+
+            // // Extract the data portion (after the comma)
+            // const data = dataURI.split(',')[1];
+
+            // // Decode the base64-encoded data
+            // const decodedData = atob(data);
+
+            // // Convert the decoded data to a Uint8Array
+            // const uint8Array = new Uint8Array(decodedData.length);
+            // for (let i = 0; i < decodedData.length; i++) {
+            // uint8Array[i] = decodedData.charCodeAt(i);
+            // }
+
+
+            // console.log(dataURItoBlob(localStorage.getItem("file")));
+
+            sound = loadSound(file.file, () => {
+                navigator.serviceWorker.controller.postMessage(file);
+                navigator.serviceWorker.addEventListener('message', event => {
+
+                    if (event.data) {
+
+                        this.#sound = sound;
+                        this.#createP5AudioControl(file.data);
+                        this.#createWaveAudioControl(file.data);
+                        this.#setCurrentAudioControls();
+                        this.#setupRenderingProcessor();
+                    }
+                });
+            }, () => {
+                console.log("errorCallback")
+            }, () => {
+                console.log("whileLoading")
+                this.controls.stop();
+            });
         } else {
             alert('Please select an audio file (e.g., MP3 or WAV).');
         }
+    }
+
+    #adderRendering = () => {
+        const { heightOffset, adderControlPosition } = this.configuration;
+
+        const {
+            adderX, adderY, adderHeight, adderWidth
+        } = adderControlPosition(width, height, heightOffset);
+
+        noStroke();
+        image(this.#icons.audioElement.adder, adderX, adderY, adderHeight, adderWidth);
     }
 
     //timer counter UI
@@ -433,8 +475,6 @@ class AudioElement extends P5 {
         const currentTimeInSeconds = this.controls.time().toFixed(2);
         const currentMinutes = Math.floor(currentTimeInSeconds / 60);
         const currentSeconds = (currentTimeInSeconds - (60 * currentMinutes)).toFixed();
-
-
 
         const { heightOffset, timerPosition, progressBarPosition } = this.configuration;
 

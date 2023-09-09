@@ -52,9 +52,18 @@ class AudioElement extends P5 {
 
             return {
                 adderX: (width / 9),
-                adderY: height - heightOffset + 90,
+                adderY: height - heightOffset + 70,
                 adderWidth: 32,
                 adderHeight: 32
+            }
+        },
+        freqControlPosition: (width, height, heightOffset) => {
+
+            return {
+                freqX: (width / 9),
+                freqY: height - heightOffset + 140,
+                freqWidth: 32,
+                freqHeight: 32
             }
         },
         progressBarPosition: (width, height, heightOffset) => {
@@ -100,7 +109,6 @@ class AudioElement extends P5 {
         return AudioElement.playControlHitCheck;
     }
 
-
     get volumeControlBarHitCheck() {
         return AudioElement.volumeControlBarHitCheck;
     }
@@ -111,6 +119,10 @@ class AudioElement extends P5 {
 
     get adderControlHitCheck() {
         return AudioElement.adderControlHitCheck;
+    }
+
+    get freqControlHitCheck() {
+        return AudioElement.freqControlHitCheck;
     }
 
     get draw() {
@@ -303,6 +315,23 @@ class AudioElement extends P5 {
         return false;
     };
 
+    static freqControlHitCheck() {
+        const { heightOffset, freqControlPosition } = this.configuration;
+
+        const {
+            freqX, freqY, freqHeight, freqWidth
+        } = freqControlPosition(width, height, heightOffset)
+
+        if (mouseX > freqX &&
+            mouseX < freqX + freqWidth &&
+            mouseY > freqY && mouseY < freqY + freqHeight) {
+
+            return true;
+        }
+
+        return false;
+    };
+
     //checks for clicks on volume icon.
     static volumeControlBarHitCheck() {
         const { heightOffset, volumeControlPosition } = this.configuration;
@@ -458,6 +487,21 @@ class AudioElement extends P5 {
 
 
         // console.log(dataURItoBlob(localStorage.getItem("file")));
+    }
+
+    #freqRendering = () => {
+        const { heightOffset, freqControlPosition } = this.configuration;
+
+        const {
+            freqX, freqY, freqHeight, freqWidth
+        } = freqControlPosition(width, height, heightOffset);
+
+        strokeWeight(3);
+        stroke(0);
+        line(freqX + (freqWidth / 2), freqY - 10, freqX + (freqWidth / 2), freqY + freqHeight + 10);
+
+        noStroke();
+        image(this.#icons.audioElement.frequencyChanger, freqX, freqY, freqHeight, freqWidth);
     }
 
     #adderRendering = () => {
@@ -634,6 +678,7 @@ class AudioElement extends P5 {
                 this.#timerRendering();
                 this.#volumeControlRendering();
                 this.#adderRendering();
+                this.#freqRendering();
             }
         };
     }

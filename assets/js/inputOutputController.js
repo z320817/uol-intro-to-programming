@@ -132,6 +132,10 @@ class InputOutputController extends P5 {
 			if (this.#audioElement.adderControlHitCheck()) {
 				this.#audioElement.fileInput.elt.click();
 			}
+
+			if (this.#audioElement.freqControlHitCheck()) {
+				console.log("yes")
+			}
 		};
 
 		// this response to mouse release events

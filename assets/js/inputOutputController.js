@@ -133,8 +133,8 @@ class InputOutputController extends P5 {
 				this.#audioElement.fileInput.elt.click();
 			}
 
-			if (this.#audioElement.freqControlHitCheck()) {
-				console.log("yes")
+			if (this.#audioElement.lowMidFreqControlHitCheck()) {
+				this.#audioElement.setlowMidFreqLevel();
 			}
 		};
 

@@ -23,6 +23,8 @@ class AudioElement extends P5 {
     #controlsAreHidden = false;
     #volumeLevel = 1;
     #currentVolumeLine = 1;
+    #lowMidFreqLevel = 0;
+    #frequencyBins = ["bass", "lowMid", "highMid", "treble"];
     #sound;
     #icons;
     #renderingProcessor;
@@ -121,8 +123,8 @@ class AudioElement extends P5 {
         return AudioElement.adderControlHitCheck;
     }
 
-    get freqControlHitCheck() {
-        return AudioElement.freqControlHitCheck;
+    get lowMidFreqControlHitCheck() {
+        return AudioElement.lowMidFreqControlHitCheck;
     }
 
     get draw() {
@@ -188,6 +190,11 @@ class AudioElement extends P5 {
      */
     setVolumeLevel(level) {
         return this.#setVolumeLevel(level);
+    }
+
+    setlowMidFreqLevel() {
+        const currentY = mouseY.toFixed();
+        this.#lowMidFreqLevel = currentY;
     }
 
     #setCurrentAudioControls() {
@@ -315,7 +322,7 @@ class AudioElement extends P5 {
         return false;
     };
 
-    static freqControlHitCheck() {
+    static lowMidFreqControlHitCheck() {
         const { heightOffset, freqControlPosition } = this.configuration;
 
         const {
@@ -324,7 +331,7 @@ class AudioElement extends P5 {
 
         if (mouseX > freqX &&
             mouseX < freqX + freqWidth &&
-            mouseY > freqY && mouseY < freqY + freqHeight) {
+            mouseY > freqY - 15 && mouseY < freqY + freqHeight - 5) {
 
             return true;
         }
@@ -496,12 +503,21 @@ class AudioElement extends P5 {
             freqX, freqY, freqHeight, freqWidth
         } = freqControlPosition(width, height, heightOffset);
 
+        textSize(14);
+        fill(0);
+        text(this.#frequencyBins[1], freqX - 3, freqY - 15);
+
         strokeWeight(3);
         stroke(0);
         line(freqX + (freqWidth / 2), freqY - 10, freqX + (freqWidth / 2), freqY + freqHeight + 10);
 
-        noStroke();
-        image(this.#icons.audioElement.frequencyChanger, freqX, freqY, freqHeight, freqWidth);
+        if (this.#lowMidFreqLevel) {
+            noStroke();
+            image(this.#icons.audioElement.frequencyChanger, freqX, this.#lowMidFreqLevel, freqHeight, freqWidth);
+        } else {
+            noStroke();
+            image(this.#icons.audioElement.frequencyChanger, freqX, freqY, freqHeight, freqWidth);
+        }
     }
 
     #adderRendering = () => {

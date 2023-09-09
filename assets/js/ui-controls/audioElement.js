@@ -408,29 +408,6 @@ class AudioElement extends P5 {
             if (this.isPlaying) {
                 this.controls.stop();
             }
-            // const reader = new FileReader();
-            // reader.onload = (event) => {
-            //     localStorage.setItem("file", event.target.result);
-            // }
-
-            // const blob = new Blob([file.file], { type: file.type });
-
-            // reader.readAsDataURL(blob);
-
-            // // Extract the data portion (after the comma)
-            // const data = dataURI.split(',')[1];
-
-            // // Decode the base64-encoded data
-            // const decodedData = atob(data);
-
-            // // Convert the decoded data to a Uint8Array
-            // const uint8Array = new Uint8Array(decodedData.length);
-            // for (let i = 0; i < decodedData.length; i++) {
-            // uint8Array[i] = decodedData.charCodeAt(i);
-            // }
-
-
-            // console.log(dataURItoBlob(localStorage.getItem("file")));
 
             sound = loadSound(file.file, () => {
                 if (navigator.serviceWorker.controller) {
@@ -455,6 +432,32 @@ class AudioElement extends P5 {
         } else {
             alert('Please select an audio file (e.g., MP3 or WAV).');
         }
+    }
+
+    handleRecordingFromMic() {
+        // const reader = new FileReader();
+        // reader.onload = (event) => {
+        //     localStorage.setItem("file", event.target.result);
+        // }
+
+        // const blob = new Blob([file.file], { type: file.type });
+
+        // reader.readAsDataURL(blob);
+
+        // // Extract the data portion (after the comma)
+        // const data = dataURI.split(',')[1];
+
+        // // Decode the base64-encoded data
+        // const decodedData = atob(data);
+
+        // // Convert the decoded data to a Uint8Array
+        // const uint8Array = new Uint8Array(decodedData.length);
+        // for (let i = 0; i < decodedData.length; i++) {
+        // uint8Array[i] = decodedData.charCodeAt(i);
+        // }
+
+
+        // console.log(dataURItoBlob(localStorage.getItem("file")));
     }
 
     #adderRendering = () => {

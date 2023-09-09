@@ -46,6 +46,7 @@ function preload() {
 	icons.audioElement.volume.volumeOn = loadImage('assets/images/audioElement/volume/volumeOn.svg');
 	icons.audioElement.volume.volumeOff = loadImage('assets/images/audioElement/volume/volumeOff.svg');
 	icons.audioElement.adder = loadImage('assets/images/audioElement/adder/add.svg');
+	icons.audioElement.frequencyChanger = loadImage('assets/images/audioElement/frequencyChanger/frequencyChanger.svg');
 }
 
 function setup() {

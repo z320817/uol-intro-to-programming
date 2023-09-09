@@ -433,22 +433,23 @@ class AudioElement extends P5 {
             // console.log(dataURItoBlob(localStorage.getItem("file")));
 
             sound = loadSound(file.file, () => {
-                navigator.serviceWorker.controller.postMessage(file);
-                navigator.serviceWorker.addEventListener('message', event => {
+                if (navigator.serviceWorker.controller) {
+                    navigator.serviceWorker.controller.postMessage(file);
+                    navigator.serviceWorker.addEventListener('message', event => {
 
-                    if (event.data) {
+                        if (event.data) {
 
-                        this.#sound = sound;
-                        this.#createP5AudioControl(file.data);
-                        this.#createWaveAudioControl(file.data);
-                        this.#setCurrentAudioControls();
-                        this.#setupRenderingProcessor();
-                    }
-                });
-            }, () => {
-                console.log("errorCallback")
-            }, () => {
-                console.log("whileLoading")
+                            this.#sound = sound;
+                            this.#createP5AudioControl(file.data);
+                            this.#createWaveAudioControl(file.data);
+                            this.#setCurrentAudioControls();
+                            this.#setupRenderingProcessor();
+                        }
+                    });
+                } else {
+                    alert('Service worker is not ready. Please open this page in new tab.');
+                }
+            }, () => { }, () => {
                 this.controls.stop();
             });
         } else {

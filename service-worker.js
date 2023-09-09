@@ -17,8 +17,9 @@ self.addEventListener('message', event => {
   urlToIntersept = event.data.data;
   fileToRespondWith = event.data.file;
 
-  console.log(urlToIntersept);
-  console.log(fileToRespondWith);
-
   event.source.postMessage(true);
+});
+
+self.addEventListener('activate', () => {
+  clients.claim();
 });

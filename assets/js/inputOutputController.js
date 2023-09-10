@@ -134,6 +134,7 @@ class InputOutputController extends P5 {
 			}
 
 			if (this.#audioElement.lowMidFreqControlHitCheck()) {
+				console.log("hit")
 				this.#audioElement.setlowMidFreqLevel();
 			}
 		};

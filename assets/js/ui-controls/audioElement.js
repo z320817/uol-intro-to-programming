@@ -207,28 +207,38 @@ class AudioElement extends P5 {
         const {
             freqY, freqHeight
         } = freqControlPosition(width, height, heightOffset);
-        const length = (freqY + freqHeight + 10) - (freqY - 10);
-        const step = this.#lowMidCutoff / length;
-        console.log(length)
+
+        const lineStart = Number(freqY.toFixed()) + 5;
+        const lineEnd = Number(freqY.toFixed()) + freqHeight + 25;
+        const lineLength = lineEnd - lineStart;
+        const lineMiddle = (lineStart + (lineLength / 2)).toFixed() - freqHeight / 2;
+        const upMiddle = lineMiddle - 1;
+        const downMiddle = lineMiddle + 1;
+        const step = Number((this.#lowMidCutoff / lineLength).toFixed());
 
         if (!this.#lowMidFreqLevel) {
-            this.#lowMidFreqLevel = freqY;
+            this.#lowMidFreqLevel = lineMiddle;
         }
 
-        this.currentAudioElement.disconnect();
-        this.currentAudioElement.connect(this.#lowMidFilter);
-
-        if (currentY > freqY) {
-            this.#lowMidFreqLevel += step;
-            this.#lowMidCutoff += step;
-            this.#lowMidFilter.set(this.#lowMidCutoff);
-        } else if (currentY === freqY) {
-            this.#removeFilter(this.#lowMidFilter);
-            this.#lowMidFreqLevel = freqY
-        } else {
+        if (currentY <= upMiddle && this.#lowMidFreqLevel > lineStart) {
             this.#lowMidFreqLevel -= step;
             this.#lowMidCutoff -= step;
             this.#lowMidFilter.set(this.#lowMidCutoff);
+            this.currentAudioElement.disconnect();
+            this.currentAudioElement.connect(this.#lowMidFilter);
+        } else if (currentY >= downMiddle && this.#lowMidFreqLevel < (lineEnd - (step * 3))) {
+            this.#lowMidFreqLevel += step;
+            this.#lowMidCutoff += step;
+            this.#lowMidFilter.set(this.#lowMidCutoff);
+            this.currentAudioElement.disconnect();
+            this.currentAudioElement.connect(this.#lowMidFilter);
+        }
+
+        if (currentY >= upMiddle && currentY <= downMiddle) {
+            this.#lowMidFreqLevel = lineMiddle;
+            this.#removeFilter(this.#lowMidFilter);
+            this.#lowMidFilter = new p5.LowPass();
+            this.#lowMidFilter.freq(400);
         }
     }
 
@@ -372,8 +382,8 @@ class AudioElement extends P5 {
 
         if (mouseX > freqX &&
             mouseX < freqX + freqWidth &&
-            mouseY > freqY - 15 && mouseY < freqY + freqHeight - 5) {
-
+            mouseY > freqY + 5 && mouseY < freqY + freqHeight + 25) {
+            console.log("hit")
             return true;
         }
 
@@ -539,20 +549,25 @@ class AudioElement extends P5 {
             freqX, freqY, freqHeight, freqWidth
         } = freqControlPosition(width, height, heightOffset);
 
+        const lineStart = (freqY + 5);
+        const lineEnd = (freqY + freqHeight + 25);
+        const lineLength = lineEnd - lineStart;
+        const lineMiddle = (lineStart + (lineLength / 2)).toFixed() - freqHeight / 2;
+
         textSize(14);
         fill(0);
-        text(this.#frequencyBins[1], freqX - 3, freqY - 15);
+        text(this.#frequencyBins[1], freqX - 3, freqY - 5);
 
         strokeWeight(3);
         stroke(0);
-        line(freqX + (freqWidth / 2), freqY - 10, freqX + (freqWidth / 2), freqY + freqHeight + 10);
+        line(freqX + (freqWidth / 2), freqY + 5, freqX + (freqWidth / 2), freqY + freqHeight + 25);
 
         if (this.#lowMidFreqLevel) {
             noStroke();
             image(this.#icons.audioElement.frequencyChanger, freqX, this.#lowMidFreqLevel, freqHeight, freqWidth);
         } else {
             noStroke();
-            image(this.#icons.audioElement.frequencyChanger, freqX, freqY, freqHeight, freqWidth);
+            image(this.#icons.audioElement.frequencyChanger, freqX, lineMiddle, freqHeight, freqWidth);
         }
     }
 

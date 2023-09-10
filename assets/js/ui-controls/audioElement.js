@@ -244,6 +244,9 @@ class AudioElement extends P5 {
         }
     }
 
+    /**
+     * @param { filter } filter
+     */
     #removeFilter(filter) {
         this.currentAudioElement.disconnect(filter);
         this.currentAudioElement.connect();

@@ -24,6 +24,14 @@ class AudioElement extends P5 {
     #volumeLevel = 1;
     #currentVolumeLine = 1;
     #lowMidFreqLevel = 0;
+    #bassFilter;
+    #lowMidFilter;
+    #highMidFilter;
+    #trebleFilter;
+    #bassCutoff = 100;
+    #lowMidCutoff = 400;
+    #highMidCutoff = 1000;
+    #trebleCutoff = 4000;
     #frequencyBins = ["bass", "lowMid", "highMid", "treble"];
     #sound;
     #icons;
@@ -149,6 +157,7 @@ class AudioElement extends P5 {
         this.#setCurrentAudioControls();
         this.#setupRenderingProcessor();
         this.#createFileInput();
+        this.#createFrequencyFilters();
     }
 
     hide() {
@@ -194,7 +203,39 @@ class AudioElement extends P5 {
 
     setlowMidFreqLevel() {
         const currentY = mouseY.toFixed();
-        this.#lowMidFreqLevel = currentY;
+        const { heightOffset, freqControlPosition } = this.configuration;
+        const {
+            freqY, freqHeight
+        } = freqControlPosition(width, height, heightOffset);
+        const length = (freqY + freqHeight + 10) - (freqY - 10);
+        const step = this.#lowMidCutoff / length;
+        console.log(length)
+
+        if (!this.#lowMidFreqLevel) {
+            this.#lowMidFreqLevel = freqY;
+        }
+
+        this.currentAudioElement.disconnect();
+        this.currentAudioElement.connect(this.#lowMidFilter);
+
+        if (currentY > freqY) {
+            this.#lowMidFreqLevel += step;
+            this.#lowMidCutoff += step;
+            this.#lowMidFilter.set(this.#lowMidCutoff);
+        } else if (currentY === freqY) {
+            this.#removeFilter(this.#lowMidFilter);
+            this.#lowMidFreqLevel = freqY
+        } else {
+            this.#lowMidFreqLevel -= step;
+            this.#lowMidCutoff -= step;
+            this.#lowMidFilter.set(this.#lowMidCutoff);
+        }
+    }
+
+    #removeFilter(filter) {
+        this.currentAudioElement.disconnect(filter);
+        this.currentAudioElement.connect();
+        filter.dispose();
     }
 
     #setCurrentAudioControls() {
@@ -428,11 +469,6 @@ class AudioElement extends P5 {
         if (isFromAudioElement) {
             this.#setVolumeFromAudioElement();
         }
-    }
-
-    #createFileInput() {
-        this.fileInput = createFileInput(this.#handleNewSongFile);
-        this.fileInput.style("display", "none");
     }
 
     /**
@@ -684,6 +720,31 @@ class AudioElement extends P5 {
 
     }
 
+
+    #hideAudioElement() {
+        this.controlsAreHidden = true;
+    }
+
+    #showAudioElement() {
+        this.controlsAreHidden = false;
+    }
+
+    #createFrequencyFilters() {
+        this.#bassFilter = new p5.LowPass();
+        this.#lowMidFilter = new p5.LowPass();
+        this.#highMidFilter = new p5.LowPass();
+        this.#trebleFilter = new p5.LowPass();
+        this.#bassFilter.freq(this.#bassCutoff);
+        this.#lowMidFilter.freq(this.#lowMidCutoff);
+        this.#highMidFilter.freq(this.#highMidCutoff);
+        this.#trebleFilter.freq(this.#trebleCutoff);
+    }
+
+    #createFileInput() {
+        this.fileInput = createFileInput(this.#handleNewSongFile);
+        this.fileInput.style("display", "none");
+    }
+
     #setupRenderingProcessor() {
         this.#renderingProcessor = () => {
             if (this.controlsAreHidden) {
@@ -697,13 +758,5 @@ class AudioElement extends P5 {
                 this.#freqRendering();
             }
         };
-    }
-
-    #hideAudioElement() {
-        this.controlsAreHidden = true;
-    }
-
-    #showAudioElement() {
-        this.controlsAreHidden = false;
     }
 }

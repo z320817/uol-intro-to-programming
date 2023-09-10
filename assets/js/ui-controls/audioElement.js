@@ -67,7 +67,7 @@ class AudioElement extends P5 {
                 adderHeight: 32
             }
         },
-        freqControlPosition: (width, height, heightOffset) => {
+        lowMidFreqControlPosition: (width, height, heightOffset) => {
 
             return {
                 freqX: (width / 9),
@@ -203,10 +203,10 @@ class AudioElement extends P5 {
 
     setlowMidFreqLevel() {
         const currentY = mouseY.toFixed();
-        const { heightOffset, freqControlPosition } = this.configuration;
+        const { heightOffset, lowMidFreqControlPosition } = this.configuration;
         const {
             freqY, freqHeight
-        } = freqControlPosition(width, height, heightOffset);
+        } = lowMidFreqControlPosition(width, height, heightOffset);
 
         const lineStart = Number(freqY.toFixed()) + 5;
         const lineEnd = Number(freqY.toFixed()) + freqHeight + 25;
@@ -379,11 +379,11 @@ class AudioElement extends P5 {
     };
 
     static lowMidFreqControlHitCheck() {
-        const { heightOffset, freqControlPosition } = this.configuration;
+        const { heightOffset, lowMidFreqControlPosition } = this.configuration;
 
         const {
             freqX, freqY, freqHeight, freqWidth
-        } = freqControlPosition(width, height, heightOffset)
+        } = lowMidFreqControlPosition(width, height, heightOffset)
 
         if (mouseX > freqX &&
             mouseX < freqX + freqWidth &&
@@ -547,12 +547,12 @@ class AudioElement extends P5 {
         // console.log(dataURItoBlob(localStorage.getItem("file")));
     }
 
-    #freqRendering = () => {
-        const { heightOffset, freqControlPosition } = this.configuration;
+    #lowMidFreqRendering = () => {
+        const { heightOffset, lowMidFreqControlPosition } = this.configuration;
 
         const {
             freqX, freqY, freqHeight, freqWidth
-        } = freqControlPosition(width, height, heightOffset);
+        } = lowMidFreqControlPosition(width, height, heightOffset);
 
         const lineStart = (freqY + 5);
         const lineEnd = (freqY + freqHeight + 25);
@@ -775,7 +775,7 @@ class AudioElement extends P5 {
                 this.#timerRendering();
                 this.#volumeControlRendering();
                 this.#adderRendering();
-                this.#freqRendering();
+                this.#lowMidFreqRendering();
             }
         };
     }

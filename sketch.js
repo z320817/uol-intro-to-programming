@@ -42,7 +42,7 @@ let icons = {
 }
 
 function preload() {
-	soundFormats('mp3', 'ogg');
+	soundFormats('mp3', 'ogg', 'wav');
 	sound = loadSound('assets/music/stomper_reggae_bit.mp3');
 	icons.inputOutputController.sound.whiteSound = loadImage('assets/images/inputOutputController/sound/white-sound.svg');
 	icons.inputOutputController.sound.blackSound = loadImage('assets/images/inputOutputController/sound/black-sound.svg');

@@ -11,6 +11,9 @@ class AudioElement extends P5 {
     };
     amplitude = new p5.Amplitude();
     fourier = new p5.FFT();
+    mic = new p5.AudioIn();
+    recorder = new p5.SoundRecorder();
+    recordFile = new p5.SoundFile();
     fileInput;
     waveAudioElement;
     currentAudioElement;
@@ -731,6 +734,17 @@ class AudioElement extends P5 {
 
     #setRecordInProgress() {
         this.isRecordInProgress = !this.isRecordInProgress;
+
+        if (this.isRecordInProgress) {
+            userStartAudio();
+            this.mic.start();
+            this.recorder.setInput(this.mic);
+            this.recorder.record(this.recordFile);
+        } else {
+            this.recorder.stop();
+            console.log(this.recordFile)
+            save(this.recordFile.buffer, 'mySound.wav');
+        }
     }
 
     /**
@@ -751,7 +765,9 @@ class AudioElement extends P5 {
      * @param { file } file
      */
     #handleNewSongFile = (file) => {
-        if (file.type === 'audio') {
+        // console.log(['audio', 'audio/wav', 'audio/mp3', 'audio/ogg'].includes(file.type))
+        // console.log(file)
+        if (['audio', 'audio/wav', 'audio/mp3', 'audio/ogg'].includes(file.type)) {
 
             if (this.isPlaying) {
                 this.controls.stop();
@@ -763,7 +779,6 @@ class AudioElement extends P5 {
                     navigator.serviceWorker.addEventListener('message', event => {
 
                         if (event.data) {
-
                             this.#sound = sound;
                             this.#createP5AudioControl(file.data);
                             this.#createWaveAudioControl(file.data);
@@ -780,32 +795,6 @@ class AudioElement extends P5 {
         } else {
             alert('Please select an audio file (e.g., MP3 or WAV).');
         }
-    }
-
-    handleRecordingFromMic() {
-        // const reader = new FileReader();
-        // reader.onload = (event) => {
-        //     localStorage.setItem("file", event.target.result);
-        // }
-
-        // const blob = new Blob([file.file], { type: file.type });
-
-        // reader.readAsDataURL(blob);
-
-        // // Extract the data portion (after the comma)
-        // const data = dataURI.split(',')[1];
-
-        // // Decode the base64-encoded data
-        // const decodedData = atob(data);
-
-        // // Convert the decoded data to a Uint8Array
-        // const uint8Array = new Uint8Array(decodedData.length);
-        // for (let i = 0; i < decodedData.length; i++) {
-        // uint8Array[i] = decodedData.charCodeAt(i);
-        // }
-
-
-        // console.log(dataURItoBlob(localStorage.getItem("file")));
     }
 
     #lowMidFreqRendering = () => {
@@ -986,7 +975,6 @@ class AudioElement extends P5 {
 
         let maxSize = micWidth + 2;
         let minSize = micWidth - 2;
-        let growthSpeed = 10;
         let pulsatingSize = minSize + sin(frameCount * 0.05) * (maxSize - minSize);
 
 

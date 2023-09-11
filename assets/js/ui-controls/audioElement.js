@@ -73,7 +73,7 @@ class AudioElement extends P5 {
         lowMidFreqControlPosition: (width, height, heightOffset) => {
 
             return {
-                freqX: (width / 9),
+                freqX: (width / 11),
                 freqY: height - heightOffset + 140,
                 freqWidth: 32,
                 freqHeight: 32
@@ -82,7 +82,7 @@ class AudioElement extends P5 {
         bassFreqControlPosition: (width, height, heightOffset) => {
 
             return {
-                freqX: (width / 9),
+                freqX: (width / 5.6),
                 freqY: height - heightOffset + 140,
                 freqWidth: 32,
                 freqHeight: 32
@@ -91,7 +91,7 @@ class AudioElement extends P5 {
         heighMidFreqControlPosition: (width, height, heightOffset) => {
 
             return {
-                freqX: (width / 9),
+                freqX: (width / 22),
                 freqY: height - heightOffset + 140,
                 freqWidth: 32,
                 freqHeight: 32
@@ -100,7 +100,7 @@ class AudioElement extends P5 {
         trebleFreqControlPosition: (width, height, heightOffset) => {
 
             return {
-                freqX: (width / 9),
+                freqX: (width / 7.4),
                 freqY: height - heightOffset + 140,
                 freqWidth: 32,
                 freqHeight: 32
@@ -263,14 +263,14 @@ class AudioElement extends P5 {
             this.#lowMidFreqLevel = lineMiddle;
         }
 
-        if (currentY - (step * 3) <= upMiddle && this.#lowMidFreqLevel > lineStart) {
-            this.#lowMidFreqLevel -= step;
+        if (currentY - 20 <= upMiddle && this.#lowMidFreqLevel > lineStart) {
+            this.#lowMidFreqLevel -= 2;
             this.#lowMidCutoff -= degree;
             this.#lowMidFilter.set(this.#lowMidCutoff);
             this.currentAudioElement.disconnect();
             this.currentAudioElement.connect(this.#lowMidFilter);
-        } else if (currentY >= downMiddle && this.#lowMidFreqLevel < (lineEnd - (step * 3))) {
-            this.#lowMidFreqLevel += step;
+        } else if (currentY >= downMiddle && this.#lowMidFreqLevel < lineEnd - 20) {
+            this.#lowMidFreqLevel += 2;
             this.#lowMidCutoff += degree;
             this.#lowMidFilter.set(this.#lowMidCutoff);
             this.currentAudioElement.disconnect();
@@ -306,14 +306,14 @@ class AudioElement extends P5 {
             this.#bassFreqLevel = lineMiddle;
         }
 
-        if (currentY - (step * 3) <= upMiddle && this.#bassFreqLevel > lineStart) {
-            this.#bassFreqLevel -= step;
+        if (currentY - 20 <= upMiddle && this.#bassFreqLevel > lineStart) {
+            this.#bassFreqLevel -= 2;
             this.#bassCutoff -= degree;
             this.#bassFilter.set(this.#bassCutoff);
             this.currentAudioElement.disconnect();
             this.currentAudioElement.connect(this.#bassFilter);
-        } else if (currentY >= downMiddle && this.#bassFreqLevel < (lineEnd - (step * 3))) {
-            this.#bassFreqLevel += step;
+        } else if (currentY >= downMiddle && this.#bassFreqLevel < lineEnd - 20) {
+            this.#bassFreqLevel += 2;
             this.#bassCutoff += degree;
             this.#bassFilter.set(this.#bassCutoff);
             this.currentAudioElement.disconnect();
@@ -349,14 +349,14 @@ class AudioElement extends P5 {
             this.#heighMidFreqLevel = lineMiddle;
         }
 
-        if (currentY - (step * 3) <= upMiddle && this.#heighMidFreqLevel > lineStart) {
-            this.#heighMidFreqLevel -= step;
+        if (currentY - 20 <= upMiddle && this.#heighMidFreqLevel > lineStart) {
+            this.#heighMidFreqLevel -= 2;
             this.#heighMidCutoff -= degree;
             this.#heighMidFilter.set(this.#heighMidCutoff);
             this.currentAudioElement.disconnect();
             this.currentAudioElement.connect(this.#heighMidFilter);
-        } else if (currentY >= downMiddle && this.#heighMidFreqLevel < (lineEnd - (step * 3))) {
-            this.#heighMidFreqLevel += step;
+        } else if (currentY >= downMiddle && this.#heighMidFreqLevel < lineEnd - 20) {
+            this.#heighMidFreqLevel += 2;
             this.#heighMidCutoff += degree;
             this.#heighMidFilter.set(this.#heighMidCutoff);
             this.currentAudioElement.disconnect();
@@ -367,7 +367,7 @@ class AudioElement extends P5 {
             this.#heighMidFreqLevel = lineMiddle;
             this.#removeFilter(this.#heighMidFilter);
             this.#heighMidFilter = new p5.LowPass();
-            this.#heighMidCutoff = 400;
+            this.#heighMidCutoff = 1000;
             this.#heighMidFilter.freq(this.#heighMidCutoff);
         }
     }
@@ -392,14 +392,14 @@ class AudioElement extends P5 {
             this.#trebleFreqLevel = lineMiddle;
         }
 
-        if (currentY - (step * 3) <= upMiddle && this.#trebleFreqLevel > lineStart) {
-            this.#trebleFreqLevel -= step;
+        if (currentY - 20 <= upMiddle && this.#trebleFreqLevel > lineStart) {
+            this.#trebleFreqLevel -= 2;
             this.#trebleCutoff -= degree;
             this.#trebleFilter.set(this.#trebleCutoff);
             this.currentAudioElement.disconnect();
             this.currentAudioElement.connect(this.#trebleFilter);
-        } else if (currentY >= downMiddle && this.#trebleFreqLevel < (lineEnd - (step * 3))) {
-            this.#trebleFreqLevel += step;
+        } else if (currentY >= downMiddle && this.#trebleFreqLevel < lineEnd - 20) {
+            this.#trebleFreqLevel += 2;
             this.#trebleCutoff += degree;
             this.#trebleFilter.set(this.#trebleCutoff);
             this.currentAudioElement.disconnect();
@@ -410,7 +410,7 @@ class AudioElement extends P5 {
             this.#trebleFreqLevel = lineMiddle;
             this.#removeFilter(this.#trebleFilter);
             this.#trebleFilter = new p5.LowPass();
-            this.#trebleCutoff = 400;
+            this.#trebleCutoff = 4000;
             this.#trebleFilter.freq(this.#trebleCutoff);
         }
     }
@@ -1127,6 +1127,9 @@ class AudioElement extends P5 {
                 this.#volumeControlRendering();
                 this.#adderRendering();
                 this.#lowMidFreqRendering();
+                this.#heighMidFreqRendering();
+                this.#trebleFreqRendering();
+                this.#bassFreqRendering();
             }
         };
     }

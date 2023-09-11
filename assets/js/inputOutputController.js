@@ -134,7 +134,19 @@ class InputOutputController extends P5 {
 			}
 
 			if (this.#audioElement.lowMidFreqControlHitCheck()) {
-				this.#audioElement.setlowMidFreqLevel();
+				this.#audioElement.setLowMidFreqLevel();
+			}
+
+			if (this.#audioElement.bassFreqControlHitCheck()) {
+				this.#audioElement.setBassFreqLevel();
+			}
+
+			if (this.#audioElement.heighMidFreqControlHitCheck()) {
+				this.#audioElement.setHeighMidFreqLevel();
+			}
+
+			if (this.#audioElement.trebleFreqControlHitCheck()) {
+				this.#audioElement.setTrebleMidFreqLevel();
 			}
 		};
 

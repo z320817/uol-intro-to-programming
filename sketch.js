@@ -28,6 +28,11 @@ let icons = {
 		volume: {
 			volumeOff: null,
 			volumeOn: null,
+		},
+		frequencyChanger: {
+			frequencyChanger: null,
+			frequencyChangerUp: null,
+			frequencyChangerDown: null,
 		}
 	}
 }
@@ -46,7 +51,9 @@ function preload() {
 	icons.audioElement.volume.volumeOn = loadImage('assets/images/audioElement/volume/volumeOn.svg');
 	icons.audioElement.volume.volumeOff = loadImage('assets/images/audioElement/volume/volumeOff.svg');
 	icons.audioElement.adder = loadImage('assets/images/audioElement/adder/add.svg');
-	icons.audioElement.frequencyChanger = loadImage('assets/images/audioElement/frequencyChanger/frequencyChanger.svg');
+	icons.audioElement.frequencyChanger.frequencyChanger = loadImage('assets/images/audioElement/frequencyChanger/frequencyChanger.svg');
+	icons.audioElement.frequencyChanger.frequencyChangerUp = loadImage('assets/images/audioElement/frequencyChanger/frequencyChangerUp.svg');
+	icons.audioElement.frequencyChanger.frequencyChangerDown = loadImage('assets/images/audioElement/frequencyChanger/frequencyChangerDown.svg');
 }
 
 function setup() {

@@ -148,6 +148,10 @@ class InputOutputController extends P5 {
 			if (this.#audioElement.trebleFreqControlHitCheck()) {
 				this.#audioElement.setTrebleMidFreqLevel();
 			}
+
+			if (this.#audioElement.micControlHitCheck()) {
+				this.#audioElement.setRecordInProgress();
+			}
 		};
 
 		// this response to mouse release events

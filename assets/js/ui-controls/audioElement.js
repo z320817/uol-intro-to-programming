@@ -15,6 +15,7 @@ class AudioElement extends P5 {
     waveAudioElement;
     currentAudioElement;
     isPlaying = false;
+    isRecordInProgress = false;
     volumeChanged = false;
 
     #p5audioElement;
@@ -126,6 +127,15 @@ class AudioElement extends P5 {
                 volumeControlHeight: heightOffset / 6
             }
         },
+        micControlPosition: (width, height, heightOffset) => {
+
+            return {
+                micX: (width / 5),
+                micY: height - heightOffset + 70,
+                micWidth: 32,
+                micHeight: 32
+            }
+        },
     }
 
     get peaks() {
@@ -177,6 +187,10 @@ class AudioElement extends P5 {
         return AudioElement.trebleFreqControlHitCheck;
     }
 
+    get micControlHitCheck() {
+        return AudioElement.micControlHitCheck;
+    }
+
     get draw() {
         return this.#renderingProcessor;
     }
@@ -208,6 +222,10 @@ class AudioElement extends P5 {
 
     show() {
         return this.#showAudioElement();
+    }
+
+    setRecordInProgress() {
+        return this.#setRecordInProgress();
     }
 
     requestP5audioControls() {
@@ -659,6 +677,23 @@ class AudioElement extends P5 {
         return false;
     };
 
+    static micControlHitCheck() {
+        const { heightOffset, micControlPosition } = this.configuration;
+
+        const {
+            micY, micX, micHeight, micWidth
+        } = micControlPosition(width, height, heightOffset)
+
+        if (mouseX > micX &&
+            mouseX < micX + micWidth &&
+            mouseY > micY + 5 && mouseY < micY + micHeight) {
+
+            return true;
+        }
+
+        return false;
+    };
+
     #setVolumeFromVolumeControl() {
         const { heightOffset, volumeControlPosition } = this.configuration;
 
@@ -692,6 +727,10 @@ class AudioElement extends P5 {
         this.#currentVolumeLine = (maxLines * this.#volumeLevel).toFixed();
 
         this.controls.setVolume(this.#volumeLevel);
+    }
+
+    #setRecordInProgress() {
+        this.isRecordInProgress = !this.isRecordInProgress;
     }
 
     /**
@@ -938,6 +977,28 @@ class AudioElement extends P5 {
         image(this.#icons.audioElement.adder, adderX, adderY, adderHeight, adderWidth);
     }
 
+    #micRendering = () => {
+        const { heightOffset, micControlPosition } = this.configuration;
+
+        const {
+            micY, micX, micHeight, micWidth
+        } = micControlPosition(width, height, heightOffset)
+
+        let maxSize = micWidth + 2;
+        let minSize = micWidth - 2;
+        let growthSpeed = 10;
+        let pulsatingSize = minSize + sin(frameCount * 0.05) * (maxSize - minSize);
+
+
+        if (this.isRecordInProgress) {
+            noStroke();
+            image(this.#icons.audioElement.mic.micOn, micX, micY, pulsatingSize, pulsatingSize);
+        } else {
+            noStroke();
+            image(this.#icons.audioElement.mic.micOff, micX, micY, micHeight, micWidth);
+        }
+    }
+
     //timer counter UI
     #timerRendering = () => {
         const timeInSeconds = this.controls.duration().toFixed(2);
@@ -1130,6 +1191,7 @@ class AudioElement extends P5 {
                 this.#heighMidFreqRendering();
                 this.#trebleFreqRendering();
                 this.#bassFreqRendering();
+                this.#micRendering();
             }
         };
     }

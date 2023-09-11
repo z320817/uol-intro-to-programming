@@ -33,7 +33,11 @@ let icons = {
 			frequencyChanger: null,
 			frequencyChangerUp: null,
 			frequencyChangerDown: null,
-		}
+		},
+		mic: {
+			micOff: null,
+			micOn: null,
+		},
 	}
 }
 
@@ -54,6 +58,8 @@ function preload() {
 	icons.audioElement.frequencyChanger.frequencyChanger = loadImage('assets/images/audioElement/frequencyChanger/frequencyChanger.svg');
 	icons.audioElement.frequencyChanger.frequencyChangerUp = loadImage('assets/images/audioElement/frequencyChanger/frequencyChangerUp.svg');
 	icons.audioElement.frequencyChanger.frequencyChangerDown = loadImage('assets/images/audioElement/frequencyChanger/frequencyChangerDown.svg');
+	icons.audioElement.mic.micOn = loadImage('assets/images/audioElement/mic/micOn.svg');
+	icons.audioElement.mic.micOff = loadImage('assets/images/audioElement/mic/micOff.svg');
 }
 
 function setup() {

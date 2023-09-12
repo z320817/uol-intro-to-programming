@@ -442,6 +442,7 @@ class AudioElement extends P5 {
     #removeFilter(filter) {
         this.currentAudioElement.disconnect(filter);
         this.currentAudioElement.connect();
+        console.log("removed")
         filter.dispose();
     }
 
@@ -732,7 +733,7 @@ class AudioElement extends P5 {
         this.controls.setVolume(this.#volumeLevel);
     }
 
-    #setRecordInProgress() {
+    async #setRecordInProgress() {
         this.isRecordInProgress = !this.isRecordInProgress;
 
         if (this.isRecordInProgress) {
@@ -742,9 +743,35 @@ class AudioElement extends P5 {
             this.recorder.record(this.recordFile);
         } else {
             this.recorder.stop();
-            console.log(this.recordFile)
-            save(this.recordFile.buffer, 'mySound.wav');
+            try {
+                const result = await this.#saveRecordedFile();
+                this.recordFile.play(); // This will be executed when the condition is met
+            } catch (error) {
+                console.error(error); // This will be executed if the condition is not met or if a timeout occurs
+            }
+
         }
+    }
+
+    #saveRecordedFile() {
+        return new Promise((resolve, reject) => {
+            let timeout = 1000;
+            const interval = 100;
+
+            const timer = setInterval(() => {
+                if (this.recordFile.isLoaded()) {
+                    clearInterval(timer);
+                    resolve(true);
+                }
+
+                if (timeout <= 0) {
+                    clearInterval(timer);
+                    reject(false);
+                }
+
+                timeout -= interval;
+            }, interval);
+        });
     }
 
     /**

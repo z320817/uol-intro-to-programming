@@ -298,7 +298,7 @@ class AudioElement extends P5 {
             this.currentAudioElement.connect(this.#lowMidFilter);
         }
 
-        if (currentY >= upMiddle && currentY <= downMiddle) {
+        if (this.#lowMidFreqLevel <= downMiddle && this.#lowMidFreqLevel >= upMiddle) {
             this.#lowMidFreqLevel = lineMiddle;
             this.#removeFilter(this.#lowMidFilter);
             this.#lowMidFilter = new p5.LowPass();
@@ -341,7 +341,7 @@ class AudioElement extends P5 {
             this.currentAudioElement.connect(this.#bassFilter);
         }
 
-        if (currentY >= upMiddle && currentY <= downMiddle) {
+        if (this.#bassFreqLevel <= downMiddle && this.#bassFreqLevel >= upMiddle) {
             this.#bassFreqLevel = lineMiddle;
             this.#removeFilter(this.#bassFilter);
             this.#bassFilter = new p5.LowPass();
@@ -384,7 +384,7 @@ class AudioElement extends P5 {
             this.currentAudioElement.connect(this.#heighMidFilter);
         }
 
-        if (currentY >= upMiddle && currentY <= downMiddle) {
+        if (this.#heighMidFreqLevel <= downMiddle && this.#heighMidFreqLevel >= upMiddle) {
             this.#heighMidFreqLevel = lineMiddle;
             this.#removeFilter(this.#heighMidFilter);
             this.#heighMidFilter = new p5.LowPass();
@@ -427,7 +427,7 @@ class AudioElement extends P5 {
             this.currentAudioElement.connect(this.#trebleFilter);
         }
 
-        if (currentY >= upMiddle && currentY <= downMiddle) {
+        if (this.#trebleFreqLevel <= downMiddle && this.#trebleFreqLevel >= upMiddle) {
             this.#trebleFreqLevel = lineMiddle;
             this.#removeFilter(this.#trebleFilter);
             this.#trebleFilter = new p5.LowPass();
@@ -442,7 +442,6 @@ class AudioElement extends P5 {
     #removeFilter(filter) {
         this.currentAudioElement.disconnect(filter);
         this.currentAudioElement.connect();
-        console.log("removed")
         filter.dispose();
     }
 

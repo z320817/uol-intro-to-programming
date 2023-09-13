@@ -2,7 +2,6 @@ let urlToIntersept;
 let fileToRespondWith;
 
 self.addEventListener('fetch', (event) => {
-  console.log(event.request.url);
   event.respondWith(customResponse(event.request));
 });
 

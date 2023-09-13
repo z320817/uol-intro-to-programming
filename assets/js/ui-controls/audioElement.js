@@ -463,10 +463,16 @@ class AudioElement extends P5 {
             };
             this.controls.time = () => {
                 const time = this.#p5audioElement.time();
-                return this.#p5audioElement.time();
+                return time;
             };
             this.controls.duration = () => {
-                return this.#p5audioElement.duration();
+                const duration = this.#p5audioElement.duration();
+
+                if (duration === Infinity) {
+                    return 0;
+                } else {
+                    return duration
+                }
             };
             this.controls.setVolume = (level) => {
                 return this.#p5audioElement.volume(level);
@@ -814,11 +820,12 @@ class AudioElement extends P5 {
                     navigator.serviceWorker.addEventListener('message', event => {
 
                         if (event.data === file.data) {
+                            console.log(this.#sound);
+                            console.log(sound);
                             this.#sound = sound;
                             this.#createP5AudioControl(file.data);
                             this.#createWaveAudioControl(file.data);
                             this.#setCurrentAudioControls();
-                            this.#setupRenderingProcessor();
                         }
                     });
                 } else {

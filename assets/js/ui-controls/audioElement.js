@@ -744,9 +744,20 @@ class AudioElement extends P5 {
             this.recorder.stop();
             try {
                 const result = await this.#saveRecordedFile();
-                this.recordFile.play(); // This will be executed when the condition is met
+                const wavArrayBuffer = toWav(this.recordFile.buffer);
+                const wavBlob = new Blob([new Uint8Array(wavArrayBuffer)], { type: 'audio/wav' });
+                const wavFile = new File([wavBlob], 'record.wav', { type: 'audio/wav' });
+                const songFile = {
+                    data: "/assets/music/record.wav",
+                    file: wavFile,
+                    name: 'record.wav',
+                    size: wavFile.size,
+                    subtype: "wav",
+                    type: "audio"
+                }
+                this.#handleNewSongFile(songFile);
             } catch (error) {
-                console.error(error); // This will be executed if the condition is not met or if a timeout occurs
+                console.error(error);
             }
 
         }
@@ -791,8 +802,6 @@ class AudioElement extends P5 {
      * @param { file } file
      */
     #handleNewSongFile = (file) => {
-        // console.log(['audio', 'audio/wav', 'audio/mp3', 'audio/ogg'].includes(file.type))
-        // console.log(file)
         if (['audio', 'audio/wav', 'audio/mp3', 'audio/ogg'].includes(file.type)) {
 
             if (this.isPlaying) {
@@ -804,7 +813,7 @@ class AudioElement extends P5 {
                     navigator.serviceWorker.controller.postMessage(file);
                     navigator.serviceWorker.addEventListener('message', event => {
 
-                        if (event.data) {
+                        if (event.data === file.data) {
                             this.#sound = sound;
                             this.#createP5AudioControl(file.data);
                             this.#createWaveAudioControl(file.data);

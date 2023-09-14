@@ -1,12 +1,19 @@
 //global for the controls and input 
 let inputOutputController = null;
+
 //store visualisations in a container
 let visualisationController = null;
+
 //letiable for p5 fast fourier transform
 let fourier;
 
 let sound;
-let icons = {
+
+const position = {
+	left: "left",
+	right: "right"
+}
+const icons = {
 	inputOutputController: {
 		sound: {
 			whiteSound: null,
@@ -66,7 +73,8 @@ function setup() {
 	createCanvas(windowWidth, windowHeight);
 	background(0);
 
-	inputOutputController = new InputOutputController(sound, icons);
+	// initialize audio decks
+	inputOutputController = new InputOutputController(sound, icons, position);
 }
 
 function draw() {
@@ -78,7 +86,6 @@ function draw() {
 
 function mousePressed() {
 	inputOutputController.mousePressed();
-
 }
 
 function mouseReleased() {

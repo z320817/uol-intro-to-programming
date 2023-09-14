@@ -25,7 +25,25 @@ class ControlPanel extends P5 {
 				visualButtonWidth: width / 4,
 				visualButtonHeight: heightOffset / 4
 			}
-		}
+		},
+		leftAudioElementPosition: (width, height, heightOffset) => {
+
+			return {
+				leftAudioElementX: (width / 54) - 10,
+				leftAudioElementY: (height - heightOffset) + (heightOffset / 4),
+				leftAudioElementWidth: width / 4,
+				leftAudioElementHeight: heightOffset
+			}
+		},
+		rightAudioElementPosition: (width, height, heightOffset) => {
+
+			return {
+				rightAudioElementX: ((width / 54) - 10) + (width / 4),
+				rightAudioElementY: height - heightOffset,
+				rightAudioElementWidth: width / 4,
+				rightAudioElementHeight: heightOffset
+			}
+		},
 	}
 
 	get configuration() {
@@ -42,6 +60,14 @@ class ControlPanel extends P5 {
 
 	get musicButtonHitCheck() {
 		return ControlPanel.musicButtonHitCheck;
+	}
+
+	get leftAudioElementHitCheck() {
+		return ControlPanel.leftAudioElementHitCheck;
+	}
+
+	get rightAudioElementHitCheck() {
+		return ControlPanel.rightAudioElementHitCheck;
 	}
 
 	get draw() {
@@ -74,7 +100,49 @@ class ControlPanel extends P5 {
 
 	//checks for clicks on the music flow button, changes control flows.
 	//@returns true if clicked false otherwise.
-	static musicButtonHitCheck() {
+	static leftAudioElementHitCheck() {
+		const { heightOffset, leftAudioElementPosition } = this.configuration;
+		const {
+			leftAudioElementX,
+			leftAudioElementY,
+			leftAudioElementHeight,
+			leftAudioElementWidth
+		} = leftAudioElementPosition(width, height, heightOffset);
+
+		if (mouseX > leftAudioElementX &&
+			mouseX < leftAudioElementX + leftAudioElementWidth &&
+			mouseY > leftAudioElementY && mouseY < leftAudioElementY + leftAudioElementHeight) {
+
+			return true;
+		}
+
+		return false;
+	};
+
+	//checks for clicks on the music flow button, changes control flows.
+	//@returns true if clicked false otherwise.
+	static rightAudioElementHitCheck() {
+		const { heightOffset, rightAudioElementPosition } = this.configuration;
+		const {
+			rightAudioElementX,
+			rightAudioElementY,
+			rightAudioElementWidth,
+			rightAudioElementHeight
+		} = rightAudioElementPosition(width, height, heightOffset);
+
+		if (mouseX > rightAudioElementX &&
+			mouseX < rightAudioElementX + rightAudioElementWidth &&
+			mouseY > rightAudioElementY && mouseY < rightAudioElementY + rightAudioElementHeight) {
+
+			return true;
+		}
+
+		return false;
+	};
+
+	//checks for clicks on the music flow button, changes control flows.
+	//@returns true if clicked false otherwise.
+	musicButtonHitCheck() {
 		const { heightOffset, musicButtonPosition } = this.configuration;
 		const {
 			musicButtonX,
@@ -95,10 +163,9 @@ class ControlPanel extends P5 {
 		return false;
 	};
 
-
 	//checks for clicks on the visuals flow button, changes control flows.
 	//@returns true if clicked false otherwise.
-	static visualButtonHitCheck() {
+	visualButtonHitCheck() {
 		const { heightOffset, musicButtonPosition, visualButtonPosition } = this.configuration;
 
 		const {

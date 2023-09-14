@@ -7,12 +7,15 @@ class InputOutputController extends P5 {
 	#playbackButton;
 	#visualsMenu;
 	#needlseUiOutput;
-	#audioElement;
+	#leftAudioElement;
+	#rightAudioElement;
+	#currentAudioElement;
 	#mousePressedEventObserver;
 	#mouseReleasedEventObserver;
 	#keyPressedEventObserver;
 	#sound;
 	#icons;
+	#position;
 	#renderingProcessor;
 
 	get mousePressed() {
@@ -31,20 +34,31 @@ class InputOutputController extends P5 {
 		return this.#renderingProcessor;
 	}
 
+	get currentAudioElement() {
+		return this.#currentAudioElement;
+	}
+
+	/**
+	 * @param { position } position, 
+	 */
 	/**
 	 * @param { sound } sound, 
 	 */
 	/**
 	 * @param { icons } icons, 
 	 */
-	constructor(sound, icons) {
+	constructor(sound, icons, position) {
 		super();
 		// Save preloaded icons reference
 		this.#icons = icons;
 		this.#sound = sound;
+		this.#position = position;
 
 		// Instatiate audio controls
 		this.#instatiateAudioControls();
+
+		// Set cuurent audio element
+		this.#setCurrentAudioElement(position.left);
 
 		// Instatiate ui controls
 		this.#instantiateUiControls();
@@ -63,24 +77,33 @@ class InputOutputController extends P5 {
 	}
 
 	#instatiateAudioControls() {
-		this.#audioElement = new AudioElement(this.#sound, this.#icons);
+		this.#leftAudioElement = new AudioElement(this.#sound, this.#icons, this.#position.left);
+		this.#rightAudioElement = new AudioElement(this.#sound, this.#icons, this.#position.right);
 	}
 
 	#instantiateUiControls() {
-		this.#playbackButton = new PlaybackButton(this.#audioElement);
-		this.#needlseUiOutput = new Needles(PI, TWO_PI, this.#audioElement);
+		this.#playbackButton = new PlaybackButton(this.#leftAudioElement);
+		this.#needlseUiOutput = new Needles(PI, TWO_PI, this.#leftAudioElement);
 		this.#controlPannel = new ControlPanel(this.#icons);
 	}
 
 	#instantiateVisualisations() {
 		this.#visualisationController = new VisualisationController();
-		this.#visualisationController.add(new Spectrum(this.#audioElement));
-		this.#visualisationController.add(new WavePattern(this.#audioElement));
-		this.#visualisationController.add(new WaveExample(drawingContext.canvas, this.#audioElement));
+		this.#visualisationController.add(new Spectrum(this.#leftAudioElement));
+		this.#visualisationController.add(new WavePattern(this.#leftAudioElement));
+		this.#visualisationController.add(new WaveExample(drawingContext.canvas, this.#leftAudioElement));
 	}
 
 	#instatiateVisualisationControls() {
 		this.#visualsMenu = new VisualsMenu(this.#visualisationController);
+	}
+
+	#setCurrentAudioElement(position) {
+		if (position.left === this.#position) {
+			this.#currentAudioElement = this.#leftAudioElement;
+		} else {
+			this.#currentAudioElement = this.#rightAudioElement;
+		}
 	}
 
 	#setupEventObservers() {
@@ -93,71 +116,84 @@ class InputOutputController extends P5 {
 			}
 
 			if (this.#controlPannel.visualButtonHitCheck()) {
-				this.#audioElement.hide();
+				this.#leftAudioElement.hide();
+				this.#rightAudioElement.hide();
 				this.#visualsMenu.show();
 			}
 
 			if (this.#controlPannel.musicButtonHitCheck()) {
-				this.#audioElement.show();
+				this.#leftAudioElement.show();
+				this.#rightAudioElement.show();
 				this.#visualsMenu.hide();
 			}
 
-			if (this.#audioElement.playControlHitCheck()) {
-				if (!this.#audioElement.isPlaying) {
-					this.#audioElement.controls.play();
-					this.#audioElement.setVolumeLevel(true);
+			if (this.#controlPannel.rightAudioElementHitCheck()) {
+				console.log("rightAudioElementHitCheck");
+				this.#setCurrentAudioElement(position.right);
+			}
+
+			if (this.#controlPannel.leftAudioElementHitCheck()) {
+				console.log("leftAudioElementHitCheck");
+				this.#setCurrentAudioElement(position.left)
+			}
+
+			if (this.#currentAudioElement.playControlHitCheck()) {
+				if (!this.#currentAudioElement.isPlaying) {
+					this.#currentAudioElement.controls.play();
+					this.#currentAudioElement.setVolumeLevel(true);
 				} else {
-					this.#audioElement.controls.pause();
-					this.#audioElement.setVolumeLevel(true);
+					this.#currentAudioElement.controls.pause();
+					this.#currentAudioElement.setVolumeLevel(true);
 				}
 			}
 
-			if (this.#audioElement.volumeControlBarHitCheck()) {
-				this.#audioElement.volumeChanged = true;
-				this.#audioElement.setVolumeLevel();
+			if (this.#currentAudioElement.volumeControlBarHitCheck()) {
+				this.#currentAudioElement.volumeChanged = true;
+				this.#currentAudioElement.setVolumeLevel();
 			}
 
-			if (this.#audioElement.volumeControlIconHitCheck()) {
-				const isMuted = !Boolean(this.#audioElement.controls.getVolume());
+			if (this.#currentAudioElement.volumeControlIconHitCheck()) {
+				const isMuted = !Boolean(this.#currentAudioElement.controls.getVolume());
 
 				if (isMuted) {
-					this.#audioElement.controls.setVolume(1);
-					this.#audioElement.setVolumeLevel(true);
+					this.#currentAudioElement.controls.setVolume(1);
+					this.#currentAudioElement.setVolumeLevel(true);
 				} else {
-					this.#audioElement.controls.setVolume(0);
-					this.#audioElement.setVolumeLevel(true);
+					this.#currentAudioElement.controls.setVolume(0);
+					this.#currentAudioElement.setVolumeLevel(true);
 				}
+
 			}
 
-			if (this.#audioElement.adderControlHitCheck()) {
-				this.#audioElement.fileInput.elt.click();
+			if (this.#currentAudioElement.adderControlHitCheck()) {
+				this.#currentAudioElement.fileInput.elt.click();
 			}
 
-			if (this.#audioElement.lowMidFreqControlHitCheck()) {
-				this.#audioElement.setLowMidFreqLevel();
+			if (this.#currentAudioElement.lowMidFreqControlHitCheck()) {
+				this.#currentAudioElement.setLowMidFreqLevel();
 			}
 
-			if (this.#audioElement.bassFreqControlHitCheck()) {
-				this.#audioElement.setBassFreqLevel();
+			if (this.#currentAudioElement.bassFreqControlHitCheck()) {
+				this.#currentAudioElement.setBassFreqLevel();
 			}
 
-			if (this.#audioElement.heighMidFreqControlHitCheck()) {
-				this.#audioElement.setHeighMidFreqLevel();
+			if (this.#currentAudioElement.heighMidFreqControlHitCheck()) {
+				this.#currentAudioElement.setHeighMidFreqLevel();
 			}
 
-			if (this.#audioElement.trebleFreqControlHitCheck()) {
-				this.#audioElement.setTrebleMidFreqLevel();
+			if (this.#currentAudioElement.trebleFreqControlHitCheck()) {
+				this.#currentAudioElement.setTrebleMidFreqLevel();
 			}
 
-			if (this.#audioElement.micControlHitCheck()) {
-				this.#audioElement.setRecordInProgress();
+			if (this.#currentAudioElement.micControlHitCheck()) {
+				this.#currentAudioElement.setRecordInProgress();
 			}
 		};
 
 		// this response to mouse release events
 		this.#mouseReleasedEventObserver = () => {
-			if (this.#audioElement.volumeControlBarHitCheck()) {
-				this.#audioElement.volumeChanged = false;
+			if (this.#currentAudioElement.volumeControlBarHitCheck()) {
+				this.#currentAudioElement.volumeChanged = false;
 			}
 		}
 
@@ -170,6 +206,8 @@ class InputOutputController extends P5 {
 
 	#setupRenderingProcessor() {
 		this.#renderingProcessor = () => {
+			this.#leftAudioElement.draw();
+
 			push();
 			fill("white");
 			stroke("black");
@@ -185,8 +223,9 @@ class InputOutputController extends P5 {
 			// playback button 
 			this.#playbackButton.draw();
 
-			// audio element
-			this.#audioElement.draw();
+			// audio elements
+			this.#leftAudioElement.draw();
+			this.#rightAudioElement.draw();
 
 			//draw the selected visualisation
 			this.#visualisationController.draw();

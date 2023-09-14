@@ -14,6 +14,7 @@ class AudioElement extends P5 {
     mic = new p5.AudioIn();
     recorder = new p5.SoundRecorder();
     recordFile = new p5.SoundFile();
+
     fileInput;
     waveAudioElement;
     currentAudioElement;
@@ -24,7 +25,6 @@ class AudioElement extends P5 {
     #p5audioElement;
     #p5audioControlsIsHidden = false;
     #waveControlsIsHidden = true;
-    #controlsAreHidden = false;
     #volumeLevel = 1;
     #currentVolumeLine = 1;
     #lowMidFreqLevel = 0;
@@ -42,87 +42,143 @@ class AudioElement extends P5 {
     #frequencyBins = ["bass", "lowMid", "highMid", "treble"];
     #sound;
     #icons;
+    #position;
     #renderingProcessor;
 
     static #configuration = {
         name: "spectrum",
         heightOffset: 0,
-        timerPosition: (width, height, heightOffset) => {
+        rightPositionOffset: 0,
+        timerPosition: (width, height, heightOffset, currentPosition, rightPositionOffset) => {
+
+            let timerX = width / 20;
+
+            if (currentPosition === position.right) {
+                timerX += rightPositionOffset;
+            }
 
             return {
-                timerX: width / 20,
+                timerX: timerX,
                 timerY: (height - heightOffset) - 35,
                 timerHeight: 32,
                 timerWidth: 32,
             }
         },
-        playControlPosition: (width, height, heightOffset) => {
+        playControlPosition: (width, height, heightOffset, currentPosition, rightPositionOffset) => {
+
+            let playControlX = (width / 54) - 10;
+
+            if (currentPosition === position.right) {
+                playControlX += rightPositionOffset;
+            }
 
             return {
-                playControlX: (width / 54) - 10,
+                playControlX: playControlX,
                 playControlY: height - heightOffset / 1.14,
                 playControlWidth: 32,
                 playControlHeight: 32
             }
         },
-        adderControlPosition: (width, height, heightOffset) => {
+        adderControlPosition: (width, height, heightOffset, currentPosition, rightPositionOffset) => {
+
+            let adderX = width / 9;
+
+            if (currentPosition === position.right) {
+                adderX += rightPositionOffset;
+            }
 
             return {
-                adderX: (width / 9),
+                adderX: adderX,
                 adderY: height - heightOffset + 70,
                 adderWidth: 32,
                 adderHeight: 32
             }
         },
-        lowMidFreqControlPosition: (width, height, heightOffset) => {
+        lowMidFreqControlPosition: (width, height, heightOffset, currentPosition, rightPositionOffset) => {
+
+            let freqX = width / 11;
+
+            if (currentPosition === position.right) {
+                freqX += rightPositionOffset;
+            }
 
             return {
-                freqX: (width / 11),
+                freqX: freqX,
                 freqY: height - heightOffset + 140,
                 freqWidth: 32,
                 freqHeight: 32
             }
         },
-        bassFreqControlPosition: (width, height, heightOffset) => {
+        bassFreqControlPosition: (width, height, heightOffset, currentPosition, rightPositionOffset) => {
+
+            let freqX = width / 5.6;
+
+            if (currentPosition === position.right) {
+                freqX += rightPositionOffset;
+            }
 
             return {
-                freqX: (width / 5.6),
+                freqX: freqX,
                 freqY: height - heightOffset + 140,
                 freqWidth: 32,
                 freqHeight: 32
             }
         },
-        heighMidFreqControlPosition: (width, height, heightOffset) => {
+        heighMidFreqControlPosition: (width, height, heightOffset, currentPosition, rightPositionOffset) => {
+
+            let freqX = width / 22;
+
+            if (currentPosition === position.right) {
+                freqX += rightPositionOffset;
+            }
 
             return {
-                freqX: (width / 22),
+                freqX: freqX,
                 freqY: height - heightOffset + 140,
                 freqWidth: 32,
                 freqHeight: 32
             }
         },
-        trebleFreqControlPosition: (width, height, heightOffset) => {
+        trebleFreqControlPosition: (width, height, heightOffset, currentPosition, rightPositionOffset) => {
+
+            let freqX = width / 7.4;
+
+            if (currentPosition === position.right) {
+                freqX += rightPositionOffset;
+            }
 
             return {
-                freqX: (width / 7.4),
+                freqX: freqX,
                 freqY: height - heightOffset + 140,
                 freqWidth: 32,
                 freqHeight: 32
             }
         },
-        progressBarPosition: (width, height, heightOffset) => {
+        progressBarPosition: (width, height, heightOffset, currentPosition, rightPositionOffset) => {
+
+            let progressBarX = width / 22;
+
+            if (currentPosition === position.right) {
+                progressBarX += rightPositionOffset;
+            }
 
             return {
-                progressBarX: width / 22,
+                progressBarX: progressBarX,
                 progressBarY: height - heightOffset + 20,
                 progressBarWidth: (width / 6),
                 progressBarHeight: heightOffset / 6
             }
         },
-        volumeControlPosition: (width, height, heightOffset) => {
+        volumeControlPosition: (width, height, heightOffset, currentPosition, rightPositionOffset) => {
+
+            let volumeControlX = (width / 54) - 10;
+
+            if (currentPosition === position.right) {
+                volumeControlX += rightPositionOffset;
+            }
 
             return {
-                volumeControlX: (width / 54) - 10,
+                volumeControlX: volumeControlX,
                 volumeControlY: height - heightOffset / 8,
                 volumeControlIconWidth: heightOffset / 8,
                 volumeControlIconHeight: heightOffset / 8,
@@ -130,10 +186,16 @@ class AudioElement extends P5 {
                 volumeControlHeight: heightOffset / 6
             }
         },
-        micControlPosition: (width, height, heightOffset) => {
+        micControlPosition: (width, height, heightOffset, currentPosition, rightPositionOffset) => {
+
+            let micX = width / 5;
+
+            if (currentPosition === position.right) {
+                micX += rightPositionOffset;
+            }
 
             return {
-                micX: (width / 5),
+                micX: micX,
                 micY: height - heightOffset + 70,
                 micWidth: 32,
                 micHeight: 32
@@ -199,15 +261,19 @@ class AudioElement extends P5 {
     }
 
     /**
+     * @param { string } position, 
+     */
+    /**
      * @param { sound } sound
      */
     /**
      * @param { icons } icons
      */
-    constructor(sound, icons) {
+    constructor(sound, icons, currentPosition) {
         super();
         this.#sound = sound;
         this.#icons = icons;
+        this.#position = currentPosition;
 
         //set initial position of elements
         this.onResize();
@@ -266,10 +332,10 @@ class AudioElement extends P5 {
 
     setLowMidFreqLevel() {
         const currentY = mouseY.toFixed();
-        const { heightOffset, lowMidFreqControlPosition } = this.configuration;
+        const { heightOffset, rightPositionOffset, lowMidFreqControlPosition } = this.configuration;
         const {
             freqY, freqHeight
-        } = lowMidFreqControlPosition(width, height, heightOffset);
+        } = lowMidFreqControlPosition(width, height, heightOffset, this.#position, rightPositionOffset);
 
         const lineStart = Number(freqY.toFixed()) + 5;
         const lineEnd = Number(freqY.toFixed()) + freqHeight + 25;
@@ -309,10 +375,10 @@ class AudioElement extends P5 {
 
     setBassFreqLevel() {
         const currentY = mouseY.toFixed();
-        const { heightOffset, bassFreqControlPosition } = this.configuration;
+        const { heightOffset, rightPositionOffset, bassFreqControlPosition } = this.configuration;
         const {
             freqY, freqHeight
-        } = bassFreqControlPosition(width, height, heightOffset);
+        } = bassFreqControlPosition(width, height, heightOffset, this.#position, rightPositionOffset);
 
         const lineStart = Number(freqY.toFixed()) + 5;
         const lineEnd = Number(freqY.toFixed()) + freqHeight + 25;
@@ -352,10 +418,10 @@ class AudioElement extends P5 {
 
     setHeighMidFreqLevel() {
         const currentY = mouseY.toFixed();
-        const { heightOffset, heighMidFreqControlPosition } = this.configuration;
+        const { heightOffset, rightPositionOffset, heighMidFreqControlPosition } = this.configuration;
         const {
             freqY, freqHeight
-        } = heighMidFreqControlPosition(width, height, heightOffset);
+        } = heighMidFreqControlPosition(width, height, heightOffset, this.#position, rightPositionOffset);
 
         const lineStart = Number(freqY.toFixed()) + 5;
         const lineEnd = Number(freqY.toFixed()) + freqHeight + 25;
@@ -395,10 +461,10 @@ class AudioElement extends P5 {
 
     setTrebleMidFreqLevel() {
         const currentY = mouseY.toFixed();
-        const { heightOffset, trebleFreqControlPosition } = this.configuration;
+        const { heightOffset, rightPositionOffset, trebleFreqControlPosition } = this.configuration;
         const {
             freqY, freqHeight
-        } = trebleFreqControlPosition(width, height, heightOffset);
+        } = trebleFreqControlPosition(width, height, heightOffset, this.#position, rightPositionOffset);
 
         const lineStart = Number(freqY.toFixed()) + 5;
         const lineEnd = Number(freqY.toFixed()) + freqHeight + 25;
@@ -517,6 +583,7 @@ class AudioElement extends P5 {
 
     static onResize() {
         this.configuration.heightOffset = height / 4;
+        this.configuration.rightPositionOffset = ((width / 54) - 10) + (width / 4);
     };
 
     /**
@@ -540,12 +607,12 @@ class AudioElement extends P5 {
 
     //checks for clicks on the visuals flow button, changes control flows.
     //@returns true if clicked false otherwise.
-    static playControlHitCheck() {
-        const { heightOffset, playControlPosition } = this.configuration;
+    playControlHitCheck() {
+        const { heightOffset, rightPositionOffset, playControlPosition } = this.configuration;
 
         const {
             playControlWidth, playControlHeight, playControlX, playControlY
-        } = playControlPosition(width, height, heightOffset)
+        } = playControlPosition(width, height, heightOffset, this.#position, rightPositionOffset)
 
         if (mouseX > playControlX &&
             mouseX < playControlX + playControlWidth &&
@@ -559,12 +626,12 @@ class AudioElement extends P5 {
 
     //checks for clicks on the songs adder button
     //@returns true if clicked false otherwise.
-    static adderControlHitCheck() {
-        const { heightOffset, adderControlPosition } = this.configuration;
+    adderControlHitCheck() {
+        const { heightOffset, rightPositionOffset, adderControlPosition } = this.configuration;
 
         const {
             adderX, adderY, adderHeight, adderWidth
-        } = adderControlPosition(width, height, heightOffset)
+        } = adderControlPosition(width, height, heightOffset, this.#position, rightPositionOffset)
 
         if (mouseX > adderX &&
             mouseX < adderX + adderWidth &&
@@ -576,12 +643,12 @@ class AudioElement extends P5 {
         return false;
     };
 
-    static lowMidFreqControlHitCheck() {
-        const { heightOffset, lowMidFreqControlPosition } = this.configuration;
+    lowMidFreqControlHitCheck() {
+        const { heightOffset, rightPositionOffset, lowMidFreqControlPosition } = this.configuration;
 
         const {
             freqX, freqY, freqHeight, freqWidth
-        } = lowMidFreqControlPosition(width, height, heightOffset)
+        } = lowMidFreqControlPosition(width, height, heightOffset, this.#position, rightPositionOffset)
 
         if (mouseX > freqX &&
             mouseX < freqX + freqWidth &&
@@ -593,12 +660,12 @@ class AudioElement extends P5 {
         return false;
     };
 
-    static bassFreqControlHitCheck() {
-        const { heightOffset, bassFreqControlPosition } = this.configuration;
+    bassFreqControlHitCheck() {
+        const { heightOffset, rightPositionOffset, bassFreqControlPosition } = this.configuration;
 
         const {
             freqX, freqY, freqHeight, freqWidth
-        } = bassFreqControlPosition(width, height, heightOffset)
+        } = bassFreqControlPosition(width, height, heightOffset, this.#position, rightPositionOffset)
 
         if (mouseX > freqX &&
             mouseX < freqX + freqWidth &&
@@ -610,12 +677,12 @@ class AudioElement extends P5 {
         return false;
     };
 
-    static heighMidFreqControlHitCheck() {
-        const { heightOffset, heighMidFreqControlPosition } = this.configuration;
+    heighMidFreqControlHitCheck() {
+        const { heightOffset, rightPositionOffset, heighMidFreqControlPosition } = this.configuration;
 
         const {
             freqX, freqY, freqHeight, freqWidth
-        } = heighMidFreqControlPosition(width, height, heightOffset)
+        } = heighMidFreqControlPosition(width, height, heightOffset, this.#position, rightPositionOffset)
 
         if (mouseX > freqX &&
             mouseX < freqX + freqWidth &&
@@ -627,12 +694,12 @@ class AudioElement extends P5 {
         return false;
     };
 
-    static trebleFreqControlHitCheck() {
-        const { heightOffset, trebleFreqControlPosition } = this.configuration;
+    trebleFreqControlHitCheck() {
+        const { heightOffset, rightPositionOffset, trebleFreqControlPosition } = this.configuration;
 
         const {
             freqX, freqY, freqHeight, freqWidth
-        } = trebleFreqControlPosition(width, height, heightOffset)
+        } = trebleFreqControlPosition(width, height, heightOffset, this.#position, rightPositionOffset)
 
         if (mouseX > freqX &&
             mouseX < freqX + freqWidth &&
@@ -645,12 +712,12 @@ class AudioElement extends P5 {
     };
 
     //checks for clicks on volume icon.
-    static volumeControlBarHitCheck() {
-        const { heightOffset, volumeControlPosition } = this.configuration;
+    volumeControlBarHitCheck() {
+        const { heightOffset, rightPositionOffset, volumeControlPosition } = this.configuration;
 
         const {
             volumeControlHeight, volumeControlWidth, volumeControlX, volumeControlY, volumeControlIconWidth
-        } = volumeControlPosition(width, height, heightOffset)
+        } = volumeControlPosition(width, height, heightOffset, this.#position, rightPositionOffset)
 
         const leftEdge = volumeControlX + volumeControlIconWidth + (heightOffset / 6);
         const rightEdge = volumeControlX + volumeControlWidth - (heightOffset / 48);
@@ -666,12 +733,12 @@ class AudioElement extends P5 {
     };
 
     //checks for clicks on volumebar.
-    static volumeControlIconHitCheck() {
-        const { heightOffset, volumeControlPosition } = this.configuration;
+    volumeControlIconHitCheck() {
+        const { heightOffset, rightPositionOffset, volumeControlPosition } = this.configuration;
 
         const {
             volumeControlX, volumeControlY, volumeControlIconWidth, volumeControlIconHeight
-        } = volumeControlPosition(width, height, heightOffset)
+        } = volumeControlPosition(width, height, heightOffset, this.#position, rightPositionOffset)
 
         const leftEdge = volumeControlX;
         const rightEdge = volumeControlX + volumeControlIconWidth;
@@ -686,12 +753,12 @@ class AudioElement extends P5 {
         return false;
     };
 
-    static micControlHitCheck() {
-        const { heightOffset, micControlPosition } = this.configuration;
+    micControlHitCheck() {
+        const { heightOffset, rightPositionOffset, micControlPosition } = this.configuration;
 
         const {
             micY, micX, micHeight, micWidth
-        } = micControlPosition(width, height, heightOffset)
+        } = micControlPosition(width, height, heightOffset, this.#position, rightPositionOffset)
 
         if (mouseX > micX &&
             mouseX < micX + micWidth &&
@@ -704,11 +771,11 @@ class AudioElement extends P5 {
     };
 
     #setVolumeFromVolumeControl() {
-        const { heightOffset, volumeControlPosition } = this.configuration;
+        const { heightOffset, rightPositionOffset, volumeControlPosition } = this.configuration;
 
         const {
             volumeControlWidth, volumeControlX, volumeControlIconWidth
-        } = volumeControlPosition(width, height, heightOffset)
+        } = volumeControlPosition(width, height, heightOffset, this.#position, rightPositionOffset)
 
         const leftEdge = volumeControlX + volumeControlIconWidth;
         const rightEdge = volumeControlX + volumeControlWidth - (heightOffset / 48);
@@ -725,11 +792,11 @@ class AudioElement extends P5 {
     }
 
     #setVolumeFromAudioElement() {
-        const { heightOffset, volumeControlPosition } = this.configuration;
+        const { heightOffset, rightPositionOffset, volumeControlPosition } = this.configuration;
 
         const {
             volumeControlWidth, volumeControlIconWidth
-        } = volumeControlPosition(width, height, heightOffset)
+        } = volumeControlPosition(width, height, heightOffset, this.#position, rightPositionOffset)
 
         let maxLines = (((volumeControlWidth - volumeControlIconWidth) / 2) - 100).toFixed();
         this.#volumeLevel = this.controls.getVolume();
@@ -840,11 +907,11 @@ class AudioElement extends P5 {
     }
 
     #lowMidFreqRendering = () => {
-        const { heightOffset, lowMidFreqControlPosition } = this.configuration;
+        const { heightOffset, rightPositionOffset, lowMidFreqControlPosition } = this.configuration;
 
         const {
             freqX, freqY, freqHeight, freqWidth
-        } = lowMidFreqControlPosition(width, height, heightOffset);
+        } = lowMidFreqControlPosition(width, height, heightOffset, this.#position, rightPositionOffset);
 
         const lineStart = (freqY + 5);
         const lineEnd = (freqY + freqHeight + 25);
@@ -879,11 +946,11 @@ class AudioElement extends P5 {
     }
 
     #heighMidFreqRendering = () => {
-        const { heightOffset, heighMidFreqControlPosition } = this.configuration;
+        const { heightOffset, rightPositionOffset, heighMidFreqControlPosition } = this.configuration;
 
         const {
             freqX, freqY, freqHeight, freqWidth
-        } = heighMidFreqControlPosition(width, height, heightOffset);
+        } = heighMidFreqControlPosition(width, height, heightOffset, this.#position, rightPositionOffset);
 
         const lineStart = (freqY + 5);
         const lineEnd = (freqY + freqHeight + 25);
@@ -918,11 +985,11 @@ class AudioElement extends P5 {
     }
 
     #bassFreqRendering = () => {
-        const { heightOffset, bassFreqControlPosition } = this.configuration;
+        const { heightOffset, rightPositionOffset, bassFreqControlPosition } = this.configuration;
 
         const {
             freqX, freqY, freqHeight, freqWidth
-        } = bassFreqControlPosition(width, height, heightOffset);
+        } = bassFreqControlPosition(width, height, heightOffset, this.#position, rightPositionOffset);
 
         const lineStart = (freqY + 5);
         const lineEnd = (freqY + freqHeight + 25);
@@ -958,11 +1025,11 @@ class AudioElement extends P5 {
 
 
     #trebleFreqRendering = () => {
-        const { heightOffset, trebleFreqControlPosition } = this.configuration;
+        const { heightOffset, rightPositionOffset, trebleFreqControlPosition } = this.configuration;
 
         const {
             freqX, freqY, freqHeight, freqWidth
-        } = trebleFreqControlPosition(width, height, heightOffset);
+        } = trebleFreqControlPosition(width, height, heightOffset, this.#position, rightPositionOffset);
 
         const lineStart = (freqY + 5);
         const lineEnd = (freqY + freqHeight + 25);
@@ -998,22 +1065,22 @@ class AudioElement extends P5 {
 
 
     #adderRendering = () => {
-        const { heightOffset, adderControlPosition } = this.configuration;
+        const { heightOffset, rightPositionOffset, adderControlPosition } = this.configuration;
 
         const {
             adderX, adderY, adderHeight, adderWidth
-        } = adderControlPosition(width, height, heightOffset);
+        } = adderControlPosition(width, height, heightOffset, this.#position, rightPositionOffset);
 
         noStroke();
         image(this.#icons.audioElement.adder, adderX, adderY, adderHeight, adderWidth);
     }
 
     #micRendering = () => {
-        const { heightOffset, micControlPosition } = this.configuration;
+        const { heightOffset, rightPositionOffset, micControlPosition } = this.configuration;
 
         const {
             micY, micX, micHeight, micWidth
-        } = micControlPosition(width, height, heightOffset)
+        } = micControlPosition(width, height, heightOffset, this.#position, rightPositionOffset)
 
         let maxSize = micWidth + 2;
         let minSize = micWidth - 2;
@@ -1038,15 +1105,15 @@ class AudioElement extends P5 {
         const currentMinutes = Math.floor(currentTimeInSeconds / 60);
         const currentSeconds = (currentTimeInSeconds - (60 * currentMinutes)).toFixed();
 
-        const { heightOffset, timerPosition, progressBarPosition } = this.configuration;
+        const { heightOffset, rightPositionOffset, timerPosition, progressBarPosition } = this.configuration;
 
         const {
             progressBarWidth
-        } = progressBarPosition(width, height, heightOffset);
+        } = progressBarPosition(width, height, heightOffset, this.#position, rightPositionOffset);
 
         const {
             timerX, timerY, timerWidth, timerHeight
-        } = timerPosition(width, height, heightOffset);
+        } = timerPosition(width, height, heightOffset, this.#position, rightPositionOffset);
 
         textSize(16);
         fill(0);
@@ -1066,11 +1133,11 @@ class AudioElement extends P5 {
 
     //play control button UI
     #playControlRendering = () => {
-        const { heightOffset, playControlPosition } = this.configuration;
+        const { heightOffset, rightPositionOffset, playControlPosition } = this.configuration;
 
         const {
             playControlWidth, playControlHeight, playControlX, playControlY
-        } = playControlPosition(width, height, heightOffset)
+        } = playControlPosition(width, height, heightOffset, this.#position, rightPositionOffset)
 
         if (!this.isPlaying) {
             noStroke();
@@ -1083,11 +1150,11 @@ class AudioElement extends P5 {
 
     //volume control button UI
     #volumeControlRendering = () => {
-        const { heightOffset, volumeControlPosition } = this.configuration;
+        const { heightOffset, rightPositionOffset, volumeControlPosition } = this.configuration;
 
         const {
             volumeControlHeight, volumeControlWidth, volumeControlX, volumeControlY, volumeControlIconHeight, volumeControlIconWidth
-        } = volumeControlPosition(width, height, heightOffset)
+        } = volumeControlPosition(width, height, heightOffset, this.#position, rightPositionOffset)
 
         let maxLines = (((volumeControlWidth - volumeControlIconWidth) / 2) - 100).toFixed();
         let initialXForSoundBar = volumeControlX;
@@ -1124,11 +1191,11 @@ class AudioElement extends P5 {
     }
 
     #progressBarRendering = () => {
-        const { heightOffset, progressBarPosition } = this.configuration;
+        const { heightOffset, rightPositionOffset, progressBarPosition } = this.configuration;
 
         const {
             progressBarHeight, progressBarWidth, progressBarX, progressBarY
-        } = progressBarPosition(width, height, heightOffset)
+        } = progressBarPosition(width, height, heightOffset, this.#position, rightPositionOffset)
 
         const spacing = this.peaks.length / progressBarWidth;
         const peakStep = Math.ceil(progressBarWidth / spacing);

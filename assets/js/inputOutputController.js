@@ -99,7 +99,7 @@ class InputOutputController extends P5 {
 	}
 
 	#setCurrentAudioElement(position) {
-		if (position.left === this.#position) {
+		if (position === this.#position.left) {
 			this.#currentAudioElement = this.#leftAudioElement;
 		} else {
 			this.#currentAudioElement = this.#rightAudioElement;
@@ -109,6 +109,14 @@ class InputOutputController extends P5 {
 	#setupEventObservers() {
 		//make the window fullscreen or revert to windowed
 		this.#mousePressedEventObserver = () => {
+
+			if (this.#controlPannel.rightAudioElementHitCheck()) {
+				this.#setCurrentAudioElement(position.right);
+			}
+
+			if (this.#controlPannel.leftAudioElementHitCheck()) {
+				this.#setCurrentAudioElement(position.left)
+			}
 
 			if (!this.#playbackButton.hitCheck()) {
 				// var fs = fullscreen();
@@ -125,16 +133,6 @@ class InputOutputController extends P5 {
 				this.#leftAudioElement.show();
 				this.#rightAudioElement.show();
 				this.#visualsMenu.hide();
-			}
-
-			if (this.#controlPannel.rightAudioElementHitCheck()) {
-				console.log("rightAudioElementHitCheck");
-				this.#setCurrentAudioElement(position.right);
-			}
-
-			if (this.#controlPannel.leftAudioElementHitCheck()) {
-				console.log("leftAudioElementHitCheck");
-				this.#setCurrentAudioElement(position.left)
 			}
 
 			if (this.#currentAudioElement.playControlHitCheck()) {

@@ -614,6 +614,8 @@ class AudioElement extends P5 {
             playControlWidth, playControlHeight, playControlX, playControlY
         } = playControlPosition(width, height, heightOffset, this.#position, rightPositionOffset)
 
+        // console.log(this.#position)
+
         if (mouseX > playControlX &&
             mouseX < playControlX + playControlWidth &&
             mouseY > playControlY && mouseY < playControlY + playControlHeight) {

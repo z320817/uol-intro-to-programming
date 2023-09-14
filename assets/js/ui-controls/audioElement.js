@@ -889,8 +889,6 @@ class AudioElement extends P5 {
                     navigator.serviceWorker.addEventListener('message', event => {
 
                         if (event.data === file.data) {
-                            console.log(this.#sound);
-                            console.log(sound);
                             this.#sound = sound;
                             this.#createP5AudioControl(file.data);
                             this.#createWaveAudioControl(file.data);

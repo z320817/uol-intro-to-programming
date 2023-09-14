@@ -8,7 +8,7 @@ self.addEventListener('fetch', (event) => {
 async function customResponse(request) {
   const url = new URL(request.url);
 
-  if (url.pathname.includes(urlToIntersept)) {
+  if (url.pathname.includes(urlToIntersept) || url.pathname.includes("/assets/music/record.wav")) {
     return new Response(fileToRespondWith, {
       status: 200,
       statusText: 'OK',

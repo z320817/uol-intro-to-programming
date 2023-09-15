@@ -82,16 +82,16 @@ class InputOutputController extends P5 {
 	}
 
 	#instantiateUiControls() {
-		this.#playbackButton = new PlaybackButton(this.#leftAudioElement);
-		this.#needlseUiOutput = new Needles(PI, TWO_PI, this.#leftAudioElement);
+		this.#playbackButton = new PlaybackButton(this.#currentAudioElement);
+		this.#needlseUiOutput = new Needles(PI, TWO_PI, this.#currentAudioElement);
 		this.#controlPannel = new ControlPanel(this.#icons);
 	}
 
 	#instantiateVisualisations() {
 		this.#visualisationController = new VisualisationController();
-		this.#visualisationController.add(new Spectrum(this.#leftAudioElement));
-		this.#visualisationController.add(new WavePattern(this.#leftAudioElement));
-		this.#visualisationController.add(new WaveExample(drawingContext.canvas, this.#leftAudioElement));
+		this.#visualisationController.add(new Spectrum(this.#currentAudioElement, this.#icons));
+		this.#visualisationController.add(new WavePattern(this.#currentAudioElement, this.#icons));
+		this.#visualisationController.add(new WaveExample(this.#currentAudioElement, this.#icons));
 	}
 
 	#instatiateVisualisationControls() {

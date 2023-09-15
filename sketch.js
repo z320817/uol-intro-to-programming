@@ -50,6 +50,12 @@ const icons = {
 			loop: null,
 			noLoop: null
 		}
+	},
+	visualisation: {
+		spectrum: {
+			on: null,
+			off: null
+		}
 	}
 }
 
@@ -74,6 +80,8 @@ function preload() {
 	icons.audioElement.mic.micOff = loadImage('assets/images/audioElement/mic/micOff.svg');
 	icons.audioElement.loop.loop = loadImage('assets/images/audioElement/loop/loop.svg');
 	icons.audioElement.loop.noLoop = loadImage('assets/images/audioElement/loop/noLoop.svg');
+	icons.visualisation.spectrum.on = loadImage('assets/images/visualisation/spectrum/on.svg');
+	icons.visualisation.spectrum.on = loadImage('assets/images/visualisation/spectrum/off.svg');
 }
 
 function setup() {

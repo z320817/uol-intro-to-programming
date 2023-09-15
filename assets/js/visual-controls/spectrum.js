@@ -1,5 +1,6 @@
 class Spectrum extends P5 {
 
+	#icons;
 	#audioElement;
 	#renderingProcessor;
 
@@ -26,12 +27,15 @@ class Spectrum extends P5 {
 	}
 
 	/**
-	 * @param { AudioElement } audioElement, 
+	 * @param { icons } icons, 
 	 */
-	constructor(audioElement) {
+	/**
+	 * @param { AudioElement } currentAudioElement, 
+	 */
+	constructor(currentAudioElement) {
 		super();
 
-		this.#audioElement = audioElement;
+		this.#audioElement = currentAudioElement;
 
 		//set initial position of elements
 		this.onResize();

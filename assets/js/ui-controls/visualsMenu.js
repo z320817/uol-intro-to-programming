@@ -1,6 +1,7 @@
 //Constructor function to handle the onscreen menu, keyboard and mouse
 //controls
 class VisualsMenu extends P5 {
+
     #menuDisplayed = false;
     #controlsDisplayed = false;
     #visualisationController;
@@ -26,10 +27,10 @@ class VisualsMenu extends P5 {
         visualsMenuPosition: (width, widthOffset, height, heightOffset, i) => {
 
             return {
-				x: width / widthOffset,
-				y:  heightOffset + i * height,
-			}
-		},
+                x: width / widthOffset,
+                y: heightOffset + i * height,
+            }
+        },
     }
 
     get configuration() {
@@ -58,9 +59,9 @@ class VisualsMenu extends P5 {
     }
 
     get show() {
-        return this.#showVisualsMenue;
+        return this.#showVisualsMenu;
     }
-    
+
     get onResize() {
         return VisualsMenu.onResize;
     }
@@ -119,7 +120,7 @@ class VisualsMenu extends P5 {
         this.#controlsDisplayed = false;
     }
 
-    #showVisualsMenue() {
+    #showVisualsMenu() {
         this.#controlsDisplayed = true;
         this.#controls();
     }

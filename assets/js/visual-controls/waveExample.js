@@ -1,7 +1,7 @@
 class WaveExample extends P5 {
 
+	#icons;
 	#waveCanvas;
-	#p5Canvas;
 	#audioElement;
 	#renderingProcessor;
 	#wave;
@@ -31,12 +31,16 @@ class WaveExample extends P5 {
 	 * @param { canvas } canvas, 
 	 */
 	/**
-	 * @param { AudioElement } audioElement, 
+	 * @param { icons } icons, 
 	 */
-	constructor(canvas, audioElement) {
+	/**
+	 * @param { AudioElement } currentAudioElement, 
+	 */
+	constructor(currentAudioElement, icons) {
 		super();
-		this.#p5Canvas = canvas;
-		this.#audioElement = audioElement.waveAudioElement;
+
+		this.#icons = icons;
+		this.#audioElement = currentAudioElement.waveAudioElement;
 
 		//set initial position of elements
 		this.onResize();

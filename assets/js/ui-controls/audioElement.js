@@ -27,6 +27,7 @@ class AudioElement extends P5 {
     #waveControlsIsHidden = true;
     #volumeLevel = 1;
     #currentVolumeLine = 1;
+    #isLooped = false;
     #lowMidFreqLevel = 0;
     #bassFreqLevel = 0;
     #heighMidFreqLevel = 0;
@@ -39,7 +40,6 @@ class AudioElement extends P5 {
     #lowMidCutoff = 400;
     #heighMidCutoff = 1000;
     #trebleCutoff = 4000;
-    #isLooped = false;
     #frequencyBins = ["bass", "lowMid", "highMid", "treble"];
     #sound;
     #icons;
@@ -124,6 +124,26 @@ class AudioElement extends P5 {
                 freqWidth: 32,
                 freqHeight: 32
             }
+        },
+        freqControlConfiguration: (freqY, freqHeight, cutOff) => {
+            const lineStart = Number(freqY.toFixed()) + 5;
+            const lineEnd = Number(freqY.toFixed()) + freqHeight + 25;
+            const lineLength = lineEnd - lineStart;
+            const lineMiddle = (lineStart + (lineLength / 2)).toFixed() - freqHeight / 2;
+            const upMiddle = lineMiddle - 1;
+            const downMiddle = lineMiddle + 1;
+            const step = Number((cutOff / lineLength).toFixed());
+            const degree = cutOff / step;
+
+            return { lineStart, lineEnd, lineMiddle, upMiddle, downMiddle, degree };
+        },
+        freqRenderingConfiguration: (freqY, freqHeight) => {
+            const lineStart = (freqY + 5);
+            const lineEnd = (freqY + freqHeight + 25);
+            const lineLength = lineEnd - lineStart;
+            const lineMiddle = (lineStart + (lineLength / 2)).toFixed() - freqHeight / 2;
+
+            return { lineMiddle };
         },
         bassFreqControlPosition: (width, height, heightOffset, currentPosition, rightPositionOffset) => {
 
@@ -234,7 +254,6 @@ class AudioElement extends P5 {
     get onResize() {
         return AudioElement.onResize;
     }
-
 
     get playControlHitCheck() {
         return AudioElement.playControlHitCheck;
@@ -357,19 +376,12 @@ class AudioElement extends P5 {
 
     setLowMidFreqLevel() {
         const currentY = mouseY.toFixed();
-        const { heightOffset, rightPositionOffset, lowMidFreqControlPosition } = this.configuration;
+        const { heightOffset, rightPositionOffset, lowMidFreqControlPosition, freqControlConfiguration } = this.configuration;
         const {
             freqY, freqHeight
         } = lowMidFreqControlPosition(width, height, heightOffset, this.#position, rightPositionOffset);
 
-        const lineStart = Number(freqY.toFixed()) + 5;
-        const lineEnd = Number(freqY.toFixed()) + freqHeight + 25;
-        const lineLength = lineEnd - lineStart;
-        const lineMiddle = (lineStart + (lineLength / 2)).toFixed() - freqHeight / 2;
-        const upMiddle = lineMiddle - 1;
-        const downMiddle = lineMiddle + 1;
-        const step = Number((this.#lowMidCutoff / lineLength).toFixed());
-        const degree = this.#lowMidCutoff / step;
+        const { lineStart, lineEnd, lineMiddle, upMiddle, downMiddle, degree } = freqControlConfiguration(freqY, freqHeight);
 
         if (!this.#lowMidFreqLevel) {
             this.#lowMidFreqLevel = lineMiddle;
@@ -400,19 +412,12 @@ class AudioElement extends P5 {
 
     setBassFreqLevel() {
         const currentY = mouseY.toFixed();
-        const { heightOffset, rightPositionOffset, bassFreqControlPosition } = this.configuration;
+        const { heightOffset, rightPositionOffset, bassFreqControlPosition, freqControlConfiguration } = this.configuration;
         const {
             freqY, freqHeight
         } = bassFreqControlPosition(width, height, heightOffset, this.#position, rightPositionOffset);
 
-        const lineStart = Number(freqY.toFixed()) + 5;
-        const lineEnd = Number(freqY.toFixed()) + freqHeight + 25;
-        const lineLength = lineEnd - lineStart;
-        const lineMiddle = (lineStart + (lineLength / 2)).toFixed() - freqHeight / 2;
-        const upMiddle = lineMiddle - 1;
-        const downMiddle = lineMiddle + 1;
-        const step = Number((this.#bassCutoff / lineLength).toFixed());
-        const degree = this.#bassCutoff / step;
+        const { lineStart, lineEnd, lineMiddle, upMiddle, downMiddle, degree } = freqControlConfiguration(freqY, freqHeight, this.#bassCutoff);
 
         if (!this.#bassFreqLevel) {
             this.#bassFreqLevel = lineMiddle;
@@ -443,19 +448,12 @@ class AudioElement extends P5 {
 
     setHeighMidFreqLevel() {
         const currentY = mouseY.toFixed();
-        const { heightOffset, rightPositionOffset, heighMidFreqControlPosition } = this.configuration;
+        const { heightOffset, rightPositionOffset, heighMidFreqControlPosition, freqControlConfiguration } = this.configuration;
         const {
             freqY, freqHeight
         } = heighMidFreqControlPosition(width, height, heightOffset, this.#position, rightPositionOffset);
 
-        const lineStart = Number(freqY.toFixed()) + 5;
-        const lineEnd = Number(freqY.toFixed()) + freqHeight + 25;
-        const lineLength = lineEnd - lineStart;
-        const lineMiddle = (lineStart + (lineLength / 2)).toFixed() - freqHeight / 2;
-        const upMiddle = lineMiddle - 1;
-        const downMiddle = lineMiddle + 1;
-        const step = Number((this.#heighMidCutoff / lineLength).toFixed());
-        const degree = this.#heighMidCutoff / step;
+        const { lineStart, lineEnd, lineMiddle, upMiddle, downMiddle, degree } = freqControlConfiguration(freqY, freqHeight);
 
         if (!this.#heighMidFreqLevel) {
             this.#heighMidFreqLevel = lineMiddle;
@@ -486,19 +484,12 @@ class AudioElement extends P5 {
 
     setTrebleMidFreqLevel() {
         const currentY = mouseY.toFixed();
-        const { heightOffset, rightPositionOffset, trebleFreqControlPosition } = this.configuration;
+        const { heightOffset, rightPositionOffset, trebleFreqControlPosition, freqControlConfiguration } = this.configuration;
         const {
             freqY, freqHeight
         } = trebleFreqControlPosition(width, height, heightOffset, this.#position, rightPositionOffset);
 
-        const lineStart = Number(freqY.toFixed()) + 5;
-        const lineEnd = Number(freqY.toFixed()) + freqHeight + 25;
-        const lineLength = lineEnd - lineStart;
-        const lineMiddle = (lineStart + (lineLength / 2)).toFixed() - freqHeight / 2;
-        const upMiddle = lineMiddle - 1;
-        const downMiddle = lineMiddle + 1;
-        const step = Number((this.#trebleCutoff / lineLength).toFixed());
-        const degree = this.#trebleCutoff / step;
+        const { lineStart, lineEnd, lineMiddle, upMiddle, downMiddle, degree } = freqControlConfiguration(freqY, freqHeight);
 
         if (!this.#trebleFreqLevel) {
             this.#trebleFreqLevel = lineMiddle;
@@ -960,16 +951,13 @@ class AudioElement extends P5 {
     }
 
     #lowMidFreqRendering = () => {
-        const { heightOffset, rightPositionOffset, lowMidFreqControlPosition } = this.configuration;
+        const { heightOffset, rightPositionOffset, lowMidFreqControlPosition, freqRenderingConfiguration } = this.configuration;
 
         const {
             freqX, freqY, freqHeight, freqWidth
         } = lowMidFreqControlPosition(width, height, heightOffset, this.#position, rightPositionOffset);
 
-        const lineStart = (freqY + 5);
-        const lineEnd = (freqY + freqHeight + 25);
-        const lineLength = lineEnd - lineStart;
-        const lineMiddle = (lineStart + (lineLength / 2)).toFixed() - freqHeight / 2;
+        const { lineMiddle } = freqRenderingConfiguration(freqY, freqHeight);
 
         textSize(14);
         fill(0);
@@ -999,16 +987,13 @@ class AudioElement extends P5 {
     }
 
     #heighMidFreqRendering = () => {
-        const { heightOffset, rightPositionOffset, heighMidFreqControlPosition } = this.configuration;
+        const { heightOffset, rightPositionOffset, heighMidFreqControlPosition, freqRenderingConfiguration } = this.configuration;
 
         const {
             freqX, freqY, freqHeight, freqWidth
         } = heighMidFreqControlPosition(width, height, heightOffset, this.#position, rightPositionOffset);
 
-        const lineStart = (freqY + 5);
-        const lineEnd = (freqY + freqHeight + 25);
-        const lineLength = lineEnd - lineStart;
-        const lineMiddle = (lineStart + (lineLength / 2)).toFixed() - freqHeight / 2;
+        const { lineMiddle } = freqRenderingConfiguration(freqY, freqHeight);
 
         textSize(14);
         fill(0);
@@ -1038,16 +1023,13 @@ class AudioElement extends P5 {
     }
 
     #bassFreqRendering = () => {
-        const { heightOffset, rightPositionOffset, bassFreqControlPosition } = this.configuration;
+        const { heightOffset, rightPositionOffset, bassFreqControlPosition, freqRenderingConfiguration } = this.configuration;
 
         const {
             freqX, freqY, freqHeight, freqWidth
         } = bassFreqControlPosition(width, height, heightOffset, this.#position, rightPositionOffset);
 
-        const lineStart = (freqY + 5);
-        const lineEnd = (freqY + freqHeight + 25);
-        const lineLength = lineEnd - lineStart;
-        const lineMiddle = (lineStart + (lineLength / 2)).toFixed() - freqHeight / 2;
+        const { lineMiddle } = freqRenderingConfiguration(freqY, freqHeight);
 
         textSize(14);
         fill(0);
@@ -1078,16 +1060,13 @@ class AudioElement extends P5 {
 
 
     #trebleFreqRendering = () => {
-        const { heightOffset, rightPositionOffset, trebleFreqControlPosition } = this.configuration;
+        const { heightOffset, rightPositionOffset, trebleFreqControlPosition, freqRenderingConfiguration } = this.configuration;
 
         const {
             freqX, freqY, freqHeight, freqWidth
         } = trebleFreqControlPosition(width, height, heightOffset, this.#position, rightPositionOffset);
 
-        const lineStart = (freqY + 5);
-        const lineEnd = (freqY + freqHeight + 25);
-        const lineLength = lineEnd - lineStart;
-        const lineMiddle = (lineStart + (lineLength / 2)).toFixed() - freqHeight / 2;
+        const { lineMiddle } = freqRenderingConfiguration(freqY, freqHeight);
 
         textSize(14);
         fill(0);

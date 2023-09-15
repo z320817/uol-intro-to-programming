@@ -23,6 +23,9 @@ class AudioElement extends P5 {
     volumeChanged = false;
 
     #p5audioElement;
+    #progressBarIsRendered = false;
+    #progressBarBuffer;
+    #progressBarConfigurationRetrived = false;
     #p5audioControlsIsHidden = false;
     #waveControlsIsHidden = true;
     #volumeLevel = 1;
@@ -994,6 +997,7 @@ class AudioElement extends P5 {
                             this.#createP5AudioControl(file.data);
                             this.#createWaveAudioControl(file.data);
                             this.#setCurrentAudioControls();
+                            this.#progressBarIsRendered = false;
                         }
                     });
                 } else {
@@ -1297,13 +1301,9 @@ class AudioElement extends P5 {
             progressBarHeight, progressBarWidth, progressBarX, progressBarY
         } = progressBarPosition(width, height, heightOffset, this.#position, rightPositionOffset);
 
-        let { x1, x2, progressBarLength, currentProgress, currentPeakIndex, progressBarSpacing, peakStep, progressStart, progressPos } = progressBarConfiguration(progressBarX, progressBarWidth, this.controls, this.peaks);
+        let { currentProgress, progressStart, progressPos } = progressBarConfiguration(progressBarX, progressBarWidth, this.controls, this.peaks);
 
-        fill(0);
-        rect(progressBarX, progressBarY, progressBarWidth, progressBarHeight);
-
-
-        this.#renderSoundPeaks(x1, x2, progressBarLength, currentPeakIndex, progressBarSpacing, peakStep, progressBarHeight, progressBarY);
+        this.#renderSoundPeaks();
 
         if (this.isPlaying) {
             stroke("#FF0000");
@@ -1319,26 +1319,47 @@ class AudioElement extends P5 {
 
     }
 
-    #renderSoundPeaks(x1, x2, progressBarLength, currentPeakIndex, progressBarSpacing, peakStep, progressBarHeight, progressBarY) {
+    #renderSoundPeaks() {
+        const { heightOffset, rightPositionOffset, progressBarPosition, progressBarConfiguration } = this.configuration;
 
+        const {
+            progressBarHeight, progressBarWidth, progressBarX, progressBarY
+        } = progressBarPosition(width, height, heightOffset, this.#position, rightPositionOffset);
 
-        for (let i = 0; i < progressBarLength; i += progressBarSpacing) {
+        if (!this.#progressBarIsRendered) {
 
-            let currentPeakValue = Math.abs(this.peaks[currentPeakIndex]) * 500;
-            x1 += progressBarSpacing;
-            let y1 = progressBarY + progressBarHeight;
-            x2 += progressBarSpacing;
-            let y2 = progressBarY + currentPeakValue;
-            stroke(255);
-            strokeWeight(3);
-            line(x1, y1, x2, y2);
-            noStroke();
+            let { progressBarLength, currentPeakIndex, progressBarSpacing, peakStep } = progressBarConfiguration(progressBarX, progressBarWidth, this.controls, this.peaks);
 
-            if (currentPeakIndex <= progressBarLength) {
-                currentPeakIndex += peakStep;
-            } else {
-                currentPeakIndex = 0;
+            let x1 = 0;
+            let x2 = 0;
+
+            // Create the off-screen buffer
+            this.#progressBarBuffer = createGraphics(progressBarWidth, progressBarHeight);
+            this.#progressBarBuffer.background(0); // Set the buffer's background color
+
+            for (let i = 0; i < progressBarLength; i += progressBarSpacing) {
+                let currentPeakValue = Math.abs(this.peaks[currentPeakIndex]) * 500;
+                x1 += progressBarSpacing;
+                let y1 = progressBarHeight;
+                x2 += progressBarSpacing;
+                let y2 = currentPeakValue;
+
+                // Draw onto the off-screen buffer
+                this.#progressBarBuffer.stroke(255);
+                this.#progressBarBuffer.strokeWeight(3);
+                this.#progressBarBuffer.line(x1, y1, x2, y2);
+                this.#progressBarBuffer.noStroke();
+
+                if (currentPeakIndex <= progressBarLength) {
+                    currentPeakIndex += peakStep;
+                } else {
+                    currentPeakIndex = 0;
+                }
             }
+
+            this.#progressBarIsRendered = true;
+        } else {
+            image(this.#progressBarBuffer, progressBarX, progressBarY);
         }
     }
 

@@ -39,6 +39,7 @@ class AudioElement extends P5 {
     #lowMidCutoff = 400;
     #heighMidCutoff = 1000;
     #trebleCutoff = 4000;
+    #isLooped = false;
     #frequencyBins = ["bass", "lowMid", "highMid", "treble"];
     #sound;
     #icons;
@@ -49,6 +50,21 @@ class AudioElement extends P5 {
         name: "spectrum",
         heightOffset: 0,
         rightPositionOffset: 0,
+        looperPosition: (width, height, heightOffset, currentPosition, rightPositionOffset) => {
+
+            let looperX = width / 24;
+
+            if (currentPosition === position.right) {
+                looperX += rightPositionOffset;
+            }
+
+            return {
+                looperX: looperX,
+                looperY: (height - heightOffset) + 70,
+                looperHeight: 32,
+                looperWidth: 28,
+            }
+        },
         timerPosition: (width, height, heightOffset, currentPosition, rightPositionOffset) => {
 
             let timerX = width / 20;
@@ -256,6 +272,10 @@ class AudioElement extends P5 {
         return AudioElement.micControlHitCheck;
     }
 
+    get looperControlHitCheck() {
+        return AudioElement.looperControlHitCheck;
+    }
+
     get draw() {
         return this.#renderingProcessor;
     }
@@ -295,6 +315,11 @@ class AudioElement extends P5 {
 
     setRecordInProgress() {
         return this.#setRecordInProgress();
+    }
+
+    setIsLooped() {
+        this.#isLooped = !this.#isLooped;
+        this.controls.setLoop();
     }
 
     requestP5audioControls() {
@@ -546,6 +571,9 @@ class AudioElement extends P5 {
             this.controls.getVolume = () => {
                 return this.#p5audioElement.volume();
             };
+            this.controls.setLoop = () => {
+                this.#p5audioElement.loop();
+            }
 
             this.currentAudioElement = this.#p5audioElement;
         }
@@ -576,6 +604,13 @@ class AudioElement extends P5 {
             this.controls.getVolume = () => {
                 return this.waveAudioElement.volume;
             };
+            this.controls.setLoop = () => {
+                if (this.#isLooped) {
+                    this.waveAudioElement.loop = true;
+                } else {
+                    this.waveAudioElement.loop = false;
+                }
+            }
 
             this.currentAudioElement = this.waveAudioElement;
         }
@@ -638,6 +673,24 @@ class AudioElement extends P5 {
         if (mouseX > adderX &&
             mouseX < adderX + adderWidth &&
             mouseY > adderY && mouseY < adderY + adderHeight) {
+
+            return true;
+        }
+
+        return false;
+    };
+
+    //checks for clicks on the loop button
+    //@returns true if clicked false otherwise.
+    looperControlHitCheck() {
+        const { heightOffset, rightPositionOffset, looperPosition } = this.configuration;
+        const {
+            looperHeight, looperWidth, looperX, looperY
+        } = looperPosition(width, height, heightOffset, this.#position, rightPositionOffset);
+
+        if (mouseX > looperX &&
+            mouseX < looperX + looperWidth &&
+            mouseY > looperY && mouseY < looperY + looperHeight) {
 
             return true;
         }
@@ -1097,6 +1150,22 @@ class AudioElement extends P5 {
     }
 
     //timer counter UI
+    #looperRendering = () => {
+        const { heightOffset, rightPositionOffset, looperPosition } = this.configuration;
+        const {
+            looperHeight, looperWidth, looperX, looperY
+        } = looperPosition(width, height, heightOffset, this.#position, rightPositionOffset);
+
+        if (this.#isLooped) {
+            noStroke();
+            image(this.#icons.audioElement.loop.loop, looperX, looperY, looperHeight, looperWidth);
+        } else {
+            noStroke();
+            image(this.#icons.audioElement.loop.noLoop, looperX, looperY, looperHeight, looperWidth);
+        }
+    }
+
+    //timer counter UI
     #timerRendering = () => {
         const timeInSeconds = this.controls.duration().toFixed(2);
         const minutes = Math.floor(timeInSeconds / 60);
@@ -1289,6 +1358,7 @@ class AudioElement extends P5 {
                 this.#trebleFreqRendering();
                 this.#bassFreqRendering();
                 this.#micRendering();
+                this.#looperRendering();
             }
         };
     }

@@ -167,6 +167,10 @@ class InputOutputController extends P5 {
 				this.#currentAudioElement.fileInput.elt.click();
 			}
 
+			if (this.#currentAudioElement.looperControlHitCheck()) {
+				this.#currentAudioElement.setIsLooped();
+			}
+
 			if (this.#currentAudioElement.lowMidFreqControlHitCheck()) {
 				this.#currentAudioElement.setLowMidFreqLevel();
 			}

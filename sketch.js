@@ -45,6 +45,11 @@ const icons = {
 			micOff: null,
 			micOn: null,
 		},
+		loop:
+		{
+			loop: null,
+			noLoop: null
+		}
 	}
 }
 
@@ -67,6 +72,8 @@ function preload() {
 	icons.audioElement.frequencyChanger.frequencyChangerDown = loadImage('assets/images/audioElement/frequencyChanger/frequencyChangerDown.svg');
 	icons.audioElement.mic.micOn = loadImage('assets/images/audioElement/mic/micOn.svg');
 	icons.audioElement.mic.micOff = loadImage('assets/images/audioElement/mic/micOff.svg');
+	icons.audioElement.loop.loop = loadImage('assets/images/audioElement/loop/loop.svg');
+	icons.audioElement.loop.noLoop = loadImage('assets/images/audioElement/loop/noLoop.svg');
 }
 
 function setup() {

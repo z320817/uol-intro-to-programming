@@ -1,6 +1,7 @@
 class WaveExample extends P5 {
 
 	#icons;
+	#isEnabled;
 	#waveCanvas;
 	#audioElement;
 	#renderingProcessor;
@@ -58,6 +59,20 @@ class WaveExample extends P5 {
 	static onResize() {
 		this.configuration.heightOffset = height / 2.5;
 	};
+
+	controlRendering() {
+		return this.#setupControllRendering();
+	}
+
+	setIsEnabled() {
+		this.#isEnabled = !this.#isEnabled;
+	}
+
+	#setupControllRendering() {
+		push();
+
+		pop();
+	}
 
 	#createWaveCanvas() {
 		// Create a canvas element

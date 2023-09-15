@@ -81,7 +81,7 @@ function preload() {
 	icons.audioElement.loop.loop = loadImage('assets/images/audioElement/loop/loop.svg');
 	icons.audioElement.loop.noLoop = loadImage('assets/images/audioElement/loop/noLoop.svg');
 	icons.visualisation.spectrum.on = loadImage('assets/images/visualisation/spectrum/on.svg');
-	icons.visualisation.spectrum.on = loadImage('assets/images/visualisation/spectrum/off.svg');
+	icons.visualisation.spectrum.off = loadImage('assets/images/visualisation/spectrum/off.svg');
 }
 
 function setup() {

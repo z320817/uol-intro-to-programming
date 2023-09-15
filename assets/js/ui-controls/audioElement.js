@@ -1302,6 +1302,26 @@ class AudioElement extends P5 {
         fill(0);
         rect(progressBarX, progressBarY, progressBarWidth, progressBarHeight);
 
+
+        this.#renderSoundPeaks(x1, x2, progressBarLength, currentPeakIndex, progressBarSpacing, peakStep, progressBarHeight, progressBarY);
+
+        if (this.isPlaying) {
+            stroke("#FF0000");
+            strokeWeight(3);
+            line(progressStart + progressPos, progressBarY, progressStart + progressPos, progressBarY + progressBarHeight);
+            noStroke();
+        } else {
+            stroke("#FFCCCC");
+            strokeWeight(3);
+            line(currentProgress, progressBarY, currentProgress, progressBarY + progressBarHeight);
+            noStroke();
+        }
+
+    }
+
+    #renderSoundPeaks(x1, x2, progressBarLength, currentPeakIndex, progressBarSpacing, peakStep, progressBarHeight, progressBarY) {
+
+
         for (let i = 0; i < progressBarLength; i += progressBarSpacing) {
 
             let currentPeakValue = Math.abs(this.peaks[currentPeakIndex]) * 500;
@@ -1320,20 +1340,6 @@ class AudioElement extends P5 {
                 currentPeakIndex = 0;
             }
         }
-
-
-        if (this.isPlaying) {
-            stroke("#FF0000");
-            strokeWeight(3);
-            line(progressStart + progressPos, progressBarY, progressStart + progressPos, progressBarY + progressBarHeight);
-            noStroke();
-        } else {
-            stroke("#FFCCCC");
-            strokeWeight(3);
-            line(currentProgress, progressBarY, currentProgress, progressBarY + progressBarHeight);
-            noStroke();
-        }
-
     }
 
 

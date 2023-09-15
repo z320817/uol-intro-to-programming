@@ -40,10 +40,6 @@ class VisualsMenu extends P5 {
         return this.#controlsDisplayed;
     }
 
-    get controls() {
-        return this.#controls;
-    }
-
     get hide() {
         return this.#hideVisualsMenu;
     }
@@ -67,26 +63,12 @@ class VisualsMenu extends P5 {
 
     draw() {
         push();
-        fill("white");
-        stroke("black");
-        strokeWeight(2);
-        textSize(34);
-
         if (this.#controlsDisplayed) {
-            text("Controls for visualisation:", 100, 30);
-            this.#controls();
+            for (let i = 0; i < this.#visualisationController.visuals.length; i++) {
+                this.#visualisationController.visuals[i].controlRendering();
+            }
         }
         pop();
-    };
-
-    #controls() {
-        const { heightOffset, widthOffset } = this.configuration;
-
-        //draw out menu items for each visualisation
-        for (let i = 0; i < this.#visualisationController.visuals.length; i++) {
-            const yLoc = heightOffset + i * widthOffset;
-            text((i + 1) + ":  " + this.#visualisationController.visuals[i].name, widthOffset, yLoc);
-        }
     };
 
     #hideVisualsMenu() {
@@ -95,7 +77,6 @@ class VisualsMenu extends P5 {
 
     #showVisualsMenu() {
         this.#controlsDisplayed = true;
-        this.#controls();
     }
 }
 

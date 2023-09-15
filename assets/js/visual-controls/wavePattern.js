@@ -2,6 +2,7 @@
 class WavePattern extends P5 {
 
 	#icons;
+	#isEnabled;
 	#audioElement;
 	#renderingProcessor;
 
@@ -47,6 +48,20 @@ class WavePattern extends P5 {
 	static onResize() {
 		this.configuration.heightOffset = height / 2.5;
 	};
+
+	controlRendering() {
+		return this.#setupControllRendering();
+	}
+
+	setIsEnabled() {
+		this.#isEnabled = !this.#isEnabled;
+	}
+
+	#setupControllRendering() {
+		push();
+
+		pop();
+	}
 
 	#setupRenderingProcessor() {
 		const { heightOffset } = this.configuration;

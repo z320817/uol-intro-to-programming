@@ -2,17 +2,17 @@ class Spectrum extends P5 {
 
 	#icons;
 	#audioElement;
-	#isEnabled;
+	#isEnabled = true;
 	#renderingProcessor;
 
 	static #configuration = {
 		name: "spectrum",
 		heightOffset: 0,
 		lowerBorder: 0,
-		spectrumControlPosition: (width, height, heightOffset) => {
+		spectrumControlPosition: (width, lowerBorder) => {
 			return {
-				spectrumControlIconX: timerX,
-				spectrumControlIconY: (height - heightOffset) - 35,
+				spectrumControlIconX: width / 12,
+				spectrumControlIconY: lowerBorder + 150,
 				spectrumControlIconHeight: 32,
 				spectrumControlIconWidth: 32,
 			}
@@ -20,6 +20,10 @@ class Spectrum extends P5 {
 		spectrumControlConfiguration: () => {
 
 		}
+	}
+
+	get controlHitCheck() {
+		return this.#controlHitCheck;
 	}
 
 	get configuration() {
@@ -61,12 +65,42 @@ class Spectrum extends P5 {
 		this.configuration.lowerBorder = Number((height - this.configuration.heightOffset).toFixed(0));
 	};
 
-	#setupControllRendering() {
+	controlRendering() {
+		return this.#setupControllRendering();
+	}
+
+	setIsEnabled() {
+		this.#isEnabled = !this.#isEnabled;
+	}
+
+	#controlHitCheck() {
 		const { lowerBorder, spectrumControlPosition } = this.configuration;
 
+		const { spectrumControlIconX, spectrumControlIconY, spectrumControlIconHeight, spectrumControlIconWidth } = spectrumControlPosition(width, lowerBorder);
+
+		if (mouseX > spectrumControlIconX &&
+			mouseX < spectrumControlIconX + spectrumControlIconWidth &&
+			mouseY > spectrumControlIconY && mouseY < spectrumControlIconY + spectrumControlIconHeight) {
+
+			return true;
+		}
+
+		return false;
+	}
+
+	#setupControllRendering() {
+		push();
+		const { lowerBorder, spectrumControlPosition } = this.configuration;
+
+		const { spectrumControlIconX, spectrumControlIconY, spectrumControlIconHeight, spectrumControlIconWidth } = spectrumControlPosition(width, lowerBorder);
+
 		noStroke();
-		image(this.#icons.audioElement.timer, timerX, timerY + 15, timerWidth, timerHeight);
-		image(this.#icons.audioElement.currentTime, timerX + progressBarWidth - 80, timerY + 15, timerWidth, timerHeight);
+		if (this.#isEnabled) {
+			image(this.#icons.visualisation.spectrum.on, spectrumControlIconX, spectrumControlIconY, spectrumControlIconHeight, spectrumControlIconWidth);
+		} else {
+			image(this.#icons.visualisation.spectrum.off, spectrumControlIconX, spectrumControlIconY, spectrumControlIconHeight, spectrumControlIconWidth);
+		}
+		pop();
 	}
 
 	#setupRenderingProcessor() {

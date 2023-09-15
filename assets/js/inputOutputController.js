@@ -142,7 +142,10 @@ class InputOutputController extends P5 {
 			}
 
 			if (this.#visualsMenu.controlsDisplayed) {
-				this.#visualsMenu.controlHitCheck();
+				if (this.#spektrumVisualisation.controlHitCheck()) {
+					this.#spektrumVisualisation.setIsEnabled();
+					console.log("Spektrum Control Hit");
+				}
 			}
 
 			if (this.#currentAudioElement.playControlHitCheck()) {
@@ -242,9 +245,7 @@ class InputOutputController extends P5 {
 			this.#visualisationController.draw();
 
 			if (this.#visualsMenu.controlsDisplayed) {
-
-				text("Select a visualisation:", 100, 700);
-				this.#visualsMenu.controls();
+				this.#visualsMenu.draw();
 			}
 			pop();
 		};

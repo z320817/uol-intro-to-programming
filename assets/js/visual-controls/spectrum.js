@@ -2,12 +2,24 @@ class Spectrum extends P5 {
 
 	#icons;
 	#audioElement;
+	#isEnabled;
 	#renderingProcessor;
 
 	static #configuration = {
 		name: "spectrum",
 		heightOffset: 0,
 		lowerBorder: 0,
+		spectrumControlPosition: (width, height, heightOffset) => {
+			return {
+				spectrumControlIconX: timerX,
+				spectrumControlIconY: (height - heightOffset) - 35,
+				spectrumControlIconHeight: 32,
+				spectrumControlIconWidth: 32,
+			}
+		},
+		spectrumControlConfiguration: () => {
+
+		}
 	}
 
 	get configuration() {
@@ -48,6 +60,14 @@ class Spectrum extends P5 {
 		this.configuration.heightOffset = (height / 2.5);
 		this.configuration.lowerBorder = Number((height - this.configuration.heightOffset).toFixed(0));
 	};
+
+	#setupControllRendering() {
+		const { lowerBorder, spectrumControlPosition } = this.configuration;
+
+		noStroke();
+		image(this.#icons.audioElement.timer, timerX, timerY + 15, timerWidth, timerHeight);
+		image(this.#icons.audioElement.currentTime, timerX + progressBarWidth - 80, timerY + 15, timerWidth, timerHeight);
+	}
 
 	#setupRenderingProcessor() {
 		const { lowerBorder } = this.configuration;

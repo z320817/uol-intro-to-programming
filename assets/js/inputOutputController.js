@@ -13,6 +13,9 @@ class InputOutputController extends P5 {
 	#mousePressedEventObserver;
 	#mouseReleasedEventObserver;
 	#keyPressedEventObserver;
+	#spektrumVisualisation;
+	#waveVisualisation;
+	#waveExampleVisualisation;
 	#sound;
 	#icons;
 	#position;
@@ -89,9 +92,12 @@ class InputOutputController extends P5 {
 
 	#instantiateVisualisations() {
 		this.#visualisationController = new VisualisationController();
-		this.#visualisationController.add(new Spectrum(this.#currentAudioElement, this.#icons));
-		this.#visualisationController.add(new WavePattern(this.#currentAudioElement, this.#icons));
-		this.#visualisationController.add(new WaveExample(this.#currentAudioElement, this.#icons));
+		this.#spektrumVisualisation = new Spectrum(this.#currentAudioElement, this.#icons);
+		this.#waveVisualisation = new WavePattern(this.#currentAudioElement, this.#icons);
+		this.#waveExampleVisualisation = new WaveExample(this.#currentAudioElement, this.#icons);
+		this.#visualisationController.add(this.#spektrumVisualisation);
+		this.#visualisationController.add(this.#waveVisualisation);
+		this.#visualisationController.add(this.#waveExampleVisualisation);
 	}
 
 	#instatiateVisualisationControls() {
@@ -135,6 +141,10 @@ class InputOutputController extends P5 {
 				this.#visualsMenu.hide();
 			}
 
+			if (this.#visualsMenu.controlsDisplayed) {
+				this.#visualsMenu.controlHitCheck();
+			}
+
 			if (this.#currentAudioElement.playControlHitCheck()) {
 				if (!this.#currentAudioElement.isPlaying) {
 					this.#currentAudioElement.controls.play();
@@ -160,7 +170,6 @@ class InputOutputController extends P5 {
 					this.#currentAudioElement.controls.setVolume(0);
 					this.#currentAudioElement.setVolumeLevel(true);
 				}
-
 			}
 
 			if (this.#currentAudioElement.adderControlHitCheck()) {
@@ -231,13 +240,6 @@ class InputOutputController extends P5 {
 
 			//draw the selected visualisation
 			this.#visualisationController.draw();
-
-			// only draw the menu if menu displayed is set to true.
-			if (this.#visualsMenu.menuDisplayed) {
-
-				text("Select a visualisation:", 100, 30);
-				this.#visualsMenu.menu();
-			}
 
 			if (this.#visualsMenu.controlsDisplayed) {
 

@@ -205,6 +205,57 @@ class AudioElement extends P5 {
                 progressBarHeight: heightOffset / 6
             }
         },
+        timerConfiguration: (controls) => {
+            let duration = controls.duration();
+            let minutes, seconds = 0;
+            if (typeof duration !== "number") {
+                duration = 0;
+            } else {
+                const timeInSeconds = Number(duration.toFixed(2));
+                minutes = Math.floor(timeInSeconds / 60);
+                seconds = Number((timeInSeconds - (60 * minutes)).toFixed());
+            }
+
+            let timeInSeconds = controls.time();
+            if (typeof timeInSeconds !== "number") {
+                timeInSeconds = 0;
+            }
+            const currentTimeInSeconds = Number(timeInSeconds.toFixed(2));
+            let currentMinutes = Number(Math.floor(currentTimeInSeconds / 60));
+            let currentSeconds = Number((currentTimeInSeconds - (60 * currentMinutes)).toFixed());
+
+            if (typeof minutes !== "number" || typeof seconds !== "number") {
+                minutes = 0;
+                seconds = 0;
+            }
+
+            if (!Number.isFinite(minutes) || !Number.isFinite(seconds)) {
+                minutes = 0;
+                seconds = 0;
+            }
+
+            minutes = minutes ? minutes.toString() : "0";
+            seconds = seconds ? seconds.toString() : "0";
+
+            return { currentMinutes, currentSeconds, minutes, seconds }
+        },
+        progressBarConfiguration: (progressBarX, progressBarWidth, controls, peaks) => {
+            const spacing = peaks.length / progressBarWidth;
+            const peakStep = Math.ceil(progressBarWidth / spacing);
+            const progressBarSpacing = progressBarWidth / peakStep;
+
+            let x1 = progressBarX - progressBarSpacing / 2;
+            let x2 = progressBarX - progressBarSpacing / 2;
+
+            let progressPos = map(controls.time(), 0, controls.duration(), 0, progressBarWidth);
+            let progressStart = progressBarX;
+            let currentProgress = progressStart + progressPos;
+
+            const progressBarLength = Math.ceil(progressBarWidth);
+            let currentPeakIndex = 0;
+
+            return { x1, x2, progressBarLength, currentProgress, currentPeakIndex, progressBarSpacing, peakStep, progressStart, progressPos };
+        },
         volumeControlPosition: (width, height, heightOffset, currentPosition, rightPositionOffset) => {
 
             let volumeControlX = (width / 54) - 10;
@@ -550,7 +601,7 @@ class AudioElement extends P5 {
             this.controls.duration = () => {
                 const duration = this.#p5audioElement.duration();
 
-                if (duration === Infinity) {
+                if (typeof duration !== 'number') {
                     return 0;
                 } else {
                     return duration
@@ -587,7 +638,13 @@ class AudioElement extends P5 {
                 return this.waveAudioElement.currentTime.toFixed(2);;
             };
             this.controls.duration = () => {
-                return this.waveAudioElement.duration;
+                const duration = this.waveAudioElement.duration;
+
+                if (typeof duration !== 'number') {
+                    return 0;
+                } else {
+                    return duration
+                }
             };
             this.controls.setVolume = (level) => {
                 return this.waveAudioElement.volume(level);
@@ -1146,14 +1203,7 @@ class AudioElement extends P5 {
 
     //timer counter UI
     #timerRendering = () => {
-        const timeInSeconds = this.controls.duration().toFixed(2);
-        const minutes = Math.floor(timeInSeconds / 60);
-        const seconds = (timeInSeconds - (60 * minutes)).toFixed();
-        const currentTimeInSeconds = this.controls.time().toFixed(2);
-        const currentMinutes = Math.floor(currentTimeInSeconds / 60);
-        const currentSeconds = (currentTimeInSeconds - (60 * currentMinutes)).toFixed();
-
-        const { heightOffset, rightPositionOffset, timerPosition, progressBarPosition } = this.configuration;
+        const { heightOffset, rightPositionOffset, timerPosition, progressBarPosition, timerConfiguration } = this.configuration;
 
         const {
             progressBarWidth
@@ -1162,6 +1212,8 @@ class AudioElement extends P5 {
         const {
             timerX, timerY, timerWidth, timerHeight
         } = timerPosition(width, height, heightOffset, this.#position, rightPositionOffset);
+
+        const { currentMinutes, currentSeconds, minutes, seconds } = timerConfiguration(this.controls);
 
         textSize(16);
         fill(0);
@@ -1239,26 +1291,13 @@ class AudioElement extends P5 {
     }
 
     #progressBarRendering = () => {
-        const { heightOffset, rightPositionOffset, progressBarPosition } = this.configuration;
+        const { heightOffset, rightPositionOffset, progressBarPosition, progressBarConfiguration } = this.configuration;
 
         const {
             progressBarHeight, progressBarWidth, progressBarX, progressBarY
-        } = progressBarPosition(width, height, heightOffset, this.#position, rightPositionOffset)
+        } = progressBarPosition(width, height, heightOffset, this.#position, rightPositionOffset);
 
-        const spacing = this.peaks.length / progressBarWidth;
-        const peakStep = Math.ceil(progressBarWidth / spacing);
-        const progressBarSpacing = progressBarWidth / peakStep;
-
-        let x1 = progressBarX - progressBarSpacing / 2;
-        let x2 = progressBarX - progressBarSpacing / 2;
-
-        let progressPos = map(this.controls.time(), 0, this.controls.duration(), 0, progressBarWidth);
-        let progressStart = progressBarX;
-        let currentProgress = progressStart + progressPos;
-
-        const progressBarLength = Math.ceil(progressBarWidth);
-        let currentPeakIndex = 0;
-
+        let { x1, x2, progressBarLength, currentProgress, currentPeakIndex, progressBarSpacing, peakStep, progressStart, progressPos } = progressBarConfiguration(progressBarX, progressBarWidth, this.controls, this.peaks);
 
         fill(0);
         rect(progressBarX, progressBarY, progressBarWidth, progressBarHeight);

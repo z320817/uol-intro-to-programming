@@ -2,7 +2,6 @@
 //controls
 class VisualsMenu extends P5 {
 
-    #menuDisplayed = false;
     #controlsDisplayed = false;
     #visualisationController;
 
@@ -37,17 +36,8 @@ class VisualsMenu extends P5 {
         return VisualsMenu.#configuration;
     }
 
-
-    get menuDisplayed() {
-        return this.#menuDisplayed;
-    }
-
     get controlsDisplayed() {
         return this.#controlsDisplayed;
-    }
-
-    get menu() {
-        return this.#menu;
     }
 
     get controls() {
@@ -69,10 +59,6 @@ class VisualsMenu extends P5 {
     //responds to keyboard presses
     //@param keycode the ascii code of the keypressed
     keyPressed(keycode) {
-        if (keycode == 32) {
-            this.#menuDisplayed = !this.#menuDisplayed;
-        }
-
         if (keycode > 48 && keycode < 58) {
             var visNumber = keycode - 49;
             this.#visualisationController.selectedVisual = this.#visualisationController.visuals[visNumber].name;
@@ -86,24 +72,11 @@ class VisualsMenu extends P5 {
         strokeWeight(2);
         textSize(34);
 
-        if (this.#menuDisplayed) {
-            text("Select a visualisation:", 100, 30);
-            this.#menu();
-        }
-
         if (this.#controlsDisplayed) {
             text("Controls for visualisation:", 100, 30);
             this.#controls();
         }
         pop();
-    };
-
-    #menu() {
-        //draw out menu items for each visualisation
-        for (let i = 0; i < this.#visualisationController.visuals.length; i++) {
-            const yLoc = 70 + i * 40;
-            text((i + 1) + ":  " + this.#visualisationController.visuals[i].name, 100, yLoc);
-        }
     };
 
     #controls() {

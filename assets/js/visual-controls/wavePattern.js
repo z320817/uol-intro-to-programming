@@ -32,9 +32,10 @@ class WavePattern extends P5 {
 	/**
 	 * @param { AudioElement } currentAudioElement, 
 	 */
-	constructor(currentAudioElement) {
+	constructor(currentAudioElement, icons) {
 		super();
 
+		this.#icons = icons;
 		this.#audioElement = currentAudioElement;
 
 		//set initial position of elements

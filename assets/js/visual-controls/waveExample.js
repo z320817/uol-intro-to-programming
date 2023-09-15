@@ -48,9 +48,6 @@ class WaveExample extends P5 {
 		// Create canvas to draw wave animations
 		this.#createWaveCanvas();
 
-		// Get audio reference for Wave
-		// this.#getWaveAudioElement();
-
 		// Configure initial wave settings
 		this.#configureWaveSettings(this.#audioElement, this.#waveCanvas)
 
@@ -62,22 +59,6 @@ class WaveExample extends P5 {
 		this.configuration.heightOffset = height / 2.5;
 	};
 
-	// #getWaveAudioElement() {
-	// 	// Create an audio element
-	// 	this.#sound = document.createElement('audio');
-
-	// 	// Set the source of the audio
-	// 	this.#sound.src = 'assets/music/stomper_reggae_bit.mp3'; // Replace with the actual path to your audio file
-
-	// 	// Add controls for playback
-	// 	this.#sound.controls = true;
-
-	// 	// Append the audio element to the document body or another element
-	// 	document.body.appendChild(this.#sound);
-
-	// 	console.log(this.#sound)
-	// }
-
 	#createWaveCanvas() {
 		// Create a canvas element
 		this.#waveCanvas = document.createElement('canvas');
@@ -86,14 +67,6 @@ class WaveExample extends P5 {
 		this.#waveCanvas.height = height - this.configuration.heightOffset;
 		this.#waveCanvas.style.position = 'absolute';
 		this.#waveCanvas.style.display = 'block';
-
-		// if (this.#waveCanvas.getContext) {
-		// 	const ctx = this.#waveCanvas.getContext("2d");
-
-		// 	ctx.fillRect(25, 25, 100, 100);
-		// 	ctx.clearRect(45, 45, 60, 60);
-		// 	ctx.strokeRect(50, 50, 50, 50);
-		// }
 
 		// Add wave canvas to the main document section
 		const main = document.querySelector("main");

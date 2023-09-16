@@ -227,13 +227,18 @@ class InputOutputController extends P5 {
 
 	#setupRenderingProcessor() {
 		this.#renderingProcessor = () => {
-			this.#leftAudioElement.draw();
-
 			push();
 			fill("white");
 			stroke("black");
 			strokeWeight(2);
 			textSize(34);
+
+			// playback button 
+			this.#playbackButton.draw();
+
+			//draw the selected visualisation
+			this.#visualisationController.draw();
+
 
 			// control panel UI 
 			this.#controlPannel.draw();
@@ -241,15 +246,9 @@ class InputOutputController extends P5 {
 			// needles UI ouput
 			this.#needlseUiOutput.draw();
 
-			// playback button 
-			this.#playbackButton.draw();
-
 			// audio elements
 			this.#leftAudioElement.draw();
 			this.#rightAudioElement.draw();
-
-			//draw the selected visualisation
-			this.#visualisationController.draw();
 
 			if (this.#visualsMenu.controlsDisplayed) {
 				this.#visualsMenu.draw();

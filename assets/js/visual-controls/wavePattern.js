@@ -2,6 +2,7 @@
 class WavePattern extends P5 {
 
 	#icons;
+	#isFullScreen;
 	#isEnabled;
 	#audioElement;
 	#renderingProcessor;
@@ -46,8 +47,16 @@ class WavePattern extends P5 {
 	}
 
 	static onResize() {
-		this.configuration.heightOffset = height / 2.5;
+		this.configuration.heightOffset = this.#isFullScreen ? height : height - (height / 2.5);
 	};
+
+	/**
+	 * @param { boolean } isFullScreen, 
+	 */
+	setFullScreen(isFullScreen) {
+		this.#isFullScreen = isFullScreen;
+		this.onResize();
+	}
 
 	controlRendering() {
 		return this.#setupControllRendering();
@@ -64,7 +73,6 @@ class WavePattern extends P5 {
 	}
 
 	#setupRenderingProcessor() {
-		const { heightOffset } = this.configuration;
 
 		this.#renderingProcessor = () => {
 			push();
@@ -79,7 +87,7 @@ class WavePattern extends P5 {
 				//for each element of the waveform map it to screen
 				//coordinates and make a new vertex at the point.
 				var x = map(i, 0, wave.length, 0, width);
-				var y = map(wave[i], -1, 1, 0, height - heightOffset);
+				var y = map(wave[i], -1, 1, 0, this.configuration.heightOffset);
 
 				vertex(x, y);
 			}

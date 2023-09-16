@@ -16,10 +16,10 @@ class Spectrum extends P5 {
 		rightPositionOffset: 0,
 		spectrumRedControlPosition: (width, height, heightOffset) => {
 			return {
-				spectrumControlY: (height - heightOffset) + 80,
-				spectrumControlX: (width / 18),
-				spectrumControlHeight: 32,
-				spectrumControlWidth: 32,
+				redControlY: (height - heightOffset) + 80,
+				redControlX: (width / 12),
+				redControlHeight: 32,
+				redControlWidth: 32,
 			}
 		},
 		spectrumBlueControlPosition: (width, height, heightOffset) => {
@@ -51,8 +51,12 @@ class Spectrum extends P5 {
 		}
 	}
 
-	get controlHitCheck() {
-		return this.#controlHitCheck;
+	get blueControlHitCheck() {
+		return this.#blueControlHitCheck;
+	}
+
+	get redControlHitCheck() {
+		return this.#redControlHitCheck;
 	}
 
 	get iconHitCheck() {
@@ -61,6 +65,10 @@ class Spectrum extends P5 {
 
 	get setBlueLevel() {
 		return this.#setBlueLevel;
+	}
+
+	get setRedLevel() {
+		return this.#setRedLevel;
 	}
 
 	get configuration() {
@@ -110,7 +118,22 @@ class Spectrum extends P5 {
 		this.#isEnabled = !this.#isEnabled;
 	}
 
-	#controlHitCheck() {
+	#redControlHitCheck() {
+		const { heightOffset, spectrumRedControlPosition } = this.configuration;
+
+		const { redControlX, redControlY, redControlHeight, redControlWidth } = spectrumRedControlPosition(width, height, heightOffset);
+
+		if (mouseX > redControlX &&
+			mouseX < redControlX + redControlWidth &&
+			mouseY > redControlY + 5 && mouseY < redControlY + redControlHeight + 25) {
+
+			return true;
+		}
+
+		return false;
+	}
+
+	#blueControlHitCheck() {
 		const { heightOffset, spectrumBlueControlPosition } = this.configuration;
 
 		const { blueControlX, blueControlY, blueControlHeight, blueControlWidth } = spectrumBlueControlPosition(width, height, heightOffset);
@@ -143,6 +166,7 @@ class Spectrum extends P5 {
 	#setupControllRendering() {
 		this.#iconRendering();
 		this.#blueLevelControlRendering();
+		this.#redLevelControlRendering();
 	}
 
 	#iconRendering() {
@@ -210,6 +234,52 @@ class Spectrum extends P5 {
 		pop();
 	}
 
+	#redLevelControlRendering = () => {
+		push();
+		const { heightOffset, spectrumRedControlPosition, spectrumControlConfiguration } = this.configuration;
+
+		const { redControlX, redControlY, redControlHeight, redControlWidth } = spectrumRedControlPosition(width, height, heightOffset);
+
+		const {
+			lineMiddle
+		} = spectrumControlConfiguration(redControlY, redControlHeight, this.#redLevelPosition);
+
+		noStroke();
+		textSize(14);
+
+		if (this.#isEnabled) {
+			fill(255, 0, 0);
+			text("Red", redControlX, redControlY);
+		} else {
+			fill(150, 150, 150);
+			text("Red", redControlX, redControlY);
+		}
+
+
+		strokeWeight(3);
+		stroke(0);
+		line(redControlX + (redControlWidth / 2), redControlY + 5, redControlX + (redControlWidth / 2), redControlY + redControlHeight + 25);
+
+		if (this.#redLevelPosition !== 0 && this.#redLevelPosition < lineMiddle) {
+			stroke(0);
+			strokeWeight(5);
+			image(this.#icons.audioElement.frequencyChanger.frequencyChangerUp, redControlX, this.#redLevelPosition, redControlHeight, redControlWidth);
+			noStroke();
+		} else if (this.#redLevelPosition !== 0 && this.#redLevelPosition > lineMiddle) {
+			stroke(0);
+			strokeWeight(5);
+			image(this.#icons.audioElement.frequencyChanger.frequencyChangerDown, redControlX, this.#redLevelPosition, redControlHeight, redControlWidth);
+			noStroke();
+		}
+		else {
+			stroke(0);
+			strokeWeight(5);
+			image(this.#icons.audioElement.frequencyChanger.frequencyChanger, redControlX, lineMiddle, redControlHeight, redControlWidth);
+			noStroke();
+		}
+		pop();
+	}
+
 
 	#setBlueLevel() {
 		if (this.#isEnabled) {
@@ -246,6 +316,41 @@ class Spectrum extends P5 {
 		}
 	}
 
+	#setRedLevel() {
+		if (this.#isEnabled) {
+			const currentY = mouseY.toFixed();
+
+			const { heightOffset, spectrumRedControlPosition, spectrumControlConfiguration } = this.configuration;
+
+			const { redControlY, redControlHeight } = spectrumRedControlPosition(width, height, heightOffset);
+
+			const {
+				lineStart, lineEnd, lineMiddle, upMiddle, downMiddle, step
+			} = spectrumControlConfiguration(redControlY, redControlHeight, this.#redLevelPosition);
+
+			if (!this.#redLevelPosition) {
+				this.#redLevelPosition = lineMiddle;
+			}
+
+			if (!this.#redLevel) {
+				this.#redLevel = 150;
+			}
+
+			if (currentY - 20 <= upMiddle && this.#redLevelPosition > lineStart) {
+				this.#redLevel += step;
+				this.#redLevelPosition -= 2;
+			} else if (currentY >= downMiddle && this.#redLevelPosition < lineEnd - 20) {
+				this.#redLevel -= step;
+				this.#redLevelPosition += 2;
+			}
+
+			if (this.#redLevelPosition <= downMiddle && this.#redLevelPosition >= upMiddle) {
+				this.#redLevel = 0;
+				this.#redLevelPosition = lineMiddle;
+			}
+		}
+	}
+
 	#setupRenderingProcessor() {
 		const { lowerBorder } = this.configuration;
 
@@ -259,7 +364,7 @@ class Spectrum extends P5 {
 
 				//fade the colour of the bin from green to red
 				var g = map(spectrum[i], 0, 255, 255, 0);
-				fill(spectrum[i], g, this.#blueLevel);
+				fill(this.#redLevel, g, this.#blueLevel);
 
 				//draw each bin as a rectangle from the left of the screen
 				//across

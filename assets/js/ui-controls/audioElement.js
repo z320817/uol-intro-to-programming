@@ -25,7 +25,6 @@ class AudioElement extends P5 {
     #p5audioElement;
     #progressBarIsRendered = false;
     #progressBarBuffer;
-    #progressBarConfigurationRetrived = false;
     #p5audioControlsIsHidden = false;
     #waveControlsIsHidden = true;
     #volumeLevel = 1;
@@ -893,6 +892,10 @@ class AudioElement extends P5 {
         const linesInUnitofLenght = (maxLines / length).toFixed(3);
         this.#currentVolumeLine = Math.ceil(linesInUnitofLenght * currentX);
         this.#volumeLevel = Math.abs((linesInUnitofLenght * currentX / maxLines).toFixed(1));
+
+        if (this.#volumeLevel <= 0.2) {
+            this.#volumeLevel = 0;
+        }
 
         this.controls.setVolume(this.#volumeLevel);
     }

@@ -144,35 +144,37 @@ class Spectrum extends P5 {
 	}
 
 	#setBlueLevel() {
-		const currentY = mouseY.toFixed();
+		if (this.#isEnabled) {
+			const currentY = mouseY.toFixed();
 
-		const { heightOffset, spectrumControlPosition, spectrumControlConfiguration } = this.configuration;
+			const { heightOffset, spectrumControlPosition, spectrumControlConfiguration } = this.configuration;
 
-		const { spectrumControlY, spectrumControlHeight } = spectrumControlPosition(width, height, heightOffset);
+			const { spectrumControlY, spectrumControlHeight } = spectrumControlPosition(width, height, heightOffset);
 
-		const {
-			lineStart, lineEnd, lineMiddle, upMiddle, downMiddle, step
-		} = spectrumControlConfiguration(spectrumControlY, spectrumControlHeight, this.#blueLevelPosition);
+			const {
+				lineStart, lineEnd, lineMiddle, upMiddle, downMiddle, step
+			} = spectrumControlConfiguration(spectrumControlY, spectrumControlHeight, this.#blueLevelPosition);
 
-		if (!this.#blueLevelPosition) {
-			this.#blueLevelPosition = lineMiddle;
-		}
+			if (!this.#blueLevelPosition) {
+				this.#blueLevelPosition = lineMiddle;
+			}
 
-		if (!this.#blueLevel) {
-			this.#blueLevel = 150;
-		}
+			if (!this.#blueLevel) {
+				this.#blueLevel = 150;
+			}
 
-		if (currentY - 20 <= upMiddle && this.#blueLevelPosition > lineStart) {
-			this.#blueLevel -= step;
-			this.#blueLevelPosition -= 2;
-		} else if (currentY >= downMiddle && this.#blueLevelPosition < lineEnd - 20) {
-			this.#blueLevel += step;
-			this.#blueLevelPosition += 2;
-		}
+			if (currentY - 20 <= upMiddle && this.#blueLevelPosition > lineStart) {
+				this.#blueLevel -= step;
+				this.#blueLevelPosition -= 2;
+			} else if (currentY >= downMiddle && this.#blueLevelPosition < lineEnd - 20) {
+				this.#blueLevel += step;
+				this.#blueLevelPosition += 2;
+			}
 
-		if (this.#blueLevelPosition <= downMiddle && this.#blueLevelPosition >= upMiddle) {
-			this.#blueLevel = 0;
-			this.#blueLevelPosition = lineMiddle;
+			if (this.#blueLevelPosition <= downMiddle && this.#blueLevelPosition >= upMiddle) {
+				this.#blueLevel = 0;
+				this.#blueLevelPosition = lineMiddle;
+			}
 		}
 	}
 

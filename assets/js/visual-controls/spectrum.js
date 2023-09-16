@@ -19,7 +19,7 @@ class Spectrum extends P5 {
 				spectrumControlIconHeight: 32,
 				spectrumControlIconWidth: 32,
 				spectrumControlY: (height - heightOffset) + 80,
-				spectrumControlX: (width / 12) - 20,
+				spectrumControlX: (width / 18),
 				spectrumControlHeight: 32,
 				spectrumControlWidth: 32,
 			}
@@ -130,16 +130,20 @@ class Spectrum extends P5 {
 		push();
 		const { heightOffset, spectrumControlPosition } = this.configuration;
 
-		const { spectrumControlIconX, spectrumControlIconY, spectrumControlIconHeight, spectrumControlIconWidth } = spectrumControlPosition(width, height, heightOffset);
+		const { spectrumControlIconX, spectrumControlIconY, spectrumControlIconHeight, spectrumControlIconWidth, spectrumControlWidth } = spectrumControlPosition(width, height, heightOffset);
 
 		noStroke();
+		textSize(14);
+		fill(0);
+		text(this.configuration.name, spectrumControlIconX - (spectrumControlWidth / 2), spectrumControlIconY + (spectrumControlWidth * 1.5));
+
 		if (this.#isEnabled) {
 			image(this.#icons.visualisation.spectrum.on, spectrumControlIconX, spectrumControlIconY, spectrumControlIconHeight, spectrumControlIconWidth);
 		} else {
 			image(this.#icons.visualisation.spectrum.off, spectrumControlIconX, spectrumControlIconY, spectrumControlIconHeight, spectrumControlIconWidth);
 		}
 
-		this.#colorLevelControlRendering();
+		this.#blueLevelControlRendering();
 		pop();
 	}
 
@@ -164,10 +168,10 @@ class Spectrum extends P5 {
 			}
 
 			if (currentY - 20 <= upMiddle && this.#blueLevelPosition > lineStart) {
-				this.#blueLevel -= step;
+				this.#blueLevel += step;
 				this.#blueLevelPosition -= 2;
 			} else if (currentY >= downMiddle && this.#blueLevelPosition < lineEnd - 20) {
-				this.#blueLevel += step;
+				this.#blueLevel -= step;
 				this.#blueLevelPosition += 2;
 			}
 
@@ -178,19 +182,19 @@ class Spectrum extends P5 {
 		}
 	}
 
-	#colorLevelControlRendering = () => {
+	#blueLevelControlRendering = () => {
 
 		const { heightOffset, spectrumControlPosition, spectrumControlConfiguration } = this.configuration;
 
-		const { spectrumControlX, spectrumControlIconX, spectrumControlIconY, spectrumControlY, spectrumControlHeight, spectrumControlWidth } = spectrumControlPosition(width, height, heightOffset);
+		const { spectrumControlX, spectrumControlY, spectrumControlHeight, spectrumControlWidth } = spectrumControlPosition(width, height, heightOffset);
 
 		const {
 			lineMiddle
 		} = spectrumControlConfiguration(spectrumControlY, spectrumControlHeight, this.#blueLevelPosition);
 
 		textSize(14);
-		fill(0);
-		text(this.configuration.name, spectrumControlIconX - (spectrumControlWidth / 2), spectrumControlIconY + (spectrumControlWidth * 1.5));
+		fill(0, 0, 255);
+		text("Blue", spectrumControlX, spectrumControlY);
 
 		strokeWeight(3);
 		stroke(0);

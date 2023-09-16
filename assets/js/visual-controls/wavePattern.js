@@ -45,7 +45,7 @@ class WavePattern extends P5 {
 			return {
 				waveControlIconX: width / 4,
 				waveControlIconY: height - heightOffset,
-				waveControlIconHeight: 32,
+				waveControlIconHeight: 42,
 				waveControlIconWidth: 32,
 			}
 		},

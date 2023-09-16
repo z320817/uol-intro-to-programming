@@ -162,61 +162,67 @@ class InputOutputController extends P5 {
 				if (this.#spektrumVisualisation.redControlHitCheck()) {
 					this.#spektrumVisualisation.setRedLevel();
 				}
-			}
 
-			if (this.#currentAudioElement.playControlHitCheck()) {
-				if (!this.#currentAudioElement.isPlaying) {
-					this.#currentAudioElement.controls.play();
-					this.#currentAudioElement.setVolumeLevel(true);
-				} else {
-					this.#currentAudioElement.controls.pause();
-					this.#currentAudioElement.setVolumeLevel(true);
+				if (this.#spektrumVisualisation.greenControlHitCheck()) {
+					this.#spektrumVisualisation.setGreenLevel();
 				}
 			}
 
-			if (this.#currentAudioElement.volumeControlBarHitCheck()) {
-				this.#currentAudioElement.volumeChanged = true;
-				this.#currentAudioElement.setVolumeLevel();
-			}
-
-			if (this.#currentAudioElement.volumeControlIconHitCheck()) {
-				const isMuted = !Boolean(this.#currentAudioElement.controls.getVolume());
-
-				if (isMuted) {
-					this.#currentAudioElement.controls.setVolume(1);
-					this.#currentAudioElement.setVolumeLevel(true);
-				} else {
-					this.#currentAudioElement.controls.setVolume(0);
-					this.#currentAudioElement.setVolumeLevel(true);
+			if (!this.#visualsMenu.controlsDisplayed) {
+				if (this.#currentAudioElement.playControlHitCheck()) {
+					if (!this.#currentAudioElement.isPlaying) {
+						this.#currentAudioElement.controls.play();
+						this.#currentAudioElement.setVolumeLevel(true);
+					} else {
+						this.#currentAudioElement.controls.pause();
+						this.#currentAudioElement.setVolumeLevel(true);
+					}
 				}
-			}
 
-			if (this.#currentAudioElement.adderControlHitCheck()) {
-				this.#currentAudioElement.fileInput.elt.click();
-			}
+				if (this.#currentAudioElement.volumeControlBarHitCheck()) {
+					this.#currentAudioElement.volumeChanged = true;
+					this.#currentAudioElement.setVolumeLevel();
+				}
 
-			if (this.#currentAudioElement.looperControlHitCheck()) {
-				this.#currentAudioElement.setIsLooped();
-			}
+				if (this.#currentAudioElement.volumeControlIconHitCheck()) {
+					const isMuted = !Boolean(this.#currentAudioElement.controls.getVolume());
 
-			if (this.#currentAudioElement.lowMidFreqControlHitCheck()) {
-				this.#currentAudioElement.setLowMidFreqLevel();
-			}
+					if (isMuted) {
+						this.#currentAudioElement.controls.setVolume(1);
+						this.#currentAudioElement.setVolumeLevel(true);
+					} else {
+						this.#currentAudioElement.controls.setVolume(0);
+						this.#currentAudioElement.setVolumeLevel(true);
+					}
+				}
 
-			if (this.#currentAudioElement.bassFreqControlHitCheck()) {
-				this.#currentAudioElement.setBassFreqLevel();
-			}
+				if (this.#currentAudioElement.adderControlHitCheck()) {
+					this.#currentAudioElement.fileInput.elt.click();
+				}
 
-			if (this.#currentAudioElement.heighMidFreqControlHitCheck()) {
-				this.#currentAudioElement.setHeighMidFreqLevel();
-			}
+				if (this.#currentAudioElement.looperControlHitCheck()) {
+					this.#currentAudioElement.setIsLooped();
+				}
 
-			if (this.#currentAudioElement.trebleFreqControlHitCheck()) {
-				this.#currentAudioElement.setTrebleMidFreqLevel();
-			}
+				if (this.#currentAudioElement.lowMidFreqControlHitCheck()) {
+					this.#currentAudioElement.setLowMidFreqLevel();
+				}
 
-			if (this.#currentAudioElement.micControlHitCheck()) {
-				this.#currentAudioElement.setRecordInProgress();
+				if (this.#currentAudioElement.bassFreqControlHitCheck()) {
+					this.#currentAudioElement.setBassFreqLevel();
+				}
+
+				if (this.#currentAudioElement.heighMidFreqControlHitCheck()) {
+					this.#currentAudioElement.setHeighMidFreqLevel();
+				}
+
+				if (this.#currentAudioElement.trebleFreqControlHitCheck()) {
+					this.#currentAudioElement.setTrebleMidFreqLevel();
+				}
+
+				if (this.#currentAudioElement.micControlHitCheck()) {
+					this.#currentAudioElement.setRecordInProgress();
+				}
 			}
 		};
 

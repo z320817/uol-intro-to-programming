@@ -8,6 +8,8 @@ class Spectrum extends P5 {
 	#blueLevelPosition = 0;
 	#redLevel = 0;
 	#redLevelPosition = 0;
+	#greenLevel = 0;
+	#greenLevelPosition = 0;
 
 	static #configuration = {
 		name: "spectrum",
@@ -28,6 +30,14 @@ class Spectrum extends P5 {
 				blueControlX: (width / 18),
 				blueControlHeight: 32,
 				blueControlWidth: 32,
+			}
+		},
+		spectrumGreenControlPosition: (width, height, heightOffset) => {
+			return {
+				greenControlY: (height - heightOffset) + 80,
+				greenControlX: (width / 9),
+				greenControlHeight: 32,
+				greenControlWidth: 32,
 			}
 		},
 		spectrumIconPosition: (width, height, heightOffset) => {
@@ -59,6 +69,10 @@ class Spectrum extends P5 {
 		return this.#redControlHitCheck;
 	}
 
+	get greenControlHitCheck() {
+		return this.#greenControlHitCheck;
+	}
+
 	get iconHitCheck() {
 		return this.#iconHitCheck;
 	}
@@ -69,6 +83,10 @@ class Spectrum extends P5 {
 
 	get setRedLevel() {
 		return this.#setRedLevel;
+	}
+
+	get setGreenLevel() {
+		return this.#setGreenLevel;
 	}
 
 	get configuration() {
@@ -148,6 +166,21 @@ class Spectrum extends P5 {
 		return false;
 	}
 
+	#greenControlHitCheck() {
+		const { heightOffset, spectrumGreenControlPosition } = this.configuration;
+
+		const { greenControlX, greenControlY, greenControlHeight, greenControlWidth } = spectrumGreenControlPosition(width, height, heightOffset);
+
+		if (mouseX > greenControlX &&
+			mouseX < greenControlX + greenControlWidth &&
+			mouseY > greenControlY + 5 && mouseY < greenControlY + greenControlHeight + 25) {
+
+			return true;
+		}
+
+		return false;
+	}
+
 	#iconHitCheck() {
 		const { heightOffset, spectrumIconPosition } = this.configuration;
 
@@ -167,6 +200,7 @@ class Spectrum extends P5 {
 		this.#iconRendering();
 		this.#blueLevelControlRendering();
 		this.#redLevelControlRendering();
+		this.#greenLevelControlRendering();
 	}
 
 	#iconRendering() {
@@ -280,6 +314,51 @@ class Spectrum extends P5 {
 		pop();
 	}
 
+	#greenLevelControlRendering = () => {
+		push();
+		const { heightOffset, spectrumGreenControlPosition, spectrumControlConfiguration } = this.configuration;
+
+		const { greenControlX, greenControlY, greenControlHeight, greenControlWidth } = spectrumGreenControlPosition(width, height, heightOffset);
+
+		const {
+			lineMiddle
+		} = spectrumControlConfiguration(greenControlY, greenControlHeight, this.#greenLevelPosition);
+
+		noStroke();
+		textSize(14);
+
+		if (this.#isEnabled) {
+			fill(0, 255, 0);
+			text("Green", greenControlX, greenControlY);
+		} else {
+			fill(150, 150, 150);
+			text("Green", greenControlX, greenControlY);
+		}
+
+
+		strokeWeight(3);
+		stroke(0);
+		line(greenControlX + (greenControlWidth / 2), greenControlY + 5, greenControlX + (greenControlWidth / 2), greenControlY + greenControlHeight + 25);
+
+		if (this.#greenLevelPosition !== 0 && this.#greenLevelPosition < lineMiddle) {
+			stroke(0);
+			strokeWeight(5);
+			image(this.#icons.audioElement.frequencyChanger.frequencyChangerUp, greenControlX, this.#greenLevelPosition, greenControlHeight, greenControlWidth);
+			noStroke();
+		} else if (this.#greenLevelPosition !== 0 && this.#greenLevelPosition > lineMiddle) {
+			stroke(0);
+			strokeWeight(5);
+			image(this.#icons.audioElement.frequencyChanger.frequencyChangerDown, greenControlX, this.#greenLevelPosition, greenControlHeight, greenControlWidth);
+			noStroke();
+		}
+		else {
+			stroke(0);
+			strokeWeight(5);
+			image(this.#icons.audioElement.frequencyChanger.frequencyChanger, greenControlX, lineMiddle, greenControlHeight, greenControlWidth);
+			noStroke();
+		}
+		pop();
+	}
 
 	#setBlueLevel() {
 		if (this.#isEnabled) {
@@ -351,6 +430,41 @@ class Spectrum extends P5 {
 		}
 	}
 
+	#setGreenLevel() {
+		if (this.#isEnabled) {
+			const currentY = mouseY.toFixed();
+
+			const { heightOffset, spectrumGreenControlPosition, spectrumControlConfiguration } = this.configuration;
+
+			const { greenControlY, greenControlHeight } = spectrumGreenControlPosition(width, height, heightOffset);
+
+			const {
+				lineStart, lineEnd, lineMiddle, upMiddle, downMiddle, step
+			} = spectrumControlConfiguration(greenControlY, greenControlHeight, this.#greenLevelPosition);
+
+			if (!this.#greenLevelPosition) {
+				this.#greenLevelPosition = lineMiddle;
+			}
+
+			if (!this.#greenLevel) {
+				this.#greenLevel = 150;
+			}
+
+			if (currentY - 20 <= upMiddle && this.#greenLevelPosition > lineStart) {
+				this.#greenLevel += step;
+				this.#greenLevelPosition -= 2;
+			} else if (currentY >= downMiddle && this.#greenLevelPosition < lineEnd - 20) {
+				this.#greenLevel -= step;
+				this.#greenLevelPosition += 2;
+			}
+
+			if (this.#greenLevelPosition <= downMiddle && this.#greenLevelPosition >= upMiddle) {
+				this.#greenLevel = 0;
+				this.#greenLevelPosition = lineMiddle;
+			}
+		}
+	}
+
 	#setupRenderingProcessor() {
 		const { lowerBorder } = this.configuration;
 
@@ -363,7 +477,7 @@ class Spectrum extends P5 {
 			for (var i = 0; i < spectrum.length; i++) {
 
 				//fade the colour of the bin from green to red
-				var g = map(spectrum[i], 0, 255, 255, 0);
+				var g = this.#greenLevel ? this.#greenLevel : map(spectrum[i], 0, 255, 255, 0);
 				fill(this.#redLevel, g, this.#blueLevel);
 
 				//draw each bin as a rectangle from the left of the screen

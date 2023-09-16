@@ -135,7 +135,8 @@ class InputOutputController extends P5 {
 				this.#isFullScreen = !this.#isFullScreen;
 				this.#fullScreenButton.setFullScreen(this.#isFullScreen);
 				fullscreen(this.#isFullScreen);
-				this.#waveVisualisation.setFullScreen(this.#isFullScreen)
+				this.#spektrumVisualisation.setFullScreen(this.#isFullScreen);
+				this.#waveVisualisation.setFullScreen(this.#isFullScreen);
 			}
 
 			if (this.#controlPannel.visualButtonHitCheck()) {

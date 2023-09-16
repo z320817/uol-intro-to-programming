@@ -125,7 +125,9 @@ class WavePattern extends P5 {
 	}
 
 	static onResize() {
-		this.configuration.heightOffset = (height / 4);
+		if (this.#isFullScreen) {
+			this.configuration.heightOffset = (height / 4);
+		}
 		this.configuration.lowerBorder = this.#isFullScreen ? height + (height / 8) : height - (height / 2.5);
 	};
 
@@ -134,9 +136,7 @@ class WavePattern extends P5 {
 	 */
 	setFullScreen(isFullScreen) {
 		this.#isFullScreen = isFullScreen;
-		if (this.#isFullScreen) {
-			this.onResize();
-		}
+		this.onResize();
 	}
 
 	controlRendering() {

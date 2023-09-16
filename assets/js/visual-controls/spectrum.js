@@ -107,7 +107,7 @@ class Spectrum extends P5 {
 
 	static onResize() {
 		this.configuration.heightOffset = height / 4;
-		this.configuration.lowerBorder = Number((height - (height / 2.5)).toFixed(0));
+		this.configuration.lowerBorder = height + (height / 2.5);
 	};
 
 	controlRendering() {
@@ -368,7 +368,7 @@ class Spectrum extends P5 {
 
 				//draw each bin as a rectangle from the left of the screen
 				//across
-				var y = map(i, 0, spectrum.length, 0, height);
+				var y = map(i, 0, spectrum.length, 0, lowerBorder);
 				var w = map(spectrum[i], 0, 255, 0, width);
 
 				rect(0, y, w, height / spectrum.length);

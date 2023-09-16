@@ -142,9 +142,12 @@ class InputOutputController extends P5 {
 			}
 
 			if (this.#visualsMenu.controlsDisplayed) {
-				if (this.#spektrumVisualisation.controlHitCheck()) {
+				if (this.#spektrumVisualisation.iconHitCheck()) {
 					this.#spektrumVisualisation.setIsEnabled();
-					console.log("Spektrum Control Hit");
+				}
+
+				if (this.#spektrumVisualisation.controlHitCheck()) {
+					this.#spektrumVisualisation.setBlueLevel();
 				}
 			}
 

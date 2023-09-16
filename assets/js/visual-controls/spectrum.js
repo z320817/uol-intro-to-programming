@@ -6,22 +6,36 @@ class Spectrum extends P5 {
 	#renderingProcessor;
 	#blueLevel = 0;
 	#blueLevelPosition = 0;
+	#redLevel = 0;
+	#redLevelPosition = 0;
 
 	static #configuration = {
 		name: "spectrum",
 		heightOffset: 0,
 		lowerBorder: 0,
 		rightPositionOffset: 0,
-		spectrumControlPosition: (width, height, heightOffset) => {
+		spectrumRedControlPosition: (width, height, heightOffset) => {
+			return {
+				spectrumControlY: (height - heightOffset) + 80,
+				spectrumControlX: (width / 18),
+				spectrumControlHeight: 32,
+				spectrumControlWidth: 32,
+			}
+		},
+		spectrumBlueControlPosition: (width, height, heightOffset) => {
+			return {
+				blueControlY: (height - heightOffset) + 80,
+				blueControlX: (width / 18),
+				blueControlHeight: 32,
+				blueControlWidth: 32,
+			}
+		},
+		spectrumIconPosition: (width, height, heightOffset) => {
 			return {
 				spectrumControlIconX: width / 12,
 				spectrumControlIconY: height - heightOffset,
 				spectrumControlIconHeight: 32,
 				spectrumControlIconWidth: 32,
-				spectrumControlY: (height - heightOffset) + 80,
-				spectrumControlX: (width / 18),
-				spectrumControlHeight: 32,
-				spectrumControlWidth: 32,
 			}
 		},
 		spectrumControlConfiguration: (spectrumControlY, spectrumControlHeight, blueLevel) => {
@@ -97,13 +111,13 @@ class Spectrum extends P5 {
 	}
 
 	#controlHitCheck() {
-		const { heightOffset, spectrumControlPosition } = this.configuration;
+		const { heightOffset, spectrumBlueControlPosition } = this.configuration;
 
-		const { spectrumControlX, spectrumControlY, spectrumControlHeight, spectrumControlWidth } = spectrumControlPosition(width, height, heightOffset);
+		const { blueControlX, blueControlY, blueControlHeight, blueControlWidth } = spectrumBlueControlPosition(width, height, heightOffset);
 
-		if (mouseX > spectrumControlX &&
-			mouseX < spectrumControlX + spectrumControlWidth &&
-			mouseY > spectrumControlY + 5 && mouseY < spectrumControlY + spectrumControlHeight + 25) {
+		if (mouseX > blueControlX &&
+			mouseX < blueControlX + blueControlWidth &&
+			mouseY > blueControlY + 5 && mouseY < blueControlY + blueControlHeight + 25) {
 
 			return true;
 		}
@@ -112,9 +126,9 @@ class Spectrum extends P5 {
 	}
 
 	#iconHitCheck() {
-		const { heightOffset, spectrumControlPosition } = this.configuration;
+		const { heightOffset, spectrumIconPosition } = this.configuration;
 
-		const { spectrumControlIconX, spectrumControlIconY, spectrumControlIconHeight, spectrumControlIconWidth } = spectrumControlPosition(width, height, heightOffset);
+		const { spectrumControlIconX, spectrumControlIconY, spectrumControlIconHeight, spectrumControlIconWidth } = spectrumIconPosition(width, height, heightOffset);
 
 		if (mouseX > spectrumControlIconX &&
 			mouseX < spectrumControlIconX + spectrumControlIconWidth &&
@@ -127,37 +141,87 @@ class Spectrum extends P5 {
 	}
 
 	#setupControllRendering() {
-		push();
-		const { heightOffset, spectrumControlPosition } = this.configuration;
+		this.#iconRendering();
+		this.#blueLevelControlRendering();
+	}
 
-		const { spectrumControlIconX, spectrumControlIconY, spectrumControlIconHeight, spectrumControlIconWidth, spectrumControlWidth } = spectrumControlPosition(width, height, heightOffset);
+	#iconRendering() {
+		push();
+		const { heightOffset, spectrumIconPosition } = this.configuration;
+
+		const { spectrumControlIconX, spectrumControlIconY, spectrumControlIconHeight, spectrumControlIconWidth } = spectrumIconPosition(width, height, heightOffset);
 
 		noStroke();
 		textSize(14);
 		fill(0);
-		text(this.configuration.name, spectrumControlIconX - (spectrumControlWidth / 2), spectrumControlIconY + (spectrumControlWidth * 1.5));
+		text(this.configuration.name, spectrumControlIconX - (spectrumControlIconWidth / 2), spectrumControlIconY + (spectrumControlIconWidth * 1.5));
 
 		if (this.#isEnabled) {
 			image(this.#icons.visualisation.spectrum.on, spectrumControlIconX, spectrumControlIconY, spectrumControlIconHeight, spectrumControlIconWidth);
 		} else {
 			image(this.#icons.visualisation.spectrum.off, spectrumControlIconX, spectrumControlIconY, spectrumControlIconHeight, spectrumControlIconWidth);
 		}
-
-		this.#blueLevelControlRendering();
 		pop();
 	}
+
+	#blueLevelControlRendering = () => {
+		push();
+		const { heightOffset, spectrumBlueControlPosition, spectrumControlConfiguration } = this.configuration;
+
+		const { blueControlX, blueControlY, blueControlHeight, blueControlWidth } = spectrumBlueControlPosition(width, height, heightOffset);
+
+		const {
+			lineMiddle
+		} = spectrumControlConfiguration(blueControlY, blueControlHeight, this.#blueLevelPosition);
+
+		noStroke();
+		textSize(14);
+
+		if (this.#isEnabled) {
+			fill(0, 0, 255);
+			text("Blue", blueControlX, blueControlY);
+		} else {
+			fill(150, 150, 150);
+			text("Blue", blueControlX, blueControlY);
+		}
+
+
+		strokeWeight(3);
+		stroke(0);
+		line(blueControlX + (blueControlWidth / 2), blueControlY + 5, blueControlX + (blueControlWidth / 2), blueControlY + blueControlHeight + 25);
+
+		if (this.#blueLevelPosition !== 0 && this.#blueLevelPosition < lineMiddle) {
+			stroke(0);
+			strokeWeight(5);
+			image(this.#icons.audioElement.frequencyChanger.frequencyChangerUp, blueControlX, this.#blueLevelPosition, blueControlHeight, blueControlWidth);
+			noStroke();
+		} else if (this.#blueLevelPosition !== 0 && this.#blueLevelPosition > lineMiddle) {
+			stroke(0);
+			strokeWeight(5);
+			image(this.#icons.audioElement.frequencyChanger.frequencyChangerDown, blueControlX, this.#blueLevelPosition, blueControlHeight, blueControlWidth);
+			noStroke();
+		}
+		else {
+			stroke(0);
+			strokeWeight(5);
+			image(this.#icons.audioElement.frequencyChanger.frequencyChanger, blueControlX, lineMiddle, blueControlHeight, blueControlWidth);
+			noStroke();
+		}
+		pop();
+	}
+
 
 	#setBlueLevel() {
 		if (this.#isEnabled) {
 			const currentY = mouseY.toFixed();
 
-			const { heightOffset, spectrumControlPosition, spectrumControlConfiguration } = this.configuration;
+			const { heightOffset, spectrumBlueControlPosition, spectrumControlConfiguration } = this.configuration;
 
-			const { spectrumControlY, spectrumControlHeight } = spectrumControlPosition(width, height, heightOffset);
+			const { blueControlY, blueControlHeight } = spectrumBlueControlPosition(width, height, heightOffset);
 
 			const {
 				lineStart, lineEnd, lineMiddle, upMiddle, downMiddle, step
-			} = spectrumControlConfiguration(spectrumControlY, spectrumControlHeight, this.#blueLevelPosition);
+			} = spectrumControlConfiguration(blueControlY, blueControlHeight, this.#blueLevelPosition);
 
 			if (!this.#blueLevelPosition) {
 				this.#blueLevelPosition = lineMiddle;
@@ -179,43 +243,6 @@ class Spectrum extends P5 {
 				this.#blueLevel = 0;
 				this.#blueLevelPosition = lineMiddle;
 			}
-		}
-	}
-
-	#blueLevelControlRendering = () => {
-
-		const { heightOffset, spectrumControlPosition, spectrumControlConfiguration } = this.configuration;
-
-		const { spectrumControlX, spectrumControlY, spectrumControlHeight, spectrumControlWidth } = spectrumControlPosition(width, height, heightOffset);
-
-		const {
-			lineMiddle
-		} = spectrumControlConfiguration(spectrumControlY, spectrumControlHeight, this.#blueLevelPosition);
-
-		textSize(14);
-		fill(0, 0, 255);
-		text("Blue", spectrumControlX, spectrumControlY);
-
-		strokeWeight(3);
-		stroke(0);
-		line(spectrumControlX + (spectrumControlWidth / 2), spectrumControlY + 5, spectrumControlX + (spectrumControlWidth / 2), spectrumControlY + spectrumControlHeight + 25);
-
-		if (this.#blueLevelPosition !== 0 && this.#blueLevelPosition < lineMiddle) {
-			stroke(0);
-			strokeWeight(5);
-			image(this.#icons.audioElement.frequencyChanger.frequencyChangerUp, spectrumControlX, this.#blueLevelPosition, spectrumControlHeight, spectrumControlWidth);
-			noStroke();
-		} else if (this.#blueLevelPosition !== 0 && this.#blueLevelPosition > lineMiddle) {
-			stroke(0);
-			strokeWeight(5);
-			image(this.#icons.audioElement.frequencyChanger.frequencyChangerDown, spectrumControlX, this.#blueLevelPosition, spectrumControlHeight, spectrumControlWidth);
-			noStroke();
-		}
-		else {
-			stroke(0);
-			strokeWeight(5);
-			image(this.#icons.audioElement.frequencyChanger.frequencyChanger, spectrumControlX, lineMiddle, spectrumControlHeight, spectrumControlWidth);
-			noStroke();
 		}
 	}
 

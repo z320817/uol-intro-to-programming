@@ -151,6 +151,7 @@ class InputOutputController extends P5 {
 			}
 
 			if (this.#visualsMenu.controlsDisplayed) {
+				// spectrum controls
 				if (this.#spektrumVisualisation.iconHitCheck()) {
 					this.#spektrumVisualisation.setIsEnabled();
 				}
@@ -165,6 +166,23 @@ class InputOutputController extends P5 {
 
 				if (this.#spektrumVisualisation.greenControlHitCheck()) {
 					this.#spektrumVisualisation.setGreenLevel();
+				}
+
+				// wave controls
+				if (this.#waveVisualisation.iconHitCheck()) {
+					this.#waveVisualisation.setIsEnabled();
+				}
+
+				if (this.#waveVisualisation.blueControlHitCheck()) {
+					this.#waveVisualisation.setBlueLevel();
+				}
+
+				if (this.#waveVisualisation.redControlHitCheck()) {
+					this.#waveVisualisation.setRedLevel();
+				}
+
+				if (this.#waveVisualisation.greenControlHitCheck()) {
+					this.#waveVisualisation.setGreenLevel();
 				}
 			}
 

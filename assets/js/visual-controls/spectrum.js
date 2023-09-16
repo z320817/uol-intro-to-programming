@@ -3,19 +3,18 @@ class Spectrum extends P5 {
 	#icons;
 	#audioElement;
 	#isEnabled = true;
-	#renderingProcessor;
 	#blueLevel = 0;
 	#blueLevelPosition = 0;
 	#redLevel = 0;
 	#redLevelPosition = 0;
 	#greenLevel = 0;
 	#greenLevelPosition = 0;
+	#renderingProcessor;
 
 	static #configuration = {
 		name: "spectrum",
 		heightOffset: 0,
 		lowerBorder: 0,
-		rightPositionOffset: 0,
 		spectrumRedControlPosition: (width, height, heightOffset) => {
 			return {
 				redControlY: (height - heightOffset) + 80,

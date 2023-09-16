@@ -5,6 +5,7 @@ class InputOutputController extends P5 {
 	#visualisationController;
 	#controlPannel;
 	#playbackButton;
+	#fullScreenButton;
 	#visualsMenu;
 	#needlseUiOutput;
 	#leftAudioElement;
@@ -16,6 +17,7 @@ class InputOutputController extends P5 {
 	#spektrumVisualisation;
 	#waveVisualisation;
 	#waveExampleVisualisation;
+	#isFullScreen = false;
 	#sound;
 	#icons;
 	#position;
@@ -86,6 +88,7 @@ class InputOutputController extends P5 {
 
 	#instantiateUiControls() {
 		this.#playbackButton = new PlaybackButton(this.#currentAudioElement);
+		this.#fullScreenButton = new FullScreenButton(this.#isFullScreen, this.#icons);
 		this.#needlseUiOutput = new Needles(PI, TWO_PI, this.#currentAudioElement);
 		this.#controlPannel = new ControlPanel(this.#icons);
 	}
@@ -124,9 +127,14 @@ class InputOutputController extends P5 {
 				this.#setCurrentAudioElement(position.left)
 			}
 
-			if (!this.#playbackButton.hitCheck()) {
-				// var fs = fullscreen();
-				// fullscreen(!fs);
+			if (this.#playbackButton.hitCheck()) {
+				this.#playbackButton.playSound();
+			}
+
+			if (this.#fullScreenButton.hitCheck()) {
+				this.#isFullScreen = !this.#isFullScreen;
+				this.#fullScreenButton.setFullScreen(this.#isFullScreen);
+				fullscreen(this.#isFullScreen);
 			}
 
 			if (this.#controlPannel.visualButtonHitCheck()) {
@@ -236,23 +244,29 @@ class InputOutputController extends P5 {
 			// playback button 
 			this.#playbackButton.draw();
 
+			// full screen button
+			this.#fullScreenButton.draw();
+
 			//draw the selected visualisation
 			this.#visualisationController.draw();
 
 
-			// control panel UI 
-			this.#controlPannel.draw();
+			if (!this.#isFullScreen) {
+				// control panel UI 
+				this.#controlPannel.draw();
 
-			// needles UI ouput
-			this.#needlseUiOutput.draw();
+				// needles UI ouput
+				this.#needlseUiOutput.draw();
 
-			// audio elements
-			this.#leftAudioElement.draw();
-			this.#rightAudioElement.draw();
+				// audio elements
+				this.#leftAudioElement.draw();
+				this.#rightAudioElement.draw();
 
-			if (this.#visualsMenu.controlsDisplayed) {
-				this.#visualsMenu.draw();
+				if (this.#visualsMenu.controlsDisplayed) {
+					this.#visualsMenu.draw();
+				}
 			}
+
 			pop();
 		};
 	}

@@ -1,29 +1,33 @@
 //displays and handles clicks on the playback button.
-class PlaybackButton extends P5 {
+class FullScreenButton extends P5 {
 
-	#renderingProcessor;
-	#audioElement;
+	#isFullScreen;
+	#icons;
+	#renderingProcessor
 
 	static #configuration = {
-		x: 20,
+		x: 60,
 		y: 20,
 		width: 20,
 		height: 20
 	}
 
 	/**
-	 * @param { audioElement } audioElement, 
+	 * @param { icons } icons, 
 	 */
-	constructor(audioElement) {
+	/**
+	 * @param { boolean } isFullScreen, 
+	 */
+	constructor(isFullScreen, icons) {
 		super();
 
-		this.#audioElement = audioElement;
-		//draws the playback button UI
+		this.#icons = icons;
+		this.#isFullScreen = isFullScreen;
 		this.#setupRenderingProcessor();
 	}
 
 	get configuration() {
-		return PlaybackButton.#configuration;
+		return FullScreenButton.#configuration;
 	}
 
 	get draw() {
@@ -31,11 +35,7 @@ class PlaybackButton extends P5 {
 	}
 
 	get hitCheck() {
-		return PlaybackButton.hitCheck;
-	}
-
-	get playSound() {
-		return PlaybackButton.playSound;
+		return FullScreenButton.hitCheck;
 	}
 
 	//checks for clicks on the button, starts or pauses playabck.
@@ -53,25 +53,22 @@ class PlaybackButton extends P5 {
 		return false;
 	};
 
-	static playSound() {
-		if (this.#audioElement.isPlaying) {
-			this.#audioElement.controls.pause();
-		} else {
-			this.#audioElement.controls.play();
-		}
+	/**
+	 * @param { boolean } isFullScreen, 
+	 */
+	setFullScreen(isFullScreen) {
+		this.#isFullScreen = isFullScreen;
 	}
 
 	#setupRenderingProcessor() {
 		this.#renderingProcessor = () => {
 			const { x, y, width, height } = this.configuration;
 
-			if (this.#audioElement.isPlaying) {
-				rect(x, y, width / 2 - 2, height);
-				rect(x + (width / 2 + 2), y, width / 2 - 2, height);
+			if (this.#isFullScreen) {
+				image(this.#icons.fullScreen.on, x, y, height, width);
 			}
 			else {
-				stroke('#000');
-				triangle(x, y, x + width, y + height / 2, x, y + height);
+				image(this.#icons.fullScreen.off, x, y, height, width);
 			}
 		};
 	}

@@ -56,6 +56,10 @@ const icons = {
 			on: null,
 			off: null
 		}
+	},
+	fullScreen: {
+		on: null,
+		off: null
 	}
 }
 
@@ -82,6 +86,8 @@ function preload() {
 	icons.audioElement.loop.noLoop = loadImage('assets/images/audioElement/loop/noLoop.svg');
 	icons.visualisation.spectrum.on = loadImage('assets/images/visualisation/spectrum/on.svg');
 	icons.visualisation.spectrum.off = loadImage('assets/images/visualisation/spectrum/off.svg');
+	icons.fullScreen.on = loadImage('assets/images/fullScreen/on.svg');
+	icons.fullScreen.off = loadImage('assets/images/fullScreen/off.svg');
 }
 
 function setup() {

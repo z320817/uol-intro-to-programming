@@ -3,6 +3,7 @@ class WavePattern extends P5 {
 
 	#icons;
 	#isFullScreen;
+	#isRendered = true;
 	#isEnabled;
 	#audioElement;
 	#blueLevel = 0;
@@ -122,10 +123,11 @@ class WavePattern extends P5 {
 		this.onResize();
 
 		this.#setupRenderingProcessor();
+		this.#isRendered = false;
 	}
 
 	static onResize() {
-		if (this.#isFullScreen) {
+		if (this.#isFullScreen || this.#isRendered) {
 			this.configuration.heightOffset = (height / 4);
 		}
 		this.configuration.lowerBorder = this.#isFullScreen ? height + (height / 8) : height - (height / 2.5);

@@ -2,6 +2,7 @@ class Spectrum extends P5 {
 
 	#icons;
 	#isFullScreen;
+	#isRendered = true;
 	#audioElement;
 	#isEnabled = true;
 	#blueLevel = 0;
@@ -121,10 +122,11 @@ class Spectrum extends P5 {
 		this.onResize();
 
 		this.#setupRenderingProcessor();
+		this.#isRendered = false;
 	}
 
 	static onResize() {
-		if (this.#isFullScreen) {
+		if (this.#isFullScreen || this.#isRendered) {
 			this.configuration.heightOffset = (height / 4);
 		}
 		this.configuration.lowerBorder = height + (height / 2.5);

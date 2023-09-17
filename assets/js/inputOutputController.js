@@ -95,8 +95,8 @@ class InputOutputController extends P5 {
 
 	#instantiateVisualisations() {
 		this.#visualisationController = new VisualisationController();
-		this.#spektrumVisualisation = new Spectrum(this.#currentAudioElement, this.#icons);
-		this.#waveVisualisation = new WavePattern(this.#currentAudioElement, this.#icons);
+		this.#spektrumVisualisation = new Spectrum(this.#visualisationController, this.#currentAudioElement, this.#icons);
+		this.#waveVisualisation = new WavePattern(this.#visualisationController, this.#currentAudioElement, this.#icons);
 		this.#waveExampleVisualisation = new WaveExample(this.#currentAudioElement, this.#icons);
 		this.#visualisationController.add(this.#spektrumVisualisation);
 		this.#visualisationController.add(this.#waveVisualisation);
@@ -155,6 +155,7 @@ class InputOutputController extends P5 {
 				// spectrum controls
 				if (this.#spektrumVisualisation.iconHitCheck()) {
 					this.#spektrumVisualisation.setIsEnabled();
+					this.#waveVisualisation.setDisabled();
 				}
 
 				if (this.#spektrumVisualisation.blueControlHitCheck()) {
@@ -172,6 +173,7 @@ class InputOutputController extends P5 {
 				// wave controls
 				if (this.#waveVisualisation.iconHitCheck()) {
 					this.#waveVisualisation.setIsEnabled();
+					this.#spektrumVisualisation.setDisabled();
 				}
 
 				if (this.#waveVisualisation.blueControlHitCheck()) {

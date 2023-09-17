@@ -12,6 +12,7 @@ class WavePattern extends P5 {
 	#redLevelPosition = 0;
 	#greenLevel = 0;
 	#greenLevelPosition = 0;
+	#visualisationController;
 	#renderingProcessor;
 
 	static #configuration = {
@@ -95,6 +96,10 @@ class WavePattern extends P5 {
 		return WavePattern.#configuration;
 	}
 
+	get isEnabled() {
+		return this.#isEnabled;
+	}
+
 	get name() {
 		return WavePattern.#configuration.name;
 	}
@@ -113,9 +118,13 @@ class WavePattern extends P5 {
 	/**
 	 * @param { AudioElement } currentAudioElement, 
 	 */
-	constructor(currentAudioElement, icons) {
+	/**
+	 * @param { VisualisationController } visualisationController
+	 */
+	constructor(visualisationController, currentAudioElement, icons) {
 		super();
 
+		this.#visualisationController = visualisationController;
 		this.#icons = icons;
 		this.#audioElement = currentAudioElement;
 
@@ -147,6 +156,14 @@ class WavePattern extends P5 {
 
 	setIsEnabled() {
 		this.#isEnabled = !this.#isEnabled;
+
+		if (this.#isEnabled) {
+			this.#visualisationController.selectedVisual = this.configuration.name;
+		}
+	}
+
+	setDisabled() {
+		this.#isEnabled = false;
 	}
 
 	#redControlHitCheck() {
